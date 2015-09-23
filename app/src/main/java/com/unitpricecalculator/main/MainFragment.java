@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
@@ -23,7 +24,9 @@ import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 public final class MainFragment extends BaseFragment {
 
@@ -43,6 +46,9 @@ public final class MainFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+    ((TextView) view.findViewById(R.id.price_header))
+        .setText(Currency.getInstance(Locale.getDefault()).getSymbol());
 
     mUnitTypeSpinner = (Spinner) view.findViewById(R.id.unit_type_spinner);
     mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());

@@ -90,9 +90,10 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
   @Override
   public Bundle saveState() {
     Bundle bundle = new Bundle();
-    bundle.putDouble("cost", mCost);
-    bundle.putDouble("size", mSize);
-    bundle.putInt("quantity", mQuantity);
+
+    bundle.putString("cost", mCostEditText.getText().toString());
+    bundle.putString("size", mSizeEditText.getText().toString());
+    bundle.putString("quantity", mQuantityEditText.getText().toString());
 
     if (mUnit != null) {
       bundle.putString("unit", mUnit.name());
@@ -103,9 +104,9 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
 
   @Override
   public void restoreState(Bundle bundle) {
-    mCost = bundle.getDouble("cost");
-    mSize = bundle.getDouble("size");
-    mQuantity = bundle.getInt("quantity");
+    mCostEditText.setText(bundle.getString("cost"));
+    mSizeEditText.setText(bundle.getString("size"));
+    mQuantityEditText.setText(bundle.getString("quantity"));
 
     if (bundle.containsKey("unit")) {
       mUnit = Unit.valueOf(bundle.getString("unit"));

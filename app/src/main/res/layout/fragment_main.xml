@@ -53,6 +53,7 @@
 
       <TextView
         style="@style/HeaderTextView"
+        android:id="@+id/price_header"
         android:layout_width="@dimen/header_column_2"
         android:text="Price"/>
 
