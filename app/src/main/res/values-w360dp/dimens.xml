@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="header_column_1">21dp</dimen>
+  <dimen name="header_column_2">89dp</dimen>
+  <dimen name="header_column_3">40dp</dimen>
+  <dimen name="header_column_4">89dp</dimen>
+  <dimen name="header_column_5">89dp</dimen>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+ <TextView
+   style="@style/RowTextView"
+   android:id="@+id/text_ordinal"
+   android:layout_width="@dimen/header_column_1"
+   android:layout_height="wrap_content"
+   android:text="1"/>
+
+  <EditText
+    style="@style/RowEditText"
+    android:id="@+id/price_edit_text"
+    android:layout_width="@dimen/header_column_2"
+    android:layout_height="wrap_content"
+    android:hint="1.4"
+    android:inputType="numberDecimal"
+    android:imeOptions="actionNext"/>
+
+  <EditText
+    style="@style/RowEditText"
+    android:id="@+id/number_edit_text"
+    android:layout_width="@dimen/header_column_3"
+    android:layout_height="wrap_content"
+    android:hint="1"
+    android:inputType="number"
+    android:imeOptions="actionNext"/>
+
+  <EditText
+    style="@style/RowEditText"
+    android:id="@+id/size_edit_text"
+    android:layout_width="@dimen/header_column_4"
+    android:layout_height="wrap_content"
+    android:hint="10"
+    android:inputType="numberDecimal"
+    android:imeOptions="actionNext"/>
+
+  <Spinner
+    style="@style/RowItem"
+    android:id="@+id/unit_spinner"
+    android:layout_width="@dimen/header_column_5"
+    android:layout_height="wrap_content"/>
+
+</merge>
