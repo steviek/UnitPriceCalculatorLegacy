@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="header_column_1">25dp</dimen>
-  <dimen name="header_column_2">95dp</dimen>
-  <dimen name="header_column_3">42dp</dimen>
-  <dimen name="header_column_4">95dp</dimen>
-  <dimen name="header_column_5">95dp</dimen>
+    <dimen name="header_column_1">25dp</dimen>
+    <dimen name="header_column_2">95dp</dimen>
+    <dimen name="header_column_3">42dp</dimen>
+    <dimen name="header_column_4">95dp</dimen>
+    <dimen name="header_column_5">95dp</dimen>
 </resources>

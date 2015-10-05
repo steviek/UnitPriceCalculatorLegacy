@@ -1,204 +1,203 @@
 <resources>
-  <string name="app_name">Unit Price Calculator</string>
-  <string name="unit_type">Unit Type: </string>
-  <string name="metric">Metric</string>
-  <string name="imperial">Imperial</string>
-  <string name="imperial_us">Imperial (US)</string>
-  <string name="imperial_uk">Imperial (UK)</string>
+    <string name="app_name">Unit Price Calculator</string>
+    <string name="unit_type">Unit Type:</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
+    <string name="imperial_us">Imperial (US)</string>
+    <string name="imperial_uk">Imperial (UK)</string>
 
-  <string name="preferred_system">Unit System Order</string>
-  <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
-  <string name="add_row">ADD ROW</string>
-  <string name="remove_row">REMOVE ROW</string>
+    <string name="preferred_system">Unit System Order</string>
+    <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
+    <string name="add_row">ADD ROW</string>
+    <string name="remove_row">REMOVE ROW</string>
 
-  <string name="show_price_per">Show price per:</string>
+    <string name="show_price_per">Show price per:</string>
+    <string name="per">per</string>
+    <string name="text_summary">%1$s%2$,.2f per %3$s %4$s</string>
 
-  <!-- MASS -->
-  <string name="weight">Weight</string>
-  <string name="gram_symbol">g</string>
-  <string name="kilogram_symbol">kg</string>
-  <string name="milligram_symbol">mg</string>
-  <string name="ounce_symbol">oz</string>
-  <string name="pound_symbol">lbs</string>
+    <!-- MASS -->
+    <string name="weight">Weight</string>
+    <string name="gram_symbol">g</string>
+    <string name="kilogram_symbol">kg</string>
+    <string name="milligram_symbol">mg</string>
+    <string name="ounce_symbol">oz</string>
+    <string name="pound_symbol">lbs</string>
 
-  <plurals name="gram">
-    <item quantity="one">Gram</item>
-    <item quantity="other">Grams</item>
-  </plurals>
+    <plurals name="gram">
+        <item quantity="one">Gram</item>
+        <item quantity="other">Grams</item>
+    </plurals>
 
-  <plurals name="kilogram">
-    <item quantity="one">Kilogram</item>
-    <item quantity="other">Kilograms</item>
-  </plurals>
+    <plurals name="kilogram">
+        <item quantity="one">Kilogram</item>
+        <item quantity="other">Kilograms</item>
+    </plurals>
 
-  <plurals name="milligram">
-    <item quantity="one">Milligram</item>
-    <item quantity="other">Milligrams</item>
-  </plurals>
+    <plurals name="milligram">
+        <item quantity="one">Milligram</item>
+        <item quantity="other">Milligrams</item>
+    </plurals>
 
-  <plurals name="ounce">
-    <item quantity="one">Ounce</item>
-    <item quantity="other">Ounces</item>
-  </plurals>
+    <plurals name="ounce">
+        <item quantity="one">Ounce</item>
+        <item quantity="other">Ounces</item>
+    </plurals>
 
-  <plurals name="pound">
-    <item quantity="one">Pound</item>
-    <item quantity="other">Pounds</item>
-  </plurals>
+    <plurals name="pound">
+        <item quantity="one">Pound</item>
+        <item quantity="other">Pounds</item>
+    </plurals>
 
-  <!-- VOLUME -->
-  <string name="volume">Volume</string>
-  <string name="millilitre_symbol">mL</string>
-  <string name="litre_symbol">L</string>
-  <string name="cubic_centimetre_symbol">cc</string>
-  <string name="gallon_symbol">gal</string>
-  <string name="quart_symbol">qt</string>
-  <string name="pint_symbol">pt</string>
-  <string name="cup_symbol">cps</string>
-  <string name="fluid_ounce_symbol">oz</string>
-  <string name="tablespoon_symbol">tbsp</string>
-  <string name="teaspoon_symbol">tsp</string>
-  <string name="us_gallon_symbol">US gal</string>
-  <string name="us_quart_symbol">US qt</string>
-  <string name="us_pint_symbol">US pt</string>
-  <string name="us_cup_symbol">US cps</string>
-  <string name="us_fluid_ounce_symbol">US oz</string>
-  <string name="us_tablespoon_symbol">US tbsp</string>
-  <string name="us_teaspoon_symbol">US tsp</string>
+    <!-- VOLUME -->
+    <string name="volume">Volume</string>
+    <string name="millilitre_symbol">mL</string>
+    <string name="litre_symbol">L</string>
+    <string name="cubic_centimetre_symbol">cc</string>
+    <string name="gallon_symbol">gal</string>
+    <string name="quart_symbol">qt</string>
+    <string name="pint_symbol">pt</string>
+    <string name="cup_symbol">cps</string>
+    <string name="fluid_ounce_symbol">oz</string>
+    <string name="tablespoon_symbol">tbsp</string>
+    <string name="teaspoon_symbol">tsp</string>
+    <string name="us_gallon_symbol">US gal</string>
+    <string name="us_quart_symbol">US qt</string>
+    <string name="us_pint_symbol">US pt</string>
+    <string name="us_cup_symbol">US cps</string>
+    <string name="us_fluid_ounce_symbol">US oz</string>
+    <string name="us_tablespoon_symbol">US tbsp</string>
+    <string name="us_teaspoon_symbol">US tsp</string>
 
-  <plurals name="millilitre">
-    <item quantity="one">Millilitre</item>
-    <item quantity="other">Millilitres</item>
-  </plurals>
+    <plurals name="millilitre">
+        <item quantity="one">Millilitre</item>
+        <item quantity="other">Millilitres</item>
+    </plurals>
 
-  <plurals name="litre">
-    <item quantity="one">Litre</item>
-    <item quantity="other">Litres</item>
-  </plurals>
+    <plurals name="litre">
+        <item quantity="one">Litre</item>
+        <item quantity="other">Litres</item>
+    </plurals>
 
-  <plurals name="cubic_centimetre">
-    <item quantity="one">Cubic Centimetre</item>
-    <item quantity="other">Cubic Centimetres</item>
-  </plurals>
+    <plurals name="cubic_centimetre">
+        <item quantity="one">Cubic Centimetre</item>
+        <item quantity="other">Cubic Centimetres</item>
+    </plurals>
 
-  <plurals name="gallon">
-    <item quantity="one">Gallon</item>
-    <item quantity="other">Gallons</item>
-  </plurals>
+    <plurals name="gallon">
+        <item quantity="one">Gallon</item>
+        <item quantity="other">Gallons</item>
+    </plurals>
 
-  <plurals name="quart">
-    <item quantity="one">Quart</item>
-    <item quantity="other">Quarts</item>
-  </plurals>
+    <plurals name="quart">
+        <item quantity="one">Quart</item>
+        <item quantity="other">Quarts</item>
+    </plurals>
 
-  <plurals name="pint">
-    <item quantity="one">Pint</item>
-    <item quantity="other">Pints</item>
-  </plurals>
+    <plurals name="pint">
+        <item quantity="one">Pint</item>
+        <item quantity="other">Pints</item>
+    </plurals>
 
-  <plurals name="cup">
-    <item quantity="one">Cup</item>
-    <item quantity="other">Cups</item>
-  </plurals>
+    <plurals name="cup">
+        <item quantity="one">Cup</item>
+        <item quantity="other">Cups</item>
+    </plurals>
 
-  <plurals name="fluid_ounce">
-    <item quantity="one">Fluid Ounce</item>
-    <item quantity="other">Fluid Ounces</item>
-  </plurals>
+    <plurals name="fluid_ounce">
+        <item quantity="one">Fluid Ounce</item>
+        <item quantity="other">Fluid Ounces</item>
+    </plurals>
 
-  <plurals name="tablespoon">
-    <item quantity="one">Tablespoon</item>
-    <item quantity="other">Tablespoons</item>
-  </plurals>
+    <plurals name="tablespoon">
+        <item quantity="one">Tablespoon</item>
+        <item quantity="other">Tablespoons</item>
+    </plurals>
 
-  <plurals name="teaspoon">
-    <item quantity="one">Teaspoon</item>
-    <item quantity="other">Teaspoons</item>
-  </plurals>
+    <plurals name="teaspoon">
+        <item quantity="one">Teaspoon</item>
+        <item quantity="other">Teaspoons</item>
+    </plurals>
 
-  <plurals name="us_gallon">
-    <item quantity="one">US Gallon</item>
-    <item quantity="other">US Gallons</item>
-  </plurals>
+    <plurals name="us_gallon">
+        <item quantity="one">US Gallon</item>
+        <item quantity="other">US Gallons</item>
+    </plurals>
 
-  <plurals name="us_quart">
-    <item quantity="one">US Quart</item>
-    <item quantity="other">US Quarts</item>
-  </plurals>
+    <plurals name="us_quart">
+        <item quantity="one">US Quart</item>
+        <item quantity="other">US Quarts</item>
+    </plurals>
 
-  <plurals name="us_pint">
-    <item quantity="one">US Pint</item>
-    <item quantity="other">US Pints</item>
-  </plurals>
+    <plurals name="us_pint">
+        <item quantity="one">US Pint</item>
+        <item quantity="other">US Pints</item>
+    </plurals>
 
-  <plurals name="us_cup">
-    <item quantity="one">US Cup</item>
-    <item quantity="other">US Cups</item>
-  </plurals>
+    <plurals name="us_cup">
+        <item quantity="one">US Cup</item>
+        <item quantity="other">US Cups</item>
+    </plurals>
 
-  <plurals name="us_fluid_ounce">
-    <item quantity="one">US Fluid Ounce</item>
-    <item quantity="other">US Fluid Ounces</item>
-  </plurals>
+    <plurals name="us_fluid_ounce">
+        <item quantity="one">US Fluid Ounce</item>
+        <item quantity="other">US Fluid Ounces</item>
+    </plurals>
 
-  <plurals name="us_tablespoon">
-    <item quantity="one">US Tablespoon</item>
-    <item quantity="other">US Tablespoons</item>
-  </plurals>
+    <plurals name="us_tablespoon">
+        <item quantity="one">US Tablespoon</item>
+        <item quantity="other">US Tablespoons</item>
+    </plurals>
 
-  <plurals name="us_teaspoon">
-    <item quantity="one">US Teaspoon</item>
-    <item quantity="other">US Teaspoons</item>
-  </plurals>
+    <plurals name="us_teaspoon">
+        <item quantity="one">US Teaspoon</item>
+        <item quantity="other">US Teaspoons</item>
+    </plurals>
 
-  <!-- LENGTH -->
-  <string name="length">Length</string>
-  <string name="metre_symbol">m</string>
-  <string name="centimetre_symbol">cm</string>
-  <string name="millimetre_symbol">mm</string>
-  <string name="inch_symbol">in</string>
-  <string name="foot_symbol">ft</string>
-  <string name="yard_symbol">yd</string>
+    <!-- LENGTH -->
+    <string name="length">Length</string>
+    <string name="metre_symbol">m</string>
+    <string name="centimetre_symbol">cm</string>
+    <string name="millimetre_symbol">mm</string>
+    <string name="inch_symbol">in</string>
+    <string name="foot_symbol">ft</string>
+    <string name="yard_symbol">yd</string>
 
-  <plurals name="metre">
-    <item quantity="one">Metre</item>
-    <item quantity="other">Metres</item>
-  </plurals>
+    <plurals name="metre">
+        <item quantity="one">Metre</item>
+        <item quantity="other">Metres</item>
+    </plurals>
 
-  <plurals name="centimetre">
-    <item quantity="one">Centimetre</item>
-    <item quantity="other">Centimetres</item>
-  </plurals>
+    <plurals name="centimetre">
+        <item quantity="one">Centimetre</item>
+        <item quantity="other">Centimetres</item>
+    </plurals>
 
-  <plurals name="millimetre">
-    <item quantity="one">Millimetre</item>
-    <item quantity="other">Millimetres</item>
-  </plurals>
+    <plurals name="millimetre">
+        <item quantity="one">Millimetre</item>
+        <item quantity="other">Millimetres</item>
+    </plurals>
 
-  <plurals name="inch">
-    <item quantity="one">Inch</item>
-    <item quantity="other">Inches</item>
-  </plurals>
+    <plurals name="inch">
+        <item quantity="one">Inch</item>
+        <item quantity="other">Inches</item>
+    </plurals>
 
-  <plurals name="foot">
-    <item quantity="one">Foot</item>
-    <item quantity="other">Feet</item>
-  </plurals>
+    <plurals name="foot">
+        <item quantity="one">Foot</item>
+        <item quantity="other">Feet</item>
+    </plurals>
 
-  <plurals name="yard">
-    <item quantity="one">Yard</item>
-    <item quantity="other">Yards</item>
-  </plurals>
+    <plurals name="yard">
+        <item quantity="one">Yard</item>
+        <item quantity="other">Yards</item>
+    </plurals>
 
-  <string name="quantity">Quantity</string>
-  <string name="unit_symbol">unit</string>
-  <plurals name="unit">
-    <item quantity="one">Unit</item>
-    <item quantity="other">Units</item>
-  </plurals>
-
-
-
+    <string name="quantity">Quantity</string>
+    <string name="unit_symbol">unit</string>
+    <plurals name="unit">
+        <item quantity="one">Unit</item>
+        <item quantity="other">Units</item>
+    </plurals>
 
 
 </resources>

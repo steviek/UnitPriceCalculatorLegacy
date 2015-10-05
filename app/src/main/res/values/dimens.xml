@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="vertical_margin">16dp</dimen>
-  <dimen name="horizontal_margin">16dp</dimen>
-  <dimen name="downwards_drop_shadow_height">16dp</dimen>
+    <dimen name="vertical_margin">16dp</dimen>
+    <dimen name="horizontal_margin">16dp</dimen>
+    <dimen name="downwards_drop_shadow_height">16dp</dimen>
 
-  <dimen name="header_column_1">20dp</dimen>
-  <dimen name="header_column_2">78dp</dimen>
-  <dimen name="header_column_3">36dp</dimen>
-  <dimen name="header_column_4">78dp</dimen>
-  <dimen name="header_column_5">78dp</dimen>
+    <dimen name="header_column_1">20dp</dimen>
+    <dimen name="header_column_2">78dp</dimen>
+    <dimen name="header_column_3">36dp</dimen>
+    <dimen name="header_column_4">78dp</dimen>
+    <dimen name="header_column_5">78dp</dimen>
 
 </resources>

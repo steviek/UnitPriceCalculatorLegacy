@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 public interface SavesStateInBundle {
 
-  Bundle saveState();
+    Bundle saveState();
 
-  void restoreState(Bundle bundle);
+    void restoreState(Bundle bundle);
 
 }
