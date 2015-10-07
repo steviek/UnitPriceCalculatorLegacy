@@ -1,185 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#fff">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
 
     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/vertical_margin"
+        android:paddingTop="@dimen/vertical_margin">
+
+        <RelativeLayout
+            android:id="@+id/unit_type_prompt_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/vertical_margin"
-            android:paddingTop="@dimen/vertical_margin">
-
-        <RelativeLayout
-                android:id="@+id/unit_type_prompt_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignRight="@+id/row_container"
-                android:paddingLeft="@dimen/horizontal_margin"
-                android:paddingRight="@dimen/horizontal_margin">
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/row_container"
+            android:paddingLeft="@dimen/horizontal_margin"
+            android:paddingRight="@dimen/horizontal_margin">
 
             <TextView
-                    android:id="@+id/unit_type_prompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/unit_type_spinner"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/unit_type"
-                    android:textColor="@color/primaryText"
-                    android:textSize="18sp"/>
+                android:id="@+id/unit_type_prompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/unit_type_spinner"
+                android:layout_alignParentLeft="true"
+                android:text="@string/unit_type"
+                android:textColor="@color/primaryText"
+                android:textSize="18sp" />
 
             <Spinner
-                    android:id="@+id/unit_type_spinner"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                android:id="@+id/unit_type_spinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 
         <LinearLayout
-                android:id="@+id/container_header"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_below="@+id/unit_type_prompt_container"
-                android:orientation="horizontal"
+            android:id="@+id/container_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/unit_type_prompt_container"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                style="@style/HeaderTextView"
+                android:layout_width="@dimen/header_column_1" />
+
+            <TextView
+                style="@style/HeaderTextView"
+                android:id="@+id/price_header"
+                android:layout_width="@dimen/header_column_2"
+                android:text="Price" />
+
+            <TextView
+                style="@style/HeaderTextView"
+                android:layout_width="@dimen/header_column_3"
+                android:text="#" />
+
+            <TextView
+                style="@style/HeaderTextView"
+                android:layout_width="@dimen/header_column_4"
+                android:text="Size" />
+
+            <TextView
+                style="@style/HeaderTextView"
+                android:layout_width="@dimen/header_column_5"
+                android:text="Unit" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container_header"
+            android:orientation="vertical">
+
+            <com.unitpricecalculator.main.UnitEntryView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:paddingRight="16dp" />
 
-            <TextView
-                    style="@style/HeaderTextView"
-                    android:layout_width="@dimen/header_column_1"/>
-
-            <TextView
-                    style="@style/HeaderTextView"
-                    android:id="@+id/price_header"
-                    android:layout_width="@dimen/header_column_2"
-                    android:text="Price"/>
-
-            <TextView
-                    style="@style/HeaderTextView"
-                    android:layout_width="@dimen/header_column_3"
-                    android:text="#"/>
-
-            <TextView
-                    style="@style/HeaderTextView"
-                    android:layout_width="@dimen/header_column_4"
-                    android:text="Size"/>
-
-            <TextView
-                    style="@style/HeaderTextView"
-                    android:layout_width="@dimen/header_column_5"
-                    android:text="Unit"/>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-                android:id="@+id/row_container"
+            <com.unitpricecalculator.main.UnitEntryView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/container_header"
-                android:orientation="vertical">
-
-            <com.unitpricecalculator.main.UnitEntryView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"/>
-
-            <com.unitpricecalculator.main.UnitEntryView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"/>
-
-            <com.unitpricecalculator.main.UnitEntryView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"/>
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
         </LinearLayout>
 
         <RelativeLayout
-                android:id="@+id/button_container"
+            android:id="@+id/button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/row_container"
+            android:layout_below="@+id/row_container"
+            android:paddingLeft="@dimen/horizontal_margin"
+            android:paddingRight="@dimen/horizontal_margin">
+
+            <TextView
+                android:id="@+id/add_row_btn"
+                style="@style/FlatButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/row_container"
-                android:layout_below="@+id/row_container"
-                android:paddingLeft="@dimen/horizontal_margin"
-                android:paddingRight="@dimen/horizontal_margin">
+                android:layout_alignParentRight="true"
+                android:text="@string/add_row" />
 
             <TextView
-                    android:id="@+id/add_row_btn"
-                    style="@style/FlatButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/add_row"/>
-
-            <TextView
-                    android:id="@+id/remove_row_btn"
-                    style="@style/FlatButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/add_row_btn"
-                    android:text="@string/remove_row"/>
+                android:id="@+id/remove_row_btn"
+                style="@style/FlatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/add_row_btn"
+                android:text="@string/remove_row" />
 
         </RelativeLayout>
 
         <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button_container"
-                android:layout_alignRight="@+id/row_container"
-                android:paddingLeft="@dimen/horizontal_margin"
-                android:paddingRight="@dimen/horizontal_margin">
+            android:id="@+id/final_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_container"
+            android:layout_alignRight="@+id/row_container"
+            android:paddingLeft="@dimen/horizontal_margin"
+            android:paddingRight="@dimen/horizontal_margin">
 
             <Spinner
-                    android:id="@+id/final_spinner"
-                    android:layout_width="@dimen/header_column_5"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                android:id="@+id/final_spinner"
+                android:layout_width="@dimen/header_column_5"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
 
-                    android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <EditText
-                    android:id="@+id/final_size"
-                    android:layout_width="@dimen/header_column_4"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/final_spinner"
-                    android:layout_alignBaseline="@+id/prompt_price_per"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:hint="1"/>
+                android:id="@+id/final_size"
+                android:layout_width="@dimen/header_column_4"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/final_spinner"
+                android:layout_alignBaseline="@+id/prompt_price_per"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:hint="1" />
 
             <TextView
-                    android:id="@+id/prompt_price_per"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/show_price_per"
-                    android:layout_toLeftOf="@+id/final_size"
-                    android:layout_centerVertical="true"
-                    android:gravity="right"
-                    android:padding="8dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/primaryText"/>
+                android:id="@+id/prompt_price_per"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_price_per"
+                android:layout_toLeftOf="@+id/final_size"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="@color/primaryText" />
 
         </RelativeLayout>
 
         <TextView
-                android:id="@+id/text_summary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/horizontal_margin"
-                android:paddingRight="@dimen/horizontal_margin"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:gravity="center"
-                android:textSize="16sp"
-                android:textColor="@color/primaryText"/>
+            android:id="@+id/final_text_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/final_container"
+            android:paddingLeft="@dimen/horizontal_margin"
+            android:paddingRight="@dimen/horizontal_margin"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/primaryText" />
 
     </RelativeLayout>
 

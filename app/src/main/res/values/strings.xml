@@ -12,8 +12,8 @@
     <string name="remove_row">REMOVE ROW</string>
 
     <string name="show_price_per">Show price per:</string>
-    <string name="per">per</string>
-    <string name="text_summary">%1$s%2$,.2f per %3$s %4$s</string>
+    <string name="text_summary">%1$s per %2$s %3$s</string>
+    <string name="main_final_summary">The most economical option is row %1$d\n%2$s per %3$s x %4$s %5$s = %6$s per %7$s %8$s</string>
 
     <!-- MASS -->
     <string name="weight">Weight</string>

@@ -6,33 +6,54 @@ public final class UnitEntry {
 
     private final double cost;
 
+    private final String costString;
+
     private final int quantity;
+
+    private final String quantityString;
 
     private final double size;
 
+    private final String sizeString;
+
     private final Unit unit;
 
-    private UnitEntry(double cost, int quantity, double size, Unit unit) {
+    private UnitEntry(double cost, String costString, int quantity, String quantityString, double size,
+                      String sizeString, Unit unit) {
         Preconditions.checkArgument(cost >= 0);
         Preconditions.checkArgument(quantity > 0);
         Preconditions.checkArgument(size > 0);
-        Preconditions.checkNotNull(unit);
         this.cost = cost;
+        this.costString = Preconditions.checkNotNull(costString);
         this.quantity = quantity;
+        this.quantityString = Preconditions.checkNotNull(quantityString);
         this.size = size;
-        this.unit = unit;
+        this.sizeString = Preconditions.checkNotNull(sizeString);
+        this.unit = Preconditions.checkNotNull(unit);
     }
 
     public double getCost() {
         return cost;
     }
 
+    public String getCostString() {
+        return costString;
+    }
+
     public int getQuantity() {
         return quantity;
     }
 
+    public String getQuantityString() {
+        return quantityString;
+    }
+
     public double getSize() {
         return size;
+    }
+
+    public String getSizeString() {
+        return sizeString;
     }
 
     public Unit getUnit() {
@@ -57,9 +78,15 @@ public final class UnitEntry {
     public static class Builder {
         private double cost;
 
+        private String costString;
+
         private int quantity;
 
+        private String quantityString;
+
         private double size;
+
+        private String sizeString;
 
         private Unit unit;
 
@@ -90,8 +117,23 @@ public final class UnitEntry {
             return this;
         }
 
+        public Builder setCostString(String costString) {
+            this.costString = Preconditions.checkNotNull(costString);
+            return this;
+        }
+
+        public Builder setQuantityString(String quantityString) {
+            this.quantityString = Preconditions.checkNotNull(quantityString);
+            return this;
+        }
+
+        public Builder setSizeString(String sizeString) {
+            this.sizeString = Preconditions.checkNotNull(sizeString);
+            return this;
+        }
+
         public UnitEntry build() {
-            return new UnitEntry(cost, quantity, size, unit);
+            return new UnitEntry(cost, costString, quantity, quantityString, size, sizeString, unit);
         }
 
         @Override

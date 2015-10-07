@@ -2,6 +2,7 @@ package com.unitpricecalculator.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -19,7 +20,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import com.squareup.otto.Subscribe;
-import com.unitpricecalculator.BuildConfig;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
@@ -33,6 +33,7 @@ import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.SavesStateInBundle;
 import com.unitpricecalculator.util.logger.Logger;
 
+import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -47,15 +48,15 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
     private TextView mSummaryTextView;
     private CompareUnitChangedEvent mLastCompareUnit;
 
-    private double mCost;
-    private int mQuantity;
-    private double mSize;
+    private OnUnitEntryChangedListener mListener;
+
     private Unit mUnit;
+    private Evaluation mEvaluation = Evaluation.NEUTRAL;
 
     private TextWatcher mTextWatcher = new AbstractTextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {
-            refreshSummary();
+            onUnitChanged();
         }
     };
 
@@ -98,7 +99,7 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
         }
 
         refreshAdapter(UnitArrayAdapter.of(getContext(), mUnit));
-        refreshSummary();
+        syncViews();
     }
 
     public void setRowNumber(int rowNumber) {
@@ -118,37 +119,32 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
     @Subscribe
     public void onCompareUnitChanged(CompareUnitChangedEvent event) {
         mLastCompareUnit = event;
-        refreshSummary();
+        syncViews();
     }
 
     public Optional<UnitEntry> getEntry() {
-        double price;
-        int quantity;
-        double size;
-        Unit unit;
-
         try {
-            price = Double.parseDouble(mCostEditText.getText().toString());
+            UnitEntry.Builder unitEntry = UnitEntry.builder();
+
+            unitEntry.setCostString(mCostEditText.getText().toString());
+            unitEntry.setCost(Double.parseDouble(mCostEditText.getText().toString()));
+
 
             if (Strings.isNullOrEmpty(mQuantityEditText.getText().toString())) {
-                quantity = 1;
+                unitEntry.setQuantity(1);
+                unitEntry.setQuantityString("1");
             } else {
-                quantity = Integer.parseInt(mQuantityEditText.getText().toString());
+                unitEntry.setQuantity(Integer.parseInt(mQuantityEditText.getText().toString()));
+                unitEntry.setQuantityString(mQuantityEditText.getText().toString());
             }
 
-            size = Double.parseDouble(mSizeEditText.getText().toString());
+            unitEntry.setSizeString(mSizeEditText.getText().toString());
+            unitEntry.setSize(Double.parseDouble(mSizeEditText.getText().toString()));
 
-            unit = getSelectedUnit();
+            unitEntry.setUnit(getSelectedUnit());
 
-            if (price >= 0 && quantity > 0 && size > 0 && unit != null) {
-                return Optional.of(UnitEntry.builder()
-                        .setCost(price)
-                        .setQuantity(quantity)
-                        .setSize(size)
-                        .setUnit(unit)
-                        .build());
-            }
-        } catch (NumberFormatException e) {
+            return Optional.of(unitEntry.build());
+        } catch (NullPointerException | IllegalArgumentException e) {
             Logger.e(e);
         }
         return Optional.absent();
@@ -195,13 +191,7 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
         mSizeEditText.addTextChangedListener(mTextWatcher);
 
         mUnitSpinner = (Spinner) findViewById(R.id.unit_spinner);
-        mUnitSpinner.setOnItemSelectedListener(
-                new AbstractOnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        refreshSummary();
-                    }
-                });
+
         mSummaryTextView = (TextView) findViewById(R.id.text_summary);
         mSummaryTextView.setGravity(oneLine
                 ? Gravity.LEFT | Gravity.CENTER_VERTICAL
@@ -209,24 +199,23 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
 
         mInflated = true;
 
-        if (!BuildConfig.DEBUG || !this.isInEditMode()) {
+        if (!this.isInEditMode()) {
             refreshAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
-            mUnitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            mUnitSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Unit unit = ((UnitArrayAdapter) parent.getAdapter()).getUnit(position);
                     if (unit != mUnit) {
                         mUnit = unit;
                         mUnitSpinner.setAdapter(UnitArrayAdapter.of(parent.getContext(), mUnit));
+                        onUnitChanged();
+                        syncViews();
                     }
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
         }
-        refreshSummary();
+        syncViews();
     }
 
     private Unit getSelectedUnit() {
@@ -243,20 +232,68 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
         }
     }
 
-    private void refreshSummary() {
+    private void onUnitChanged() {
+        Optional<UnitEntry> unitEntry = getEntry();
+        syncViews();
+        if (mListener != null) {
+            mListener.onUnitEntryChanged(unitEntry);
+        }
+    }
+
+    private void syncViews() {
         Optional<UnitEntry> unitEntry = getEntry();
         if (unitEntry.isPresent() && mLastCompareUnit != null) {
             double baseSize = Double.parseDouble(mLastCompareUnit.getSize());
             Unit baseUnit = mLastCompareUnit.getUnit();
             double pricePer = unitEntry.get().pricePer(baseSize, baseUnit);
             mSummaryTextView.setText(getResources().getString(R.string.text_summary,
-                    Currency.getInstance(Locale.getDefault()).getSymbol(),
-                    pricePer,
+                    NumberFormat.getCurrencyInstance().format(pricePer),
                     mLastCompareUnit.getSize(),
                     getResources().getString(baseUnit.getSymbol())));
             mSummaryTextView.setVisibility(View.VISIBLE);
+
+            mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
+            mSummaryTextView.setTextColor(ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
         } else {
             mSummaryTextView.setVisibility(View.INVISIBLE);
+            mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
+            mSummaryTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
+        }
+
+    }
+
+    public void setEvaluation(Evaluation evaluation) {
+        mEvaluation = evaluation;
+        syncViews();
+    }
+
+    public void setOnUnitEntryChangedListener(OnUnitEntryChangedListener listener) {
+        mListener = listener;
+    }
+
+    public interface OnUnitEntryChangedListener {
+        void onUnitEntryChanged(Optional<UnitEntry> unitEntry);
+    }
+
+    public enum Evaluation {
+        GOOD(R.color.good_green, R.color.good_green),
+        BAD(R.color.bad_red, R.color.bad_red),
+        NEUTRAL(R.color.primaryText, R.color.secondaryText);
+
+        private int primaryColor;
+        private int secondaryColor;
+
+        Evaluation(int primaryColor, int secondaryColor) {
+            this.primaryColor = primaryColor;
+            this.secondaryColor = secondaryColor;
+        }
+
+        public int getPrimaryColor() {
+            return primaryColor;
+        }
+
+        public int getSecondaryColor() {
+            return secondaryColor;
         }
     }
 }

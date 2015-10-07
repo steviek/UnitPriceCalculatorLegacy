@@ -1,5 +1,8 @@
 package com.unitpricecalculator.main;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -13,9 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.MyApplication;
@@ -24,18 +24,26 @@ import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.unit.Unit;
+import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
+import com.unitpricecalculator.util.NumberUtils;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-public final class MainFragment extends BaseFragment {
+public final class MainFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener {
 
     private LinearLayout mRowContainer;
     private View mAddRowButton;
@@ -69,6 +77,7 @@ public final class MainFragment extends BaseFragment {
                 if (Units.getCurrentUnitType() != unitType) {
                     Units.setCurrentUnitType(unitType);
                     ((Spinner) parent).setAdapter(new UnitTypeArrayAdapter(getContext()));
+                    evaluateEntries();
                 }
             }
         });
@@ -77,6 +86,7 @@ public final class MainFragment extends BaseFragment {
 
         for (int i = 0; i < mRowContainer.getChildCount(); i++) {
             UnitEntryView entryView = (UnitEntryView) mRowContainer.getChildAt(i);
+            entryView.setOnUnitEntryChangedListener(this);
             mEntryViews.add(entryView);
             entryView.setRowNumber(i + 1);
         }
@@ -103,7 +113,9 @@ public final class MainFragment extends BaseFragment {
                 }
                 mAddRowButton.setEnabled(true);
                 UnitEntryView entryView = mEntryViews.remove(mEntryViews.size() - 1);
+                entryView.setOnUnitEntryChangedListener(null);
                 mRowContainer.removeView(entryView);
+                evaluateEntries();
             }
         });
 
@@ -111,7 +123,8 @@ public final class MainFragment extends BaseFragment {
         mFinalEditText.addTextChangedListener(new AbstractTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                updateCompareUnit();
+                MyApplication.getInstance().getBus().post(getCompareUnit());
+                evaluateEntries();
             }
         });
 
@@ -120,14 +133,16 @@ public final class MainFragment extends BaseFragment {
         mFinalSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateCompareUnit();
+                MyApplication.getInstance().getBus().post(getCompareUnit());
+                evaluateEntries();
             }
         });
 
-        mSummaryText = (TextView) view.findViewById(R.id.text_summary);
+        mSummaryText = (TextView) view.findViewById(R.id.final_text_summary);
 
         if (mSavedState != null) {
             onRestoreState(mSavedState);
+            evaluateEntries();
         }
 
         return view;
@@ -143,6 +158,9 @@ public final class MainFragment extends BaseFragment {
         entryView.setPadding((int) dp16, 0, (int) dp16, 0);
         entryView.setRowNumber(mEntryViews.size());
         mRemoveRowButton.setEnabled(true);
+        entryView.setOnUnitEntryChangedListener(this);
+        entryView.onCompareUnitChanged(getCompareUnit());
+        evaluateEntries();
         return entryView;
     }
 
@@ -198,20 +216,67 @@ public final class MainFragment extends BaseFragment {
         mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
     }
 
+    @Override
+    public void onUnitEntryChanged(Optional<UnitEntry> unitEntry) {
+        evaluateEntries();
+    }
+
     private CompareUnitChangedEvent getCompareUnit() {
-        String size = "1";
-        Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
-                .getUnit(mFinalSpinner.getSelectedItemPosition());
-        try {
-            Double.parseDouble(mFinalEditText.getText().toString());
-            size = mFinalEditText.getText().toString();
-        } catch (NumberFormatException e) {
-            Logger.e(e);
-        }
+        String size = NumberUtils.firstParsableDouble(mFinalEditText.getText().toString(), "1");
+        Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter()).getUnit(mFinalSpinner.getSelectedItemPosition());
         return new CompareUnitChangedEvent(size, unit);
     }
 
-    private void updateCompareUnit() {
+    private void evaluateEntries() {
+        CompareUnitChangedEvent compareUnit = getCompareUnit();
+        double size = Double.parseDouble(compareUnit.getSize());
+        Unit unit = compareUnit.getUnit();
 
+        int entries = 0;
+        int bestRow = 0;
+        UnitEntry best = null;
+
+        for (int i = 0; i < mEntryViews.size(); i ++) {
+            UnitEntryView entryView = mEntryViews.get(i);
+            Optional<UnitEntry> entry = entryView.getEntry();
+            if (entry.isPresent()) {
+                entries++;
+                if (best == null || entry.get().pricePer(size, unit) < best.pricePer(size, unit)) {
+                    best = entry.get();
+                    bestRow = i;
+                }
+            }
+        }
+
+        if (entries >= 2 && best != null) {
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            mSummaryText.setText(getResources().getString(R.string.main_final_summary,
+                    bestRow + 1,
+                    format.format(best.getCost()),
+                    best.getQuantityString(),
+                    best.getSizeString(),
+                    getString(best.getUnit().getSymbol()),
+                    format.format(best.pricePer(size, unit)),
+                    compareUnit.getSize(),
+                    getString(unit.getSymbol())));
+
+            for (UnitEntryView entryView : mEntryViews) {
+                Optional<UnitEntry> entry = entryView.getEntry();
+                if (entry.isPresent()) {
+                    if (entry.get().pricePer(size, unit) <= best.pricePer(size, unit)) {
+                        entryView.setEvaluation(UnitEntryView.Evaluation.GOOD);
+                    } else {
+                        entryView.setEvaluation(UnitEntryView.Evaluation.BAD);
+                    }
+                } else {
+                    entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
+                }
+            }
+        } else {
+            mSummaryText.setText("");
+            for (UnitEntryView entryView : mEntryViews) {
+                entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
+            }
+        }
     }
 }
