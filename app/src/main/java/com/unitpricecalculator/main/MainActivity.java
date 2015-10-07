@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.unitpricecalculator.BaseActivity;
@@ -71,6 +72,12 @@ public final class MainActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
@@ -78,6 +85,15 @@ public final class MainActivity extends BaseActivity {
             return true;
         }
         // Handle your other action bar items...
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                mFragment.save();
+                break;
+            case R.id.action_clear:
+                mFragment.clear();
+                break;
+
+        }
 
         return super.onOptionsItemSelected(item);
     }

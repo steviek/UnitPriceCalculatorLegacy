@@ -194,6 +194,19 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
                 .getUnit(mFinalSpinner.getSelectedItemPosition()).name());
     }
 
+    public void clear() {
+        for (UnitEntryView entryView : mEntryViews) {
+            entryView.clear();
+        }
+        mFinalEditText.setText("");
+        mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+        mSummaryText.setText("");
+    }
+
+    public void save() {
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();

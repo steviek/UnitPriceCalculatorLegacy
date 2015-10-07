@@ -262,6 +262,14 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
 
     }
 
+    public void clear() {
+        mCostEditText.setText("");
+        mQuantityEditText.setText("");
+        mSizeEditText.setText("");
+        refreshAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType().getBase()));
+        syncViews();
+    }
+
     public void setEvaluation(Evaluation evaluation) {
         mEvaluation = evaluation;
         syncViews();
