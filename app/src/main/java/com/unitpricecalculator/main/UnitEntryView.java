@@ -1,7 +1,9 @@
 package com.unitpricecalculator.main;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,28 +18,27 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
+import com.unitpricecalculator.util.SavesStateInJson;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
-import com.unitpricecalculator.util.SavesStateInBundle;
 import com.unitpricecalculator.util.logger.Logger;
 
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
+import java.text.NumberFormat;
+
+final class UnitEntryView extends LinearLayout implements SavesStateInJson {
 
     private TextView mRowNumberTextView;
     private EditText mCostEditText;
@@ -74,30 +75,25 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
     }
 
     @Override
-    public Bundle saveState() {
-        Bundle bundle = new Bundle();
-
-        bundle.putString("cost", mCostEditText.getText().toString());
-        bundle.putString("size", mSizeEditText.getText().toString());
-        bundle.putString("quantity", mQuantityEditText.getText().toString());
-
+    public JSONObject saveState() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("cost", mCostEditText.getText().toString());
+        json.put("size", mSizeEditText.getText().toString());
+        json.put("quantity", mQuantityEditText.getText().toString());
         if (mUnit != null) {
-            bundle.putString("unit", mUnit.name());
+            json.put("unit", Units.toJson(mUnit));
         }
-
-        return bundle;
+        return json;
     }
 
     @Override
-    public void restoreState(Bundle bundle) {
-        mCostEditText.setText(bundle.getString("cost"));
-        mSizeEditText.setText(bundle.getString("size"));
-        mQuantityEditText.setText(bundle.getString("quantity"));
-
-        if (bundle.containsKey("unit")) {
-            mUnit = Unit.valueOf(bundle.getString("unit"));
+    public void restoreState(JSONObject object) throws JSONException {
+        mCostEditText.setText(object.optString("cost"));
+        mSizeEditText.setText(object.optString("size"));
+        mQuantityEditText.setText(object.optString("quantity"));
+        if (object.has("unit")) {
+            mUnit = Units.fromJson(object.getJSONObject("unit"));
         }
-
         refreshAdapter(UnitArrayAdapter.of(getContext(), mUnit));
         syncViews();
     }
@@ -128,7 +124,6 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
 
             unitEntry.setCostString(mCostEditText.getText().toString());
             unitEntry.setCost(Double.parseDouble(mCostEditText.getText().toString()));
-
 
             if (Strings.isNullOrEmpty(mQuantityEditText.getText().toString())) {
                 unitEntry.setQuantity(1);
@@ -211,7 +206,6 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
                         onUnitChanged();
                         syncViews();
                     }
-
                 }
             });
         }
@@ -220,7 +214,7 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
 
     private Unit getSelectedUnit() {
         if (this.isInEditMode()) {
-            return Unit.UNIT;
+            return DefaultUnit.UNIT;
         }
         return ((UnitArrayAdapter) mUnitSpinner.getAdapter()).getUnit(mUnitSpinner.getSelectedItemPosition());
     }
@@ -249,7 +243,7 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
             mSummaryTextView.setText(getResources().getString(R.string.text_summary,
                     NumberFormat.getCurrencyInstance().format(pricePer),
                     mLastCompareUnit.getSize(),
-                    getResources().getString(baseUnit.getSymbol())));
+                    baseUnit.getSymbol()));
             mSummaryTextView.setVisibility(View.VISIBLE);
 
             mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
@@ -259,7 +253,6 @@ final class UnitEntryView extends LinearLayout implements SavesStateInBundle {
             mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
             mSummaryTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
         }
-
     }
 
     public void clear() {

@@ -1,11 +1,10 @@
 package com.unitpricecalculator.main;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.widget.ArrayAdapter;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import android.content.Context;
+import android.widget.ArrayAdapter;
 
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Unit;
@@ -28,7 +27,6 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
     }
 
     private static UnitArrayAdapter of(Context context, UnitType unitType, Unit selected) {
-        final Resources resources = context.getResources();
         ImmutableList.Builder<Unit> units = ImmutableList.builder();
         ImmutableList.Builder<String> symbols = ImmutableList.builder();
 
@@ -37,7 +35,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
         if (selected != null) {
             includedUnits.add(selected);
             units.add(selected);
-            symbols.add(resources.getString(selected.getSymbol()));
+            symbols.add(selected.getSymbol());
         }
 
         for (System system : System.getPreferredOrder()) {
@@ -46,7 +44,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
                         (selected == null || unit != selected)) {
                     includedUnits.add(unit);
                     units.add(unit);
-                    symbols.add(resources.getString(unit.getSymbol()));
+                    symbols.add(unit.getSymbol());
                 }
             }
         }

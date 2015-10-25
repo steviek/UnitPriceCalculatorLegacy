@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
+    </style>s
 
     <style name="HeaderTextView">
         <item name="android:layout_height">match_parent</item>
@@ -35,6 +35,30 @@
         <item name="android:textColor">?attr/colorAccent</item>
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Menu" />
+    <style name="Menu.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#de000000</item>
+        <item name="android:drawablePadding">24dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="Menu.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/dividerColor</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
 </resources>

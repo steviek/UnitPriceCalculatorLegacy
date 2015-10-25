@@ -23,7 +23,7 @@ public enum UnitType {
     }
 
     public Unit getBase() {
-        return Unit.valueOf(base);
+        return DefaultUnit.valueOf(base);
     }
 
     public static UnitType fromName(String name, Resources resources) {

@@ -65,7 +65,8 @@ public final class UnitEntry {
     }
 
     public double pricePer(double size, Unit unit) {
-        Preconditions.checkArgument(unit.getUnitType() == this.unit.getUnitType());
+        Preconditions.checkArgument(unit.getUnitType() == this.unit.getUnitType(),
+                "Expected " + this.unit.getUnitType() + ", was " + unit.getUnitType());
         double costPerUnit = getPricePerUnit();
         double costPerOtherUnit = costPerUnit / (this.unit.getFactor() / unit.getFactor());
         return size * costPerOtherUnit;

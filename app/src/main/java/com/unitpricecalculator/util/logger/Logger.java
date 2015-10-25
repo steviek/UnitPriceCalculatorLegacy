@@ -54,11 +54,10 @@ public final class Logger {
     }
 
     private static boolean shouldLog() {
-        return false;
-        /*if (tag == null) {
+        if (tag == null) {
             throw new IllegalStateException("Logger not initialized!");
         }
-        return shouldLog;*/
+        return shouldLog;
     }
 
 }

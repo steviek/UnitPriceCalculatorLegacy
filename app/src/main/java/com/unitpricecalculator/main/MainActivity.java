@@ -1,7 +1,12 @@
 package com.unitpricecalculator.main;
 
+import com.google.common.base.Preconditions;
+
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
@@ -9,22 +14,32 @@ import android.view.MenuItem;
 
 import com.unitpricecalculator.BaseActivity;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.util.logger.Logger;
 
-public final class MainActivity extends BaseActivity {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public final class MainActivity extends BaseActivity implements MenuFragment.Callback {
 
     private ActionBarDrawerToggle mDrawerToggle;
-
     private DrawerLayout mDrawerLayout;
 
-    private MainFragment mFragment;
+    private MainFragment mMainFragment;
+    private SettingsFragment mSettingsFragment;
+    private JSONObject mMainState;
 
-    private MenuFragment mMenu;
+    private State mState;
+
+    private enum State {
+        MAIN, SETTINGS
+    }
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Preconditions.checkNotNull(getSupportActionBar());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -34,27 +49,37 @@ public final class MainActivity extends BaseActivity {
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        mFragment = new MainFragment();
-        mMenu = new MenuFragment();
+        mMainFragment = new MainFragment();
+        mSettingsFragment = new SettingsFragment();
+
+        if (savedInstanceState != null) {
+            mState = State.valueOf(savedInstanceState.getString("state"));
+            try {
+                mMainFragment.restoreState(new JSONObject(savedInstanceState.getString("mainFragment")));
+            } catch (JSONException e) {
+                Logger.e(e);
+            }
+        } else {
+            mState = State.MAIN;
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_frame, mFragment)
-                .replace(R.id.menu_frame, mMenu)
+                .replace(R.id.content_frame, getFragment(mState))
+                .replace(R.id.menu_frame, new MenuFragment())
                 .commit();
-
-        if (savedInstanceState != null) {
-            mFragment.onRestoreState(savedInstanceState.getBundle("mainFragment"));
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mFragment != null) {
-            Bundle b = new Bundle();
-            mFragment.onSaveState(b);
-            outState.putBundle("mainFragment", b);
+        outState.putString("state", mState.name());
+        if (mMainFragment != null) {
+            try {
+                outState.putString("mainFragment", mMainFragment.saveState().toString());
+            } catch (JSONException e) {
+                Logger.e(e);
+            }
         }
     }
 
@@ -72,9 +97,17 @@ public final class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switch (mState) {
+            case SETTINGS:
+                menu.clear();
+                return true;
+            case MAIN:
+                menu.clear();
+                getMenuInflater().inflate(R.menu.menu_main, menu);
+                return true;
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -87,14 +120,71 @@ public final class MainActivity extends BaseActivity {
         // Handle your other action bar items...
         switch (item.getItemId()) {
             case R.id.action_save:
-                mFragment.save();
+                mMainFragment.save();
                 break;
             case R.id.action_clear:
-                mFragment.clear();
+                mMainFragment.clear();
                 break;
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMenuEvent(MenuFragment.MenuEvent event) {
+        switch (event) {
+            case FEEDBACK:
+                break;
+            case NEW:
+                changeState(State.MAIN);
+                break;
+            case RATE:
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=com.unitpricecalculator"));
+                startActivity(i);
+                break;
+            case SETTINGS:
+                changeState(State.SETTINGS);
+                break;
+            case SAVED:
+                break;
+            case SHARE:
+                break;
+        }
+    }
+
+    private Fragment getFragment(State state) {
+        switch (state) {
+            case SETTINGS:
+                return mSettingsFragment;
+            case MAIN:
+                return mMainFragment;
+        }
+        throw new IllegalArgumentException("Unexpected state: " + state);
+    }
+
+    private void changeState(State state) {
+        mDrawerLayout.closeDrawers();
+        if (state == mState) {
+            return;
+        }
+
+        try {
+            switch (state) {
+                case MAIN:
+                    mMainFragment.restoreState(mMainState);
+                    break;
+                case SETTINGS:
+                    mMainState = mMainFragment.saveState();
+                    hideSoftKeyboard();
+                    break;
+            }
+        } catch (JSONException e) {
+            Logger.e(e);
+        }
+        mState = state;
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, getFragment(mState)).commit();
+        invalidateOptionsMenu();
     }
 }

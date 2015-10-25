@@ -1,20 +1,30 @@
 package com.unitpricecalculator.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.view.DragLinearLayout;
 
 public final class MenuFragment extends BaseFragment {
 
     private DragLinearLayout mDragLinearLayout;
+    private Callback mCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Callback) {
+            mCallback = (Callback) context;
+        } else {
+            throw new IllegalArgumentException(context + " must implement Callback interface");
+        }
+    }
 
     @Nullable
     @Override
@@ -22,27 +32,40 @@ public final class MenuFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
-        mDragLinearLayout = (DragLinearLayout) view.findViewById(R.id.drag_linear_layout);
-
-        for (System system : System.getPreferredOrder()) {
-            View rowView = inflater.inflate(R.layout.list_draggable, null);
-            ((TextView) rowView.findViewById(R.id.text))
-                    .setText(getResources().getString(system.getName()));
-            rowView.setTag(system);
-            mDragLinearLayout.addDragView(rowView, rowView.findViewById(R.id.handler));
-        }
-
-        mDragLinearLayout.setOnViewSwapListener(new DragLinearLayout.OnViewSwapListener() {
-            @Override
-            public void onSwap(View firstView, int firstPosition, View secondView, int secondPosition) {
-                System[] order = System.getPreferredOrder();
-                System temp = order[firstPosition];
-                order[firstPosition] = order[secondPosition];
-                order[secondPosition] = temp;
-                System.setPreferredOrder(order);
-            }
-        });
+        view.findViewById(R.id.btn_new).setOnClickListener(new MenuEventClickListener(MenuEvent.NEW));
+        view.findViewById(R.id.btn_saved).setOnClickListener(new MenuEventClickListener(MenuEvent.SAVED));
+        view.findViewById(R.id.btn_feedback).setOnClickListener(new MenuEventClickListener(MenuEvent.FEEDBACK));
+        view.findViewById(R.id.btn_rate).setOnClickListener(new MenuEventClickListener(MenuEvent.RATE));
+        view.findViewById(R.id.btn_share).setOnClickListener(new MenuEventClickListener(MenuEvent.SHARE));
+        view.findViewById(R.id.btn_settings).setOnClickListener(new MenuEventClickListener(MenuEvent.SETTINGS));
 
         return view;
+    }
+
+    public enum MenuEvent {
+        NEW,
+        FEEDBACK,
+        RATE,
+        SAVED,
+        SETTINGS,
+        SHARE
+    }
+
+    public interface Callback {
+        void onMenuEvent(MenuEvent event);
+    }
+
+    private class MenuEventClickListener implements View.OnClickListener {
+
+        private final MenuEvent menuEvent;
+
+        public MenuEventClickListener(MenuEvent menuEvent) {
+            this.menuEvent = menuEvent;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mCallback.onMenuEvent(menuEvent);
+        }
     }
 }

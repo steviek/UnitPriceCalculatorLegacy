@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableList;
 
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
-import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +18,14 @@ import java.util.Map;
  */
 public final class Units {
 
-    private Units() {
-    }
+    private Units() {}
 
     private static Map<UnitType, ImmutableList<Unit>> unitMap = new HashMap<>();
 
     public static ImmutableList<Unit> getUnitsForType(UnitType unitType) {
         if (unitMap.get(unitType) == null) {
             ImmutableList.Builder<Unit> list = ImmutableList.builder();
-            for (Unit unit : Unit.values()) {
+            for (Unit unit : DefaultUnit.values()) {
                 if (unit.getUnitType() == unitType) {
                     list.add(unit);
                 }
@@ -35,14 +36,37 @@ public final class Units {
     }
 
     public static UnitType getCurrentUnitType() {
-        UnitType unitType = UnitType.valueOf(Prefs.getString(Keys.UNIT_TYPE, UnitType.WEIGHT.name()));
-        Logger.d("Get unit type: %s", unitType);
-        return unitType;
+        return UnitType.valueOf(Prefs.getString(Keys.UNIT_TYPE, UnitType.WEIGHT.name()));
     }
 
     public static void setCurrentUnitType(UnitType unitType) {
         Prefs.putString(Keys.UNIT_TYPE, unitType.name());
-        Logger.d("Set unit type: %s", unitType);
         MyApplication.getInstance().getBus().post(new UnitTypeChangedEvent(unitType));
     }
+
+    public static JSONObject toJson(Unit unit) throws JSONException {
+        if (unit instanceof DefaultUnit) {
+            JSONObject obj = new JSONObject();
+            obj.put("kind", "default");
+            obj.put("name", ((DefaultUnit) unit).name());
+            return obj;
+        } else if (unit instanceof CustomUnit) {
+            JSONObject obj = new JSONObject();
+            obj.put("kind", "custom");
+            obj.put("key", ((CustomUnit) unit).getKey());
+            return obj;
+        }
+        throw new IllegalStateException();
+    }
+
+    public static Unit fromJson(JSONObject jsonObject) throws JSONException {
+        String kind = jsonObject.getString("kind");
+        if (kind.equals("default")) {
+            return DefaultUnit.valueOf(jsonObject.getString("name"));
+        } else if (kind.equals("custom")) {
+            return CustomUnit.fromKey(jsonObject.getString("key"));
+        }
+        throw new IllegalStateException();
+    }
+
 }
