@@ -24,7 +24,7 @@
     <string name="enter_name">Enter name here</string>
     <string name="saved_from_date">Saved on %1$s</string>
 
-    <string name="new_comparison">New Comparison</string>
+    <string name="current_comparison">Current Comparison</string>
     <string name="saved_comparisons">Saved Comparisons</string>
     <string name="rate_app">Rate App</string>
     <string name="settings">Settings</string>

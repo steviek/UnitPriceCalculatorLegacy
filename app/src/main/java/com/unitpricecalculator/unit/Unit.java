@@ -2,7 +2,7 @@ package com.unitpricecalculator.unit;
 
 import android.os.Parcelable;
 
-public interface Unit extends Parcelable {
+public interface Unit extends Parcelable{
     String getSymbol();
 
     double getFactor();

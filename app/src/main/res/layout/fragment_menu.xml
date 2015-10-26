@@ -15,7 +15,7 @@
         <TextView
             style="@style/Menu.Button"
             android:id="@+id/btn_new"
-            android:text="@string/new_comparison"
+            android:text="@string/current_comparison"
             android:drawableLeft="@drawable/ic_list" />
 
         <TextView

@@ -1,7 +1,7 @@
 package com.unitpricecalculator.main;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -26,21 +26,21 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.saved.SavedComparison;
+import com.unitpricecalculator.saved.SavedUnitEntryRow;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.NumberUtils;
-import com.unitpricecalculator.util.SavesStateInJson;
+import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -52,7 +52,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public final class MainFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener,
-        SavesStateInJson {
+        SavesState<SavedComparison> {
 
     private LinearLayout mRowContainer;
     private View mAddRowButton;
@@ -64,7 +64,7 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
 
     private List<UnitEntryView> mEntryViews = new ArrayList<>();
 
-    private JSONObject mSavedState;
+    private SavedComparison mSavedState;
 
     @Nullable
     @Override
@@ -177,34 +177,41 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
     }
 
     @Override
-    public JSONObject saveState() throws JSONException {
-        JSONObject outState = new JSONObject();
-        outState.put("numRows", mEntryViews.size());
-        for (int i = 0; i < mEntryViews.size(); i++) {
-            outState.put("row" + i, mEntryViews.get(i).saveState());
+    public SavedComparison saveState() {
+        return saveState(null);
+    }
+
+    private SavedComparison saveState(String name) {
+        ImmutableList.Builder<SavedUnitEntryRow> list = ImmutableList.builder();
+        for (UnitEntryView entryView : mEntryViews) {
+            list.add(entryView.saveState());
         }
-        outState.put("finalSize", mFinalEditText.getText().toString());
-        outState.put("finalUnit", Units.toJson(((UnitArrayAdapter) mFinalSpinner.getAdapter())
-                .getUnit(mFinalSpinner.getSelectedItemPosition())));
-        return outState;
+        String finalSize = mFinalEditText.getText().toString();
+        Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
+                .getUnit(mFinalSpinner.getSelectedItemPosition());
+        String savedName = name;
+        if (savedName == null) {
+            DateFormat df = DateFormat.getDateTimeInstance();
+            savedName = getString(R.string.saved_from_date, df.format(new Date(0)));
+        }
+        return new SavedComparison(savedName, list.build(), finalSize, finalUnit);
     }
 
     @Override
-    public void restoreState(JSONObject object) throws JSONException {
+    public void restoreState(SavedComparison comparison) {
         if (mRowContainer == null || getContext() == null) {
-            mSavedState = object;
+            mSavedState = comparison;
             return;
         }
 
-        int numRows = object.getInt("numRows");
         mRowContainer.removeAllViewsInLayout();
         mEntryViews.clear();
-        for (int i = 0; i < numRows; i++) {
+        for (SavedUnitEntryRow entryRow : comparison.getSavedUnitEntryRows()) {
             UnitEntryView entryView = addRowView();
-            entryView.restoreState(object.getJSONObject("row" + i));
+            entryView.restoreState(entryRow);
         }
-        mFinalEditText.setText(object.getString("finalSize"));
-        Unit unit = Units.fromJson(object.getJSONObject("finalUnit"));
+        mFinalEditText.setText(comparison.getFinalQuantity());
+        Unit unit = comparison.getFinalUnit();
         UnitArrayAdapter adapter = UnitArrayAdapter.of(getContext(), unit);
         mFinalSpinner.setAdapter(adapter);
         mFinalSpinner.setSelection(0);
@@ -237,16 +244,10 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
                 public void onClick(DialogInterface dialog, int which) {
                     try {
                         String savedName = name.getText().toString();
-                        if (Strings.isNullOrEmpty(savedName)) {
-                            DateFormat df = DateFormat.getDateTimeInstance();
-                            savedName = getString(R.string.saved_from_date, df.format(new Date(0)));
-                        }
-                        SavedState state = new SavedState(savedName);
-                        for (UnitEntryView entryView : mEntryViews) {
-                            state.addSavedRow(entryView.saveState());
-                        }
+                        SavedComparison comparison = saveState(savedName);
+
                         Set<String> savedStates = Prefs.getStringSet(Keys.SAVED_STATES);
-                        savedStates.add(state.toJson().toString());
+                        savedStates.add(comparison.toJson().toString());
                         Prefs.putStringSet(Keys.SAVED_STATES, savedStates);
                     } catch (JSONException e) {
                         throw new IllegalStateException(e);
@@ -274,12 +275,7 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
         super.onResume();
         MyApplication.getInstance().getBus().register(this);
         if (mSavedState != null) {
-            try {
-                restoreState(mSavedState);
-            } catch (JSONException e) {
-                Logger.e(e);
-            }
-
+            restoreState(mSavedState);
             evaluateEntries();
         }
     }
@@ -362,53 +358,5 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
                 entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
             }
         }
-    }
-
-    private static class SavedState {
-        private String name;
-        private List<JSONObject> savedRows;
-
-        SavedState(String name) {
-            this.name = name;
-            this.savedRows = new ArrayList<>();
-        }
-
-        public void addSavedRow(JSONObject row) {
-            savedRows.add(row);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public List<JSONObject> getSavedRows() {
-            return savedRows;
-        }
-
-        public JSONObject toJson() throws JSONException {
-            JSONObject json = new JSONObject();
-            json.put("name", name);
-            JSONArray array = new JSONArray();
-            for (JSONObject row : savedRows) {
-                array.put(row);
-            }
-            json.put("savedRows", savedRows);
-            return json;
-        }
-
-        public static SavedState fromJson(JSONObject object) {
-            try {
-                String name = object.getString("name");
-                SavedState savedState = new SavedState(name);
-                JSONArray array = object.getJSONArray("savedRows");
-                for (int i = 0; i < array.length(); i++) {
-                    savedState.addSavedRow(array.getJSONObject(i));
-                }
-                return savedState;
-            } catch (JSONException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-
     }
 }

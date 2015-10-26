@@ -1,6 +1,7 @@
 package com.unitpricecalculator.unit;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
@@ -79,7 +80,7 @@ public enum DefaultUnit implements Unit {
         dest.writeString(name());
     }
 
-    public static final Creator<DefaultUnit> CREATOR = new Creator<DefaultUnit>() {
+    public static final Parcelable.Creator<DefaultUnit> CREATOR = new Parcelable.Creator<DefaultUnit>() {
         @Override
         public DefaultUnit createFromParcel(Parcel source) {
             return valueOf(source.readString());

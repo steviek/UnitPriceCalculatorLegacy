@@ -24,21 +24,19 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.saved.SavedUnitEntryRow;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
-import com.unitpricecalculator.util.SavesStateInJson;
+import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.NumberFormat;
 
-final class UnitEntryView extends LinearLayout implements SavesStateInJson {
+final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
 
     private TextView mRowNumberTextView;
     private EditText mCostEditText;
@@ -75,25 +73,20 @@ final class UnitEntryView extends LinearLayout implements SavesStateInJson {
     }
 
     @Override
-    public JSONObject saveState() throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put("cost", mCostEditText.getText().toString());
-        json.put("size", mSizeEditText.getText().toString());
-        json.put("quantity", mQuantityEditText.getText().toString());
-        if (mUnit != null) {
-            json.put("unit", Units.toJson(mUnit));
-        }
-        return json;
+    public SavedUnitEntryRow saveState() {
+        return new SavedUnitEntryRow(
+                mCostEditText.getText().toString(),
+                mSizeEditText.getText().toString(),
+                mQuantityEditText.getText().toString(),
+                mUnit);
     }
 
     @Override
-    public void restoreState(JSONObject object) throws JSONException {
-        mCostEditText.setText(object.optString("cost"));
-        mSizeEditText.setText(object.optString("size"));
-        mQuantityEditText.setText(object.optString("quantity"));
-        if (object.has("unit")) {
-            mUnit = Units.fromJson(object.getJSONObject("unit"));
-        }
+    public void restoreState(SavedUnitEntryRow entryRow) {
+        mCostEditText.setText(entryRow.getCost());
+        mSizeEditText.setText(entryRow.getSize());
+        mQuantityEditText.setText(entryRow.getQuantity());
+        mUnit = entryRow.getUnit();
         refreshAdapter(UnitArrayAdapter.of(getContext(), mUnit));
         syncViews();
     }
