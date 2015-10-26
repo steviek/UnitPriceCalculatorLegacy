@@ -1,4 +1,4 @@
-package com.unitpricecalculator.main;
+package com.unitpricecalculator.comparisons;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;

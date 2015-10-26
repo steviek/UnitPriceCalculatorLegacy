@@ -1,4 +1,4 @@
-package com.unitpricecalculator.main;
+package com.unitpricecalculator.comparisons;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.MyApplication;
@@ -26,8 +28,6 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
-import com.unitpricecalculator.saved.SavedComparison;
-import com.unitpricecalculator.saved.SavedUnitEntryRow;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
@@ -40,8 +40,6 @@ import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 
-import org.json.JSONException;
-
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -51,8 +49,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public final class MainFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener,
+public final class ComparisonFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener,
         SavesState<SavedComparison> {
+
+    private final ObjectMapper mObjectMapper = new ObjectMapper();
 
     private LinearLayout mRowContainer;
     private View mAddRowButton;
@@ -61,6 +61,8 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
     private Spinner mFinalSpinner;
     private TextView mSummaryText;
     private AlertDialog mAlertDialog;
+    private Spinner mUnitTypeSpinner;
+    private UnitTypeArrayAdapter mUnitTypeArrayAdapter;
 
     private List<UnitEntryView> mEntryViews = new ArrayList<>();
 
@@ -75,8 +77,8 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
         ((TextView) view.findViewById(R.id.price_header))
                 .setText(Currency.getInstance(Locale.getDefault()).getSymbol());
 
-        Spinner mUnitTypeSpinner = (Spinner) view.findViewById(R.id.unit_type_spinner);
-        UnitTypeArrayAdapter mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());
+        mUnitTypeSpinner = (Spinner) view.findViewById(R.id.unit_type_spinner);
+        mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());
         mUnitTypeSpinner.setAdapter(mUnitTypeArrayAdapter);
         mUnitTypeSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
             @Override
@@ -85,14 +87,7 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
                 UnitType unitType = UnitType.fromName((String) parent.getItemAtPosition(position),
                         getResources());
                 if (Units.getCurrentUnitType() != unitType) {
-                    Units.setCurrentUnitType(unitType);
-                    ((Spinner) parent).setAdapter(new UnitTypeArrayAdapter(getContext()));
-                    mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), unitType));
-                    CompareUnitChangedEvent event = getCompareUnit();
-                    for (UnitEntryView entryView : mEntryViews) {
-                        entryView.onCompareUnitChanged(event);
-                    }
-                    evaluateEntries();
+                    setUnitType((Spinner) parent, unitType);
                 }
             }
         });
@@ -160,6 +155,17 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
         return view;
     }
 
+    private void setUnitType(Spinner parent, UnitType unitType) {
+        Units.setCurrentUnitType(unitType);
+        parent.setAdapter(new UnitTypeArrayAdapter(getContext()));
+        mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), unitType));
+        CompareUnitChangedEvent event = getCompareUnit();
+        for (UnitEntryView entryView : mEntryViews) {
+            entryView.onCompareUnitChanged(event);
+        }
+        evaluateEntries();
+    }
+
     private UnitEntryView addRowView() {
         UnitEntryView entryView = new UnitEntryView(getContext());
         mEntryViews.add(entryView);
@@ -186,6 +192,8 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
         for (UnitEntryView entryView : mEntryViews) {
             list.add(entryView.saveState());
         }
+        UnitType unitType = UnitType.fromName(mUnitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
+                getResources());
         String finalSize = mFinalEditText.getText().toString();
         Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
                 .getUnit(mFinalSpinner.getSelectedItemPosition());
@@ -194,7 +202,7 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
             DateFormat df = DateFormat.getDateTimeInstance();
             savedName = getString(R.string.saved_from_date, df.format(new Date(0)));
         }
-        return new SavedComparison(savedName, list.build(), finalSize, finalUnit);
+        return new SavedComparison(savedName, unitType, list.build(), finalSize, finalUnit);
     }
 
     @Override
@@ -205,6 +213,7 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
         }
 
         mRowContainer.removeAllViewsInLayout();
+        setUnitType(mUnitTypeSpinner, comparison.getUnitType());
         mEntryViews.clear();
         for (SavedUnitEntryRow entryRow : comparison.getSavedUnitEntryRows()) {
             UnitEntryView entryView = addRowView();
@@ -247,9 +256,9 @@ public final class MainFragment extends BaseFragment implements UnitEntryView.On
                         SavedComparison comparison = saveState(savedName);
 
                         Set<String> savedStates = Prefs.getStringSet(Keys.SAVED_STATES);
-                        savedStates.add(comparison.toJson().toString());
+                        savedStates.add(mObjectMapper.writeValueAsString(comparison));
                         Prefs.putStringSet(Keys.SAVED_STATES, savedStates);
-                    } catch (JSONException e) {
+                    } catch (JsonProcessingException e) {
                         throw new IllegalStateException(e);
                     }
                 }

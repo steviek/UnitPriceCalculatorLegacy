@@ -3,6 +3,8 @@ package com.unitpricecalculator.saved;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.unitpricecalculator.comparisons.SavedComparison;
+
 /**
  * Created by stevenkideckel on 2015-10-25.
  */

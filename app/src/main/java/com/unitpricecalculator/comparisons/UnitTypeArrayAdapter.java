@@ -1,4 +1,4 @@
-package com.unitpricecalculator.main;
+package com.unitpricecalculator.comparisons;
 
 import android.content.Context;
 import android.content.res.Resources;

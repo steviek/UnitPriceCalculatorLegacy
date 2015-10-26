@@ -1,6 +1,7 @@
 package com.unitpricecalculator.main;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -12,21 +13,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unitpricecalculator.BaseActivity;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.util.logger.Logger;
+import com.unitpricecalculator.comparisons.ComparisonFragment;
+import com.unitpricecalculator.comparisons.SavedComparison;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
 
 public final class MainActivity extends BaseActivity implements MenuFragment.Callback {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
-    private MainFragment mMainFragment;
+    private ComparisonFragment mComparisonFragment;
     private SettingsFragment mSettingsFragment;
-    private JSONObject mMainState;
+    private SavedComparison mMainState;
 
     private State mState;
 
@@ -49,15 +54,16 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        mMainFragment = new MainFragment();
+        mComparisonFragment = new ComparisonFragment();
         mSettingsFragment = new SettingsFragment();
 
         if (savedInstanceState != null) {
             mState = State.valueOf(savedInstanceState.getString("state"));
             try {
-                mMainFragment.restoreState(new JSONObject(savedInstanceState.getString("mainFragment")));
-            } catch (JSONException e) {
-                Logger.e(e);
+                mComparisonFragment.restoreState(objectMapper.readValue(savedInstanceState.getString("mainFragment"),
+                        SavedComparison.class));
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
             }
         } else {
             mState = State.MAIN;
@@ -74,11 +80,11 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("state", mState.name());
-        if (mMainFragment != null) {
+        if (mComparisonFragment != null) {
             try {
-                outState.putString("mainFragment", mMainFragment.saveState().toString());
-            } catch (JSONException e) {
-                Logger.e(e);
+                outState.putString("mainFragment", objectMapper.writeValueAsString(mComparisonFragment.saveState()));
+            } catch (JsonProcessingException e) {
+                throw Throwables.propagate(e);
             }
         }
     }
@@ -120,10 +126,10 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         // Handle your other action bar items...
         switch (item.getItemId()) {
             case R.id.action_save:
-                mMainFragment.save();
+                mComparisonFragment.save();
                 break;
             case R.id.action_clear:
-                mMainFragment.clear();
+                mComparisonFragment.clear();
                 break;
 
         }
@@ -159,7 +165,7 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
             case SETTINGS:
                 return mSettingsFragment;
             case MAIN:
-                return mMainFragment;
+                return mComparisonFragment;
         }
         throw new IllegalArgumentException("Unexpected state: " + state);
     }
@@ -170,18 +176,14 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
             return;
         }
 
-        try {
-            switch (state) {
-                case MAIN:
-                    mMainFragment.restoreState(mMainState);
-                    break;
-                case SETTINGS:
-                    mMainState = mMainFragment.saveState();
-                    hideSoftKeyboard();
-                    break;
-            }
-        } catch (JSONException e) {
-            Logger.e(e);
+        switch (state) {
+            case MAIN:
+                mComparisonFragment.restoreState(mMainState);
+                break;
+            case SETTINGS:
+                mMainState = mComparisonFragment.saveState();
+                hideSoftKeyboard();
+                break;
         }
         mState = state;
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, getFragment(mState)).commit();

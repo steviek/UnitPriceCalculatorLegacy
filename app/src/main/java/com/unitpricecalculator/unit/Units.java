@@ -7,9 +7,6 @@ import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,30 +40,4 @@ public final class Units {
         Prefs.putString(Keys.UNIT_TYPE, unitType.name());
         MyApplication.getInstance().getBus().post(new UnitTypeChangedEvent(unitType));
     }
-
-    public static JSONObject toJson(Unit unit) throws JSONException {
-        if (unit instanceof DefaultUnit) {
-            JSONObject obj = new JSONObject();
-            obj.put("kind", "default");
-            obj.put("name", ((DefaultUnit) unit).name());
-            return obj;
-        } else if (unit instanceof CustomUnit) {
-            JSONObject obj = new JSONObject();
-            obj.put("kind", "custom");
-            obj.put("key", ((CustomUnit) unit).getKey());
-            return obj;
-        }
-        throw new IllegalStateException();
-    }
-
-    public static Unit fromJson(JSONObject jsonObject) throws JSONException {
-        String kind = jsonObject.getString("kind");
-        if (kind.equals("default")) {
-            return DefaultUnit.valueOf(jsonObject.getString("name"));
-        } else if (kind.equals("custom")) {
-            return CustomUnit.fromKey(jsonObject.getString("key"));
-        }
-        throw new IllegalStateException();
-    }
-
 }

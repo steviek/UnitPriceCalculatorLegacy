@@ -1,4 +1,4 @@
-package com.unitpricecalculator.main;
+package com.unitpricecalculator.comparisons;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -24,7 +24,6 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
-import com.unitpricecalculator.saved.SavedUnitEntryRow;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
@@ -76,8 +75,8 @@ final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEn
     public SavedUnitEntryRow saveState() {
         return new SavedUnitEntryRow(
                 mCostEditText.getText().toString(),
-                mSizeEditText.getText().toString(),
                 mQuantityEditText.getText().toString(),
+                mSizeEditText.getText().toString(),
                 mUnit);
     }
 

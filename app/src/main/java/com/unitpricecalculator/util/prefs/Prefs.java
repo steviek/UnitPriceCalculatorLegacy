@@ -1,29 +1,29 @@
 package com.unitpricecalculator.util.prefs;
 
+import com.google.common.base.Throwables;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public final class Prefs {
 
+    private static ObjectMapper objectMapper;
     private static SharedPreferences prefs;
-    private static Map<Class<?>, StringSerializer<?>> serializers;
-    private static Map<Class<?>, StringDeserializer<?>> deserializers;
 
-    public static void initialize(Context context,
-                                  Map<Class<?>, StringSerializer<?>> serializers,
-                                  Map<Class<?>, StringDeserializer<?>> deserializers) {
+    public static void initialize(Context context, ObjectMapper objectMapper) {
         prefs = context.getSharedPreferences(context.getPackageName() + "_prefs",
                 Context.MODE_MULTI_PROCESS);
-        Prefs.serializers = serializers;
-        Prefs.deserializers = deserializers;
+        Prefs.objectMapper = objectMapper;
     }
 
     private static void checkInit() {
@@ -139,6 +139,7 @@ public final class Prefs {
     }
 
     public static void putStringSet(String key, Set<String> set) {
+        checkInit();
         if (Build.VERSION.SDK_INT >= 11) {
             prefs.edit().putStringSet(key, set).apply();
         } else {
@@ -154,18 +155,30 @@ public final class Prefs {
         }
     }
 
-    public static <T> void putStringSerializable(Class<T> clazz, String key, T object) {
-        StringSerializer<T> serializer = (StringSerializer<T>) serializers.get(clazz);
-        apply(prefs.edit().putString(key, serializer.serialize(object)));
+    public static void putObject(String key, Object object) {
+        checkInit();
+        try {
+            prefs.edit().putString(key, objectMapper.writeValueAsString(object)).apply();
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
-    public static <T> T getStringSerializable(Class<T> clazz, String key) {
-        StringDeserializer<T> deserializer = (StringDeserializer<T>) deserializers.get(clazz);
-        String serialized = prefs.getString(key, null);
-        if (serialized == null) {
-            return null;
+    public static <T> T getObject(Class<T> clazz, String key) {
+        return getObject(clazz, key, null);
+    }
+
+    public static <T> T getObject(Class<T> clazz, String key, T fallback) {
+        checkInit();
+        String serialized = Prefs.getString(key);
+        if (serialized != null) {
+            try {
+                return objectMapper.readValue(serialized, clazz);
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
+            }
         } else {
-            return deserializer.deserialize(serialized);
+            return fallback;
         }
     }
 }
