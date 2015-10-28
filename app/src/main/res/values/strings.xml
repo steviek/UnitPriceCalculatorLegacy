@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Unit Price Calculator</string>
+
     <string name="unit_type">Unit Type:</string>
     <string name="metric">Metric</string>
     <string name="imperial">Imperial</string>

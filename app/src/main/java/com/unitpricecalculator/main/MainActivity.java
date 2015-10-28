@@ -24,7 +24,7 @@ import com.unitpricecalculator.saved.SavedFragment;
 
 import java.io.IOException;
 
-public final class MainActivity extends BaseActivity implements MenuFragment.Callback {
+public final class MainActivity extends BaseActivity implements MenuFragment.Callback, SavedFragment.Callback {
 
     private ObjectMapper objectMapper;
 
@@ -113,9 +113,17 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         menu.clear();
         switch (mState) {
             case MAIN:
+                setTitle(R.string.app_name);
                 getMenuInflater().inflate(R.menu.menu_main, menu);
+                return true;
+            case SETTINGS:
+                setTitle(R.string.settings);
+                return true;
+            case SAVED:
+                setTitle(R.string.saved_comparisons);
+                return true;
         }
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -199,5 +207,11 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         mState = state;
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, getFragment(mState)).commit();
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onLoadSavedComparison(SavedComparison comparison) {
+        mMainState = comparison;
+        changeState(State.MAIN);
     }
 }

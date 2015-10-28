@@ -231,6 +231,9 @@ final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEn
         if (unitEntry.isPresent() && mLastCompareUnit != null) {
             double baseSize = Double.parseDouble(mLastCompareUnit.getSize());
             Unit baseUnit = mLastCompareUnit.getUnit();
+            if (unitEntry.get().getUnit().getUnitType() != baseUnit.getUnitType()) {
+                return;
+            }
             double pricePer = unitEntry.get().pricePer(baseSize, baseUnit);
             mSummaryTextView.setText(getResources().getString(R.string.text_summary,
                     NumberFormat.getCurrencyInstance().format(pricePer),

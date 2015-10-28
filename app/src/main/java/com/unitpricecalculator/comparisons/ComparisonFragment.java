@@ -318,9 +318,13 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
             Optional<UnitEntry> entry = entryView.getEntry();
             if (entry.isPresent()) {
                 entries++;
-                if (best == null || entry.get().pricePer(size, unit) < best.pricePer(size, unit)) {
-                    best = entry.get();
-                    bestRow = i;
+                try {
+                    if (best == null || entry.get().pricePer(size, unit) < best.pricePer(size, unit)) {
+                        best = entry.get();
+                        bestRow = i;
+                    }
+                } catch (IllegalArgumentException e) {
+                    return;
                 }
             }
         }

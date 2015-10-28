@@ -22,7 +22,7 @@ public final class MenuFragment extends BaseFragment {
         if (context instanceof Callback) {
             mCallback = (Callback) context;
         } else {
-            throw new IllegalArgumentException(context + " must implement Callback interface");
+            throw new IllegalArgumentException(context + " must implement CallbackClass interface");
         }
     }
 
