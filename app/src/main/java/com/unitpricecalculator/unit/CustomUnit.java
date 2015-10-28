@@ -2,6 +2,8 @@ package com.unitpricecalculator.unit;
 
 import android.os.Parcel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unitpricecalculator.util.prefs.Prefs;
 
 public final class CustomUnit implements Unit {
@@ -16,7 +18,13 @@ public final class CustomUnit implements Unit {
 
     private final double factor;
 
-    public CustomUnit(String key, String symbol, System system, UnitType unitType, double factor) {
+    @JsonCreator
+    public CustomUnit(
+            @JsonProperty("key") String key,
+            @JsonProperty("symbol") String symbol,
+            @JsonProperty("system") System system,
+            @JsonProperty("unitType") UnitType unitType,
+            @JsonProperty("factor") double factor) {
         this.key = key;
         this.symbol = symbol;
         this.system = system;
@@ -69,4 +77,32 @@ public final class CustomUnit implements Unit {
             return new CustomUnit[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CustomUnit that = (CustomUnit) o;
+
+        if (Double.compare(that.factor, factor) != 0) return false;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
+        if (system != that.system) return false;
+        return unitType == that.unitType;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = key != null ? key.hashCode() : 0;
+        result = 31 * result + (symbol != null ? symbol.hashCode() : 0);
+        result = 31 * result + (system != null ? system.hashCode() : 0);
+        result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
+        temp = Double.doubleToLongBits(factor);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

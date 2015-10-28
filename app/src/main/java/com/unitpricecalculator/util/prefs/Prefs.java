@@ -12,7 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class Prefs {
@@ -155,13 +157,44 @@ public final class Prefs {
         }
     }
 
-    public static void putObject(String key, Object object) {
+    public static <T> List<T> getList(Class<T> clazz, String key) {
+        return getList(clazz, key, new ArrayList<T>());
+    }
+
+    public static <T> List<T> getList(Class<T> clazz, String key, List<T> fallback) {
         checkInit();
+        Set<String> set = getStringSet(key, null);
+        if (set == null) {
+            return fallback;
+        } else {
+            try {
+                List<T> list = new ArrayList<>();
+                for (String s : set) {
+                    list.add(objectMapper.readValue(s, clazz));
+                }
+                return list;
+            } catch (Exception e) {
+                throw Throwables.propagate(e);
+            }
+        }
+    }
+
+    public static <T> void putList(String key, List<T> list) {
+        Set<String> stringSet = new HashSet<>();
         try {
-            prefs.edit().putString(key, objectMapper.writeValueAsString(object)).apply();
+            for (T t : list) {
+                stringSet.add(objectMapper.writeValueAsString(t));
+            }
+            Prefs.putStringSet(key, stringSet);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public static <T> void addToList(Class<T> clazz, String key, T object) {
+        List<T> list = getList(clazz, key);
+        list.add(object);
+        putList(key, list);
     }
 
     public static <T> T getObject(Class<T> clazz, String key) {
@@ -179,6 +212,15 @@ public final class Prefs {
             }
         } else {
             return fallback;
+        }
+    }
+
+    public static void putObject(String key, Object object) {
+        checkInit();
+        try {
+            prefs.edit().putString(key, objectMapper.writeValueAsString(object)).apply();
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
         }
     }
 }

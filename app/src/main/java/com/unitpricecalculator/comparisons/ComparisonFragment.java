@@ -19,8 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.MyApplication;
@@ -47,12 +45,9 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 public final class ComparisonFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener,
         SavesState<SavedComparison> {
-
-    private final ObjectMapper mObjectMapper = new ObjectMapper();
 
     private LinearLayout mRowContainer;
     private View mAddRowButton;
@@ -251,16 +246,9 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
             alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        String savedName = name.getText().toString();
-                        SavedComparison comparison = saveState(savedName);
-
-                        Set<String> savedStates = Prefs.getStringSet(Keys.SAVED_STATES);
-                        savedStates.add(mObjectMapper.writeValueAsString(comparison));
-                        Prefs.putStringSet(Keys.SAVED_STATES, savedStates);
-                    } catch (JsonProcessingException e) {
-                        throw new IllegalStateException(e);
-                    }
+                    String savedName = name.getText().toString();
+                    SavedComparison comparison = saveState(savedName);
+                    Prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
                 }
             });
             alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

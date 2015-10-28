@@ -2,6 +2,8 @@ package com.unitpricecalculator.comparisons;
 
 import com.google.common.collect.ImmutableList;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 
@@ -13,8 +15,13 @@ public final class SavedComparison {
     private final String finalQuantity;
     private final Unit finalUnit;
 
-    public SavedComparison(String name, UnitType unitType, ImmutableList<SavedUnitEntryRow> savedUnitEntryRows,
-                           String finalQuantity, Unit finalUnit) {
+    @JsonCreator
+    public SavedComparison(
+            @JsonProperty("name") String name,
+            @JsonProperty("unitType") UnitType unitType,
+            @JsonProperty("entryRows") ImmutableList<SavedUnitEntryRow> savedUnitEntryRows,
+            @JsonProperty("finalQuantity") String finalQuantity,
+            @JsonProperty("finalUnit") Unit finalUnit) {
         this.name = name;
         this.unitType = unitType;
         this.savedUnitEntryRows = savedUnitEntryRows;
@@ -40,5 +47,32 @@ public final class SavedComparison {
 
     public UnitType getUnitType() {
         return unitType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SavedComparison that = (SavedComparison) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (unitType != that.unitType) return false;
+        if (savedUnitEntryRows != null ? !savedUnitEntryRows.equals(that.savedUnitEntryRows) : that.savedUnitEntryRows != null)
+            return false;
+        if (finalQuantity != null ? !finalQuantity.equals(that.finalQuantity) : that.finalQuantity != null)
+            return false;
+        return !(finalUnit != null ? !finalUnit.equals(that.finalUnit) : that.finalUnit != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (unitType != null ? unitType.hashCode() : 0);
+        result = 31 * result + (savedUnitEntryRows != null ? savedUnitEntryRows.hashCode() : 0);
+        result = 31 * result + (finalQuantity != null ? finalQuantity.hashCode() : 0);
+        result = 31 * result + (finalUnit != null ? finalUnit.hashCode() : 0);
+        return result;
     }
 }

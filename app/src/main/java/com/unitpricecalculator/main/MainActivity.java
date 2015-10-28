@@ -16,15 +16,17 @@ import android.view.MenuItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unitpricecalculator.BaseActivity;
+import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.SavedComparison;
+import com.unitpricecalculator.saved.SavedFragment;
 
 import java.io.IOException;
 
 public final class MainActivity extends BaseActivity implements MenuFragment.Callback {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -32,17 +34,20 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
     private ComparisonFragment mComparisonFragment;
     private SettingsFragment mSettingsFragment;
     private SavedComparison mMainState;
+    private SavedFragment mSavedFragment;
 
     private State mState;
 
     private enum State {
-        MAIN, SETTINGS
+        MAIN, SETTINGS, SAVED
     }
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        objectMapper = ((MyApplication) getApplication()).getObjectMapper();
 
         Preconditions.checkNotNull(getSupportActionBar());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -56,6 +61,7 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
 
         mComparisonFragment = new ComparisonFragment();
         mSettingsFragment = new SettingsFragment();
+        mSavedFragment = new SavedFragment();
 
         if (savedInstanceState != null) {
             mState = State.valueOf(savedInstanceState.getString("state"));
@@ -104,16 +110,12 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
         switch (mState) {
-            case SETTINGS:
-                menu.clear();
-                return true;
             case MAIN:
-                menu.clear();
                 getMenuInflater().inflate(R.menu.menu_main, menu);
-                return true;
         }
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -154,6 +156,7 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
                 changeState(State.SETTINGS);
                 break;
             case SAVED:
+                changeState(State.SAVED);
                 break;
             case SHARE:
                 break;
@@ -166,6 +169,8 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
                 return mSettingsFragment;
             case MAIN:
                 return mComparisonFragment;
+            case SAVED:
+                return mSavedFragment;
         }
         throw new IllegalArgumentException("Unexpected state: " + state);
     }
@@ -176,12 +181,18 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
             return;
         }
 
+        if (mState == State.MAIN) {
+            mMainState = mComparisonFragment.saveState();
+        }
+
         switch (state) {
             case MAIN:
                 mComparisonFragment.restoreState(mMainState);
                 break;
             case SETTINGS:
-                mMainState = mComparisonFragment.saveState();
+                hideSoftKeyboard();
+                break;
+            case SAVED:
                 hideSoftKeyboard();
                 break;
         }

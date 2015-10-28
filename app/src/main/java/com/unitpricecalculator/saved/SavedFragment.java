@@ -25,5 +25,7 @@ public class SavedFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mListView = (ListView) view.findViewById(R.id.list_view);
+        SavedComparisonsArrayAdapter adapter = SavedComparisonsArrayAdapter.create(getContext());
+        mListView.setAdapter(adapter);
     }
 }
