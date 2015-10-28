@@ -151,6 +151,11 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
     public void onMenuEvent(MenuFragment.MenuEvent event) {
         switch (event) {
             case FEEDBACK:
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, "sixbynineapps@gmail.com");
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
+                startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
                 break;
             case NEW:
                 changeState(State.MAIN);

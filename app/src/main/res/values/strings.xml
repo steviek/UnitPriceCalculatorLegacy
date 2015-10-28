@@ -72,4 +72,7 @@
     <string name="quantity">Quantity</string>
     <string name="unit_symbol">unit</string>
 
+    <string name="send_email">Send Email</string>
+    <string name="feedback_subject">Feedback for Unit Price Calculator</string>
+
 </resources>
