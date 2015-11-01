@@ -2,6 +2,7 @@ package com.unitpricecalculator;
 
 import android.app.Application;
 
+import com.crittercism.app.Crittercism;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.squareup.otto.Bus;
@@ -26,6 +27,7 @@ public final class MyApplication extends Application {
         Prefs.initialize(this, objectMapper);
         Logger.initialize("AppLogs", BuildConfig.DEBUG);
         bus = new Bus();
+        Crittercism.initialize(this, "56367aca8d4d8c0a00d08069");
     }
 
     public static MyApplication getInstance() {

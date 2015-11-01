@@ -2,12 +2,14 @@ package com.unitpricecalculator.comparisons;
 
 import com.google.common.collect.ImmutableList;
 
+import android.support.annotation.NonNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 
-public final class SavedComparison {
+public final class SavedComparison implements Comparable<SavedComparison> {
 
     private final String name;
     private final UnitType unitType;
@@ -74,5 +76,17 @@ public final class SavedComparison {
         result = 31 * result + (finalQuantity != null ? finalQuantity.hashCode() : 0);
         result = 31 * result + (finalUnit != null ? finalUnit.hashCode() : 0);
         return result;
+    }
+
+    /**
+     * Generates a copy of this comparison with the provided name.  The original object is unaffected.
+     */
+    public SavedComparison rename(String newName) {
+        return new SavedComparison(newName, unitType, savedUnitEntryRows, finalQuantity, finalUnit);
+    }
+
+    @Override
+    public int compareTo(@NonNull SavedComparison another) {
+        return name.compareTo(another.name);
     }
 }

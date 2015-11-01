@@ -5,18 +5,23 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.unit.System;
+import com.unitpricecalculator.view.DragLinearLayout;
 
 public class SettingsFragment extends BaseFragment {
+
+    private DragLinearLayout mDragLinearLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        /*mDragLinearLayout = (DragLinearLayout) view.findViewById(R.id.drag_linear_layout);
+        mDragLinearLayout = (DragLinearLayout) view.findViewById(R.id.drag_linear_layout);
 
         for (System system : System.getPreferredOrder()) {
             View rowView = inflater.inflate(R.layout.list_draggable, null);
@@ -35,7 +40,7 @@ public class SettingsFragment extends BaseFragment {
                 order[secondPosition] = temp;
                 System.setPreferredOrder(order);
             }
-        });*/
+        });
 
         return view;
     }

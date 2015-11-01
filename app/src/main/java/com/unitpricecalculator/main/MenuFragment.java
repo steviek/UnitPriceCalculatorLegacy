@@ -9,21 +9,15 @@ import android.view.ViewGroup;
 
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.view.DragLinearLayout;
 
 public final class MenuFragment extends BaseFragment {
 
-    private DragLinearLayout mDragLinearLayout;
     private Callback mCallback;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Callback) {
-            mCallback = (Callback) context;
-        } else {
-            throw new IllegalArgumentException(context + " must implement CallbackClass interface");
-        }
+        mCallback = castOrThrow(Callback.class, context);
     }
 
     @Nullable
@@ -38,6 +32,8 @@ public final class MenuFragment extends BaseFragment {
         view.findViewById(R.id.btn_rate).setOnClickListener(new MenuEventClickListener(MenuEvent.RATE));
         view.findViewById(R.id.btn_share).setOnClickListener(new MenuEventClickListener(MenuEvent.SHARE));
         view.findViewById(R.id.btn_settings).setOnClickListener(new MenuEventClickListener(MenuEvent.SETTINGS));
+
+        view.findViewById(R.id.btn_share).setVisibility(View.GONE);
 
         return view;
     }

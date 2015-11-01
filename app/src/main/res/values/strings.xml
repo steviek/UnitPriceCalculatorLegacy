@@ -21,6 +21,8 @@
 
     <string name="save">Save</string>
     <string name="clear">Clear</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
     <string name="give_name">Please enter a name for this comparison</string>
     <string name="enter_name">Enter name here</string>
     <string name="saved_from_date">Saved on %1$s</string>

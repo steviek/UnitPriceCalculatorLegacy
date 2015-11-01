@@ -1,6 +1,7 @@
 package com.unitpricecalculator.comparisons;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import android.content.DialogInterface;
@@ -111,9 +112,9 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
         mRemoveRowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEntryViews.size() == 0) {
+                if (mEntryViews.size() == 1) {
                     throw new IllegalStateException();
-                } else if (mEntryViews.size() == 1) {
+                } else if (mEntryViews.size() == 2) {
                     mRemoveRowButton.setEnabled(false);
                 }
                 mAddRowButton.setEnabled(true);
@@ -193,9 +194,9 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
         Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
                 .getUnit(mFinalSpinner.getSelectedItemPosition());
         String savedName = name;
-        if (savedName == null) {
+        if (Strings.isNullOrEmpty(savedName)) {
             DateFormat df = DateFormat.getDateTimeInstance();
-            savedName = getString(R.string.saved_from_date, df.format(new Date(0)));
+            savedName = getString(R.string.saved_from_date, df.format(new Date(System.currentTimeMillis())));
         }
         return new SavedComparison(savedName, unitType, list.build(), finalSize, finalUnit);
     }
