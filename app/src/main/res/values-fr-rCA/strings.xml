@@ -1,0 +1,12 @@
+<resources>
+
+    <!-- VOLUME -->
+    <string name="teaspoon_symbol">CàT</string>
+    <string name="us_teaspoon_symbol">CàT US</string>
+
+    <!-- LENGTH -->
+    <string name="inch_symbol">po</string>
+    <string name="foot_symbol">pi</string>
+    <string name="yard_symbol">vg</string>
+
+</resources>
