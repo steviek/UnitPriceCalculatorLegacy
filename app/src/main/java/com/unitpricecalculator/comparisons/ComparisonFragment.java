@@ -66,8 +66,7 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         ((TextView) view.findViewById(R.id.price_header))
