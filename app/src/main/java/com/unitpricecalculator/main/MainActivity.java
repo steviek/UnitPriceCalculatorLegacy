@@ -3,6 +3,7 @@ package com.unitpricecalculator.main;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -151,11 +153,15 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
     public void onMenuEvent(MenuFragment.MenuEvent event) {
         switch (event) {
             case FEEDBACK:
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setType("text/plain");
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
                 intent.putExtra(Intent.EXTRA_EMAIL, "sixbynineapps@gmail.com");
                 intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
-                startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
+                try {
+                    startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, R.string.no_email_client, Toast.LENGTH_SHORT).show();
+                }
                 break;
             case NEW:
                 changeState(State.MAIN);

@@ -54,7 +54,7 @@
                 style="@style/HeaderTextView"
                 android:id="@+id/price_header"
                 android:layout_width="@dimen/header_column_2"
-                android:text="Price" />
+                android:text="@string/price" />
 
             <TextView
                 style="@style/HeaderTextView"
@@ -64,12 +64,12 @@
             <TextView
                 style="@style/HeaderTextView"
                 android:layout_width="@dimen/header_column_4"
-                android:text="Size" />
+                android:text="@string/size" />
 
             <TextView
                 style="@style/HeaderTextView"
                 android:layout_width="@dimen/header_column_5"
-                android:text="Unit" />
+                android:text="@string/unit" />
 
 
         </LinearLayout>

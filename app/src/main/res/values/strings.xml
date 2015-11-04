@@ -9,6 +9,7 @@
 
     <string name="price">Price</string>
     <string name="size">Size</string>
+    <string name="unit">Unit</string>
 
     <string name="preferred_system">Unit System Order</string>
     <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
@@ -33,6 +34,7 @@
     <string name="settings">Settings</string>
     <string name="share_app">Share App</string>
     <string name="send_feedback">Send Feedback</string>
+    <string name="no_email_client">No email clients installed</string>
 
     <!-- MASS -->
     <string name="weight">Weight</string>
