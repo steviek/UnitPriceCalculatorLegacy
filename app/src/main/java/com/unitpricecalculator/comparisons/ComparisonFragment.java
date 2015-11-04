@@ -189,7 +189,7 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
             list.add(entryView.saveState());
         }
         UnitType unitType = UnitType.fromName(mUnitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
-                getResources());
+                MyApplication.getInstance().getResources());
         String finalSize = mFinalEditText.getText().toString();
         Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
                 .getUnit(mFinalSpinner.getSelectedItemPosition());
