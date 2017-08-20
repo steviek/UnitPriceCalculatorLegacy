@@ -63,5 +63,21 @@
 
     <string name="send_email">Envoyer Courriel</string>
     <string name="feedback_subject">Feedback pour Calculatrice prix unitaire</string>
+  <string name="kilogram_symbol">kg</string>
+    <string name="foot_symbol">ft</string>
+    <string name="centimetre_symbol">cm</string>
+    <string name="cubic_centimetre_symbol">cc</string>
+    <string name="fluid_ounce_symbol">oz</string>
+    <string name="gallon_symbol">gal</string>
+    <string name="gram_symbol">g</string>
+    <string name="litre_symbol">L</string>
+    <string name="metre_symbol">m</string>
+    <string name="milligram_symbol">mg</string>
+    <string name="millilitre_symbol">mL</string>
+    <string name="millimetre_symbol">mm</string>
+    <string name="ounce_symbol">oz</string>
+    <string name="pint_symbol">pt</string>
+    <string name="quart_symbol">qt</string>
+    <string name="yard_symbol">yd</string>
 
 </resources>

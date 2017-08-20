@@ -1,0 +1,17 @@
+<resources>
+    <!-- When in America, US Imperial should read as default. -->
+    <string name="gallon_symbol">UK gal</string>
+    <string name="quart_symbol">UK qt</string>
+    <string name="pint_symbol">UK pt</string>
+    <string name="cup_symbol">UK cps</string>
+    <string name="fluid_ounce_symbol">UK oz</string>
+    <string name="tablespoon_symbol">UK tbsp</string>
+    <string name="teaspoon_symbol">UK tsp</string>
+    <string name="us_gallon_symbol">gal</string>
+    <string name="us_quart_symbol">qt</string>
+    <string name="us_pint_symbol">pt</string>
+    <string name="us_cup_symbol">cps</string>
+    <string name="us_fluid_ounce_symbol">oz</string>
+    <string name="us_tablespoon_symbol">tbsp</string>
+    <string name="us_teaspoon_symbol">tsp</string>
+</resources>

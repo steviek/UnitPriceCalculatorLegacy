@@ -39,12 +39,14 @@
 
         <LinearLayout
             android:id="@+id/container_header"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_below="@+id/unit_type_prompt_container"
             android:orientation="horizontal"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingRight="16dp"
+            android:layout_alignLeft="@+id/row_container"
+            android:layout_alignStart="@+id/row_container">
 
             <TextView
                 style="@style/HeaderTextView"
@@ -79,6 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/container_header"
+            android:layout_centerHorizontal="true"
             android:orientation="vertical">
 
             <com.unitpricecalculator.comparisons.UnitEntryView

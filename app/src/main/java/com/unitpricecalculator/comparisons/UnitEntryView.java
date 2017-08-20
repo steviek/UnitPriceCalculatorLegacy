@@ -1,8 +1,5 @@
 package com.unitpricecalculator.comparisons;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
@@ -18,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
@@ -35,7 +34,7 @@ import com.unitpricecalculator.util.logger.Logger;
 
 import java.text.NumberFormat;
 
-final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
+public final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
 
     private TextView mRowNumberTextView;
     private EditText mCostEditText;
