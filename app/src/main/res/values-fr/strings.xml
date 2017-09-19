@@ -79,5 +79,6 @@
     <string name="pint_symbol">pt</string>
     <string name="quart_symbol">qt</string>
     <string name="yard_symbol">yd</string>
+  <string name="change_currency_symbol">Changer la devise</string>
 
 </resources>

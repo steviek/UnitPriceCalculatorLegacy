@@ -1,13 +1,16 @@
 package com.unitpricecalculator.unit;
 
-import com.google.common.collect.ImmutableList;
+import android.os.Build;
 
+import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 
+import java.util.Currency;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -39,5 +42,17 @@ public final class Units {
     public static void setCurrentUnitType(UnitType unitType) {
         Prefs.putString(Keys.UNIT_TYPE, unitType.name());
         MyApplication.getInstance().getBus().post(new UnitTypeChangedEvent(unitType));
+    }
+
+    public static Currency getCurrency() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+            && Prefs.getString("currency") != null) {
+            return Currency.getInstance(Prefs.getString("currency"));
+        }
+        return Currency.getInstance(Locale.getDefault());
+    }
+
+    public static void setCurrency(Currency currency) {
+        Prefs.putString("currency", currency.getCurrencyCode());
     }
 }

@@ -65,4 +65,5 @@
   <string name="volume">Volumen</string>
   <string name="weight">Peso</string>
   <string name="yard_symbol">yarda</string>
+  <string name="change_currency_symbol">Cambiar la moneda</string>
 </resources>

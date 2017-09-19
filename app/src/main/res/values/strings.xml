@@ -15,6 +15,7 @@
     <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
     <string name="add_row">ADD ROW</string>
     <string name="remove_row">REMOVE ROW</string>
+    <string name="change_currency_symbol">Change Currency</string>
 
     <string name="show_price_per">Show price per:</string>
     <string name="text_summary">%1$s per %2$s %3$s</string>

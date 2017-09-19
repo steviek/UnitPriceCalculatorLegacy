@@ -8,6 +8,39 @@
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
+        <LinearLayout
+          android:id="@+id/change_currency_parent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="?attr/selectableItemBackground">
+
+            <TextView
+              android:id="@+id/change_currency"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/change_currency_symbol"
+              android:textSize="18sp"
+              android:textColor="@color/primaryText"
+              android:paddingLeft="16dp"
+              android:paddingRight="16dp"
+              android:paddingTop="16dp"
+              android:paddingBottom="4dp"/>
+
+            <TextView
+              android:id="@+id/change_currency_subtitle"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/drag_and_drop_prompt"
+              android:textColor="@color/secondaryText"
+              android:textSize="14sp"
+              android:paddingLeft="16dp"
+              android:paddingRight="16dp"
+              android:paddingTop="4dp"
+              android:paddingBottom="8dp" />
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
