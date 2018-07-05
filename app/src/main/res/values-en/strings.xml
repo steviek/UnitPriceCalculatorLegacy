@@ -79,5 +79,6 @@
 
     <string name="send_email">Send Email</string>
     <string name="feedback_subject">Feedback for Unit Price Calculator</string>
+    <string name="dozen_symbol">dozen</string>
 
 </resources>

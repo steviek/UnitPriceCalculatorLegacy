@@ -66,4 +66,5 @@
   <string name="weight">Peso</string>
   <string name="yard_symbol">yarda</string>
   <string name="change_currency_symbol">Cambiar el símbolo monetario</string>
+  <string name="dozen_symbol">docena</string>
 </resources>
