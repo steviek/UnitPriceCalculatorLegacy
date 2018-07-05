@@ -347,6 +347,8 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
     if (entries >= 2 && best != null) {
       NumberFormat format = NumberFormat.getCurrencyInstance();
       format.setCurrency(Units.getCurrency());
+      format.setMinimumFractionDigits(2);
+      format.setMaximumFractionDigits(8);
       mSummaryText.setText(getResources().getString(R.string.main_final_summary,
           bestRow + 1,
           format.format(best.getCost()),

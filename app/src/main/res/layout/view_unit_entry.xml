@@ -55,6 +55,7 @@
         android:text="$12 per 10 g"
         android:paddingLeft="@dimen/horizontal_margin"
         android:paddingRight="@dimen/horizontal_margin"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_vertical"
+        android:textIsSelectable="true"/>
 
 </merge>
