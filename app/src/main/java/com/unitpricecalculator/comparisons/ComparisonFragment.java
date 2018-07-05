@@ -310,8 +310,8 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
   }
 
   private CompareUnitChangedEvent getCompareUnit() {
-    String size = NumberUtils.firstParsableDouble(mFinalEditText.getText().toString(), "1");
     Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter()).getUnit(mFinalSpinner.getSelectedItemPosition());
+    String size = NumberUtils.firstParsableDouble(mFinalEditText.getText().toString(), String.valueOf(unit.getDefaultQuantity()));
     return new CompareUnitChangedEvent(size, unit);
   }
 
@@ -319,6 +319,10 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
     CompareUnitChangedEvent compareUnit = getCompareUnit();
     double size = Double.parseDouble(compareUnit.getSize());
     Unit unit = compareUnit.getUnit();
+
+    if (Strings.isNullOrEmpty(mFinalEditText.getText().toString())) {
+      mFinalEditText.setHint(String.valueOf(unit.getDefaultQuantity()));
+    }
 
     int entries = 0;
     int bestRow = 0;

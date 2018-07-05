@@ -124,8 +124,13 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
                 unitEntry.setQuantityString(mQuantityEditText.getText().toString());
             }
 
-            unitEntry.setSizeString(mSizeEditText.getText().toString());
-            unitEntry.setSize(Double.parseDouble(mSizeEditText.getText().toString()));
+            if (Strings.isNullOrEmpty(mSizeEditText.getText().toString())) {
+                unitEntry.setSize(1);
+                unitEntry.setSizeString("1");
+            } else {
+                unitEntry.setSizeString(mSizeEditText.getText().toString());
+                unitEntry.setSize(Double.parseDouble(mSizeEditText.getText().toString()));
+            }
 
             unitEntry.setUnit(getSelectedUnit());
 

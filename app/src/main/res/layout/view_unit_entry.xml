@@ -36,7 +36,7 @@
             style="@style/RowEditText"
             android:layout_width="@dimen/header_column_4"
             android:layout_height="wrap_content"
-            android:hint="@string/size"
+            android:hint="1"
             android:imeOptions="actionNext"
             android:inputType="numberDecimal" />
 

@@ -10,4 +10,8 @@ public interface Unit extends Parcelable{
     System getSystem();
 
     UnitType getUnitType();
+
+    default int getDefaultQuantity() {
+        return 1;
+    }
 }

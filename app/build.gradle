@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "28.0.0"
     defaultConfig {
         applicationId "com.unitpricecalculator"
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 7
         versionName "3.3"
     }
@@ -35,18 +35,22 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.squareup:otto:1.3.8'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.6.3'
-    compile 'com.crittercism:crittercism-android-agent:+'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    testCompile 'com.google.truth:truth:0.27'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.google.guava:guava:23.6-android'
+    implementation 'com.squareup:otto:1.3.8'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-guava:2.6.3'
+    implementation 'com.crittercism:crittercism-android-agent:+'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:3.0'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'com.google.truth:truth:0.40'
 }

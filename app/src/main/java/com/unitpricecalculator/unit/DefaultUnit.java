@@ -7,14 +7,14 @@ import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
 
 public enum DefaultUnit implements Unit {
-    GRAM(R.string.gram_symbol, 1, System.METRIC, UnitType.WEIGHT),
+    GRAM(R.string.gram_symbol, 1, System.METRIC, UnitType.WEIGHT, 100),
     KILOGRAM(R.string.kilogram_symbol, 1000, System.METRIC, UnitType.WEIGHT),
-    MILLIGRAM(R.string.milligram_symbol, 0.001, System.METRIC, UnitType.WEIGHT),
+    MILLIGRAM(R.string.milligram_symbol, 0.001, System.METRIC, UnitType.WEIGHT, 100),
     OUNCE(R.string.ounce_symbol, 28.3495, System.IMPERIAL, UnitType.WEIGHT),
     POUND(R.string.pound_symbol, 453.592, System.IMPERIAL, UnitType.WEIGHT),
-    MILLILITRE(R.string.millilitre_symbol, 0.001, System.METRIC, UnitType.VOLUME),
+    MILLILITRE(R.string.millilitre_symbol, 0.001, System.METRIC, UnitType.VOLUME, 100),
     LITRE(R.string.litre_symbol, 1, System.METRIC, UnitType.VOLUME),
-    CUBIC_CENTIMETRE(R.string.cubic_centimetre_symbol, 0.001, System.METRIC, UnitType.VOLUME),
+    CUBIC_CENTIMETRE(R.string.cubic_centimetre_symbol, 0.001, System.METRIC, UnitType.VOLUME, 100),
     GALLON(R.string.gallon_symbol, 4.54609, System.IMPERIAL_UK, UnitType.VOLUME),
     QUART(R.string.quart_symbol, 1.13652, System.IMPERIAL_UK, UnitType.VOLUME),
     PINT(R.string.pint_symbol, 0.568261, System.IMPERIAL_UK, UnitType.VOLUME),
@@ -30,23 +30,30 @@ public enum DefaultUnit implements Unit {
     US_TABLESPOON(R.string.us_tablespoon_symbol, 0.0147868, System.IMPERIAL_US, UnitType.VOLUME),
     US_TEASPOON(R.string.us_teaspoon_symbol, 0.00492892, System.IMPERIAL_US, UnitType.VOLUME),
     METRE(R.string.metre_symbol, 1, System.METRIC, UnitType.LENGTH),
-    CENTIMETRE(R.string.centimetre_symbol, 0.01, System.METRIC, UnitType.LENGTH),
-    MILLIMETRE(R.string.millimetre_symbol, 0.001, System.METRIC, UnitType.LENGTH),
+    CENTIMETRE(R.string.centimetre_symbol, 0.01, System.METRIC, UnitType.LENGTH, 10),
+    MILLIMETRE(R.string.millimetre_symbol, 0.001, System.METRIC, UnitType.LENGTH, 100),
     INCH(R.string.inch_symbol, 0.0254, System.IMPERIAL, UnitType.LENGTH),
     FOOT(R.string.foot_symbol, 0.3048, System.IMPERIAL, UnitType.LENGTH),
     YARD(R.string.yard_symbol, 0.9144, System.IMPERIAL, UnitType.LENGTH),
-    UNIT(R.string.unit_symbol, 1, System.METRIC, UnitType.QUANTITY);
+    UNIT(R.string.unit_symbol, 1, System.METRIC, UnitType.QUANTITY),
+    DOZEN(R.string.dozen_symbol, 12, System.METRIC, UnitType.QUANTITY);
 
     private final int symbol;
     private final double factor;
     private final System system;
     private final UnitType unitType;
+    private final int defaultQuantity;
 
     DefaultUnit(int symbol, double factor, System system, UnitType unitType) {
+        this(symbol, factor, system, unitType, 1);
+    }
+
+    DefaultUnit(int symbol, double factor, System system, UnitType unitType, int defaultQuantity) {
         this.symbol = symbol;
         this.factor = factor;
         this.system = system;
         this.unitType = unitType;
+        this.defaultQuantity = defaultQuantity;
     }
 
     @Override
@@ -69,6 +76,10 @@ public enum DefaultUnit implements Unit {
         return unitType;
     }
 
+    @Override
+    public int getDefaultQuantity() {
+        return defaultQuantity;
+    }
 
     @Override
     public int describeContents() {
