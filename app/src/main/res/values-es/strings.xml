@@ -40,7 +40,7 @@
   <string name="rate_app">Calificar Aplicación</string>
   <string name="remove_row">BORRAR FILA</string>
   <string name="rename">Renombrar</string>
-  <string name="save">Guadar</string>
+  <string name="save">Guardar</string>
   <string name="saved_comparisons">Comparaciones guardadas</string>
   <string name="saved_from_date">Guardada %1$s</string>
   <string name="send_email">Enviar Correo</string>
@@ -65,5 +65,5 @@
   <string name="volume">Volumen</string>
   <string name="weight">Peso</string>
   <string name="yard_symbol">yarda</string>
-  <string name="change_currency_symbol">Cambiar la moneda</string>
+  <string name="change_currency_symbol">Cambiar el símbolo monetario</string>
 </resources>
