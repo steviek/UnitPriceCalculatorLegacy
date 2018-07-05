@@ -45,8 +45,8 @@
   <string name="saved_from_date">Guardada %1$s</string>
   <string name="send_email">Enviar por e-mail</string>
   <string name="send_feedback">Enviar feedback</string>
-  <string name="settings">Configuração</string>
-  <string name="share_app">Compartilhar Aplicativo</string>
+  <string name="settings">Configurações</string>
+  <string name="share_app">Partilhar Aplicativo</string>
   <string name="show_price_per">Mostre preço por:</string>
   <string name="size">Tamanho</string>
   <string name="tablespoon_symbol">cs</string>
