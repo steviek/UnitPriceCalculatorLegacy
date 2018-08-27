@@ -41,6 +41,7 @@ import com.unitpricecalculator.util.prefs.Prefs;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -305,58 +306,117 @@ public final class ComparisonFragment extends BaseFragment
       mFinalEditText.setHint(String.valueOf(unit.getDefaultQuantity()));
     }
 
-    int entries = 0;
-    int bestRow = 0;
-    UnitEntry best = null;
 
+    List<UnitEntryWithIndex> unitEntries = new ArrayList<>();
     for (int i = 0; i < mEntryViews.size(); i++) {
       UnitEntryView entryView = mEntryViews.get(i);
       Optional<UnitEntry> entry = entryView.getEntry();
       if (entry.isPresent()) {
-        entries++;
-        try {
-          if (best == null || entry.get().pricePer(size, unit) < best.pricePer(size, unit)) {
-            best = entry.get();
-            bestRow = i;
-          }
-        } catch (IllegalArgumentException e) {
-          return;
-        }
+        unitEntries.add(new UnitEntryWithIndex(i, entry.get()));
       }
     }
 
-    if (entries >= 2 && best != null) {
-      NumberFormat format = NumberFormat.getCurrencyInstance();
-      format.setCurrency(Units.getCurrency());
-      format.setMinimumFractionDigits(2);
-      format.setMaximumFractionDigits(8);
-      mSummaryText.setText(getResources().getString(R.string.main_final_summary,
-          bestRow + 1,
-          format.format(best.getCost()),
-          best.getQuantityString(),
-          best.getSizeString(),
-          best.getUnit().getSymbol(),
-          format.format(best.pricePer(size, unit)),
-          compareUnit.getSize(),
-          unit.getSymbol()));
+    Collections.sort(
+            unitEntries,
+            (entry1, entry2) ->
+                    Double.compare(
+                            entry1.getUnitEntry().pricePer(size, unit),
+                            entry2.getUnitEntry().pricePer(size, unit)));
 
-      for (UnitEntryView entryView : mEntryViews) {
-        Optional<UnitEntry> entry = entryView.getEntry();
-        if (entry.isPresent()) {
-          if (entry.get().pricePer(size, unit) <= best.pricePer(size, unit)) {
-            entryView.setEvaluation(UnitEntryView.Evaluation.GOOD);
-          } else {
-            entryView.setEvaluation(UnitEntryView.Evaluation.BAD);
-          }
-        } else {
-          entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
-        }
-      }
-    } else {
+    if (unitEntries.size() < 2) {
       mSummaryText.setText("");
       for (UnitEntryView entryView : mEntryViews) {
         entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
       }
+      return;
+    }
+
+    NumberFormat format = NumberFormat.getCurrencyInstance();
+    format.setCurrency(Units.getCurrency());
+    format.setMinimumFractionDigits(2);
+    format.setMaximumFractionDigits(8);
+
+    StringBuilder finalSummary = new StringBuilder();
+    UnitEntryWithIndex best = unitEntries.get(0);
+    if (best.getUnitEntry().getQuantity() == 1) {
+      finalSummary.append(getResources().getString(R.string.main_final_summary_no_number,
+              best.getIndex() + 1,
+              format.format(best.getUnitEntry().getCost()),
+              best.getUnitEntry().getSizeString(),
+              best.getUnitEntry().getUnit().getSymbol(),
+              format.format(best.getUnitEntry().pricePer(size, unit)),
+              compareUnit.getSize(),
+              unit.getSymbol()));
+    } else {
+      finalSummary.append(getResources().getString(R.string.main_final_summary,
+              best.getIndex() + 1,
+              format.format(best.getUnitEntry().getCost()),
+              best.getUnitEntry().getQuantityString(),
+              best.getUnitEntry().getSizeString(),
+              best.getUnitEntry().getUnit().getSymbol(),
+              format.format(best.getUnitEntry().pricePer(size, unit)),
+              compareUnit.getSize(),
+              unit.getSymbol()));
+    }
+
+    finalSummary.append("\n\n");
+
+    for (UnitEntryWithIndex entryWithIndex : unitEntries) {
+      if (entryWithIndex.getUnitEntry().getQuantity() == 1) {
+        finalSummary.append(getResources().getString(R.string.single_row_summary_no_number,
+                entryWithIndex.getIndex() + 1,
+                format.format(entryWithIndex.getUnitEntry().getCost()),
+                entryWithIndex.getUnitEntry().getSizeString(),
+                entryWithIndex.getUnitEntry().getUnit().getSymbol(),
+                format.format(entryWithIndex.getUnitEntry().pricePer(size, unit)),
+                compareUnit.getSize(),
+                unit.getSymbol()));
+      } else {
+        finalSummary.append(getResources().getString(R.string.single_row_summary,
+                entryWithIndex.getIndex() + 1,
+                format.format(entryWithIndex.getUnitEntry().getCost()),
+                entryWithIndex.getUnitEntry().getQuantityString(),
+                entryWithIndex.getUnitEntry().getSizeString(),
+                entryWithIndex.getUnitEntry().getUnit().getSymbol(),
+                format.format(entryWithIndex.getUnitEntry().pricePer(size, unit)),
+                compareUnit.getSize(),
+                unit.getSymbol()));
+      }
+
+      finalSummary.append("\n");
+    }
+
+    mSummaryText.setText(finalSummary);
+
+    for (UnitEntryView entryView : mEntryViews) {
+      Optional<UnitEntry> entry = entryView.getEntry();
+      if (entry.isPresent()) {
+        if (entry.get().pricePer(size, unit) <= best.getUnitEntry().pricePer(size, unit)) {
+          entryView.setEvaluation(UnitEntryView.Evaluation.GOOD);
+        } else {
+          entryView.setEvaluation(UnitEntryView.Evaluation.BAD);
+        }
+      } else {
+        entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
+      }
+    }
+  }
+
+  private static final class UnitEntryWithIndex {
+    final int index;
+    final UnitEntry unitEntry;
+
+    UnitEntryWithIndex(int index, UnitEntry unitEntry) {
+      this.index = index;
+      this.unitEntry = unitEntry;
+    }
+
+    public int getIndex() {
+      return index;
+    }
+
+    public UnitEntry getUnitEntry() {
+      return unitEntry;
     }
   }
 }
