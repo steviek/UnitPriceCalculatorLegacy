@@ -1,11 +1,10 @@
 package com.unitpricecalculator.comparisons;
 
-import com.google.common.collect.ImmutableList;
-
 import android.support.annotation.NonNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 
@@ -60,9 +59,13 @@ public final class SavedComparison implements Comparable<SavedComparison> {
 
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (unitType != that.unitType) return false;
-        if (savedUnitEntryRows != null ? !savedUnitEntryRows.equals(that.savedUnitEntryRows) : that.savedUnitEntryRows != null)
+        if (savedUnitEntryRows != null
+                ? !savedUnitEntryRows.equals(that.savedUnitEntryRows)
+                : that.savedUnitEntryRows != null)
             return false;
-        if (finalQuantity != null ? !finalQuantity.equals(that.finalQuantity) : that.finalQuantity != null)
+        if (finalQuantity != null
+                ? !finalQuantity.equals(that.finalQuantity)
+                : that.finalQuantity != null)
             return false;
         return !(finalUnit != null ? !finalUnit.equals(that.finalUnit) : that.finalUnit != null);
 

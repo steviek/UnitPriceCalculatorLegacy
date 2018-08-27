@@ -12,12 +12,12 @@ import com.unitpricecalculator.R;
 
 public final class MenuFragment extends BaseFragment {
 
-    private Callback mCallback;
+    private Callback callback;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = castOrThrow(Callback.class, context);
+        callback = castOrThrow(Callback.class, context);
     }
 
     @Nullable
@@ -26,12 +26,18 @@ public final class MenuFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
-        view.findViewById(R.id.btn_new).setOnClickListener(new MenuEventClickListener(MenuEvent.NEW));
-        view.findViewById(R.id.btn_saved).setOnClickListener(new MenuEventClickListener(MenuEvent.SAVED));
-        view.findViewById(R.id.btn_feedback).setOnClickListener(new MenuEventClickListener(MenuEvent.FEEDBACK));
-        view.findViewById(R.id.btn_rate).setOnClickListener(new MenuEventClickListener(MenuEvent.RATE));
-        view.findViewById(R.id.btn_share).setOnClickListener(new MenuEventClickListener(MenuEvent.SHARE));
-        view.findViewById(R.id.btn_settings).setOnClickListener(new MenuEventClickListener(MenuEvent.SETTINGS));
+        view.findViewById(R.id.btn_new)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.NEW));
+        view.findViewById(R.id.btn_saved)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.SAVED));
+        view.findViewById(R.id.btn_feedback)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.FEEDBACK));
+        view.findViewById(R.id.btn_rate)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.RATE));
+        view.findViewById(R.id.btn_share)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.SHARE));
+        view.findViewById(R.id.btn_settings)
+                .setOnClickListener(new MenuEventClickListener(MenuEvent.SETTINGS));
 
         view.findViewById(R.id.btn_share).setVisibility(View.GONE);
 
@@ -61,7 +67,7 @@ public final class MenuFragment extends BaseFragment {
 
         @Override
         public void onClick(View v) {
-            mCallback.onMenuEvent(menuEvent);
+            callback.onMenuEvent(menuEvent);
         }
     }
 }

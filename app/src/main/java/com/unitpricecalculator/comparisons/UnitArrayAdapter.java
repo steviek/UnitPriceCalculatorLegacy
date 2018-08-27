@@ -1,11 +1,10 @@
 package com.unitpricecalculator.comparisons;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
@@ -51,7 +50,8 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
         return new UnitArrayAdapter(context, symbols.build(), units.build());
     }
 
-    private UnitArrayAdapter(Context context, ImmutableList<String> unitSymbols, ImmutableList<Unit> units) {
+    private UnitArrayAdapter(
+            Context context, ImmutableList<String> unitSymbols, ImmutableList<Unit> units) {
         super(context, android.R.layout.simple_dropdown_item_1line, unitSymbols);
         this.units = Preconditions.checkNotNull(units);
     }

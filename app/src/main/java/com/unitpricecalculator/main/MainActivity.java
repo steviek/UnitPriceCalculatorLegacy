@@ -1,8 +1,5 @@
 package com.unitpricecalculator.main;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -17,6 +14,8 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.unitpricecalculator.BaseActivity;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
@@ -26,7 +25,8 @@ import com.unitpricecalculator.saved.SavedFragment;
 
 import java.io.IOException;
 
-public final class MainActivity extends BaseActivity implements MenuFragment.Callback, SavedFragment.Callback {
+public final class MainActivity extends BaseActivity
+        implements MenuFragment.Callback, SavedFragment.Callback {
 
     private ObjectMapper objectMapper;
 
@@ -56,7 +56,8 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         getSupportActionBar().setHomeButtonEnabled(true);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.app_name, R.string.app_name);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, R.string.app_name, R.string.app_name);
 
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -68,8 +69,10 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         if (savedInstanceState != null) {
             mState = State.valueOf(savedInstanceState.getString("state"));
             try {
-                mComparisonFragment.restoreState(objectMapper.readValue(savedInstanceState.getString("mainFragment"),
-                        SavedComparison.class));
+                mComparisonFragment.restoreState(
+                        objectMapper.readValue(
+                                savedInstanceState.getString("mainFragment"),
+                                SavedComparison.class));
             } catch (IOException e) {
                 throw Throwables.propagate(e);
             }
@@ -90,7 +93,9 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
         outState.putString("state", mState.name());
         if (mComparisonFragment != null) {
             try {
-                outState.putString("mainFragment", objectMapper.writeValueAsString(mComparisonFragment.saveState()));
+                outState.putString(
+                        "mainFragment",
+                        objectMapper.writeValueAsString(mComparisonFragment.saveState()));
             } catch (JsonProcessingException e) {
                 throw Throwables.propagate(e);
             }
@@ -168,7 +173,9 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
                 break;
             case RATE:
                 Intent i = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=com.unitpricecalculator"));
+                        Uri.parse(
+                                "https://play.google.com/store/apps/details?id=" +
+                                        "com.unitpricecalculator"));
                 startActivity(i);
                 break;
             case SETTINGS:
@@ -216,7 +223,10 @@ public final class MainActivity extends BaseActivity implements MenuFragment.Cal
                 break;
         }
         mState = state;
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, getFragment(mState)).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, getFragment(mState))
+                .commit();
         invalidateOptionsMenu();
     }
 

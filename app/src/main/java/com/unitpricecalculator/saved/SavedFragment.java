@@ -1,9 +1,6 @@
 package com.unitpricecalculator.saved;
 
-import com.google.common.base.Strings;
-
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,10 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.common.base.Strings;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.SavedComparison;
@@ -32,15 +29,15 @@ import java.util.List;
 
 public class SavedFragment extends BaseFragment {
 
-    private ActionMode mActionMode;
-    private Callback mCallback;
-    private int mSelectedPosition;
+    private ActionMode actionMode;
+    private Callback callback;
+    private int selectedPosition;
 
-    private SavedComparisonsArrayAdapter mAdapter;
-    private List<SavedComparison> mSavedComparisons;
+    private SavedComparisonsArrayAdapter adapter;
+    private List<SavedComparison> savedComparisons;
 
-    private AlertDialog mAlertDialog;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private AlertDialog alertDialog;
+    private final ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
@@ -60,56 +57,48 @@ public class SavedFragment extends BaseFragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_rename:
-                    if (mAlertDialog == null) {
+                    if (alertDialog == null) {
                         final EditText name = new EditText(getContext());
                         int sideMargin = getResources().getDimensionPixelOffset(R.dimen.horizontal_margin);
                         name.setInputType(InputType.TYPE_CLASS_TEXT);
                         name.setHint(R.string.enter_name);
 
-                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                        alert.setMessage(R.string.give_name);
-                        alert.setView(name, sideMargin, 0, sideMargin, 0);
-                        alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String savedName = name.getText().toString();
-                                if (!Strings.isNullOrEmpty(savedName)) {
-                                    SavedComparison old = mAdapter.getItem(mSelectedPosition);
-                                    SavedComparison renamed = old.rename(savedName);
-                                    mSavedComparisons.remove(old);
-                                    mSavedComparisons.add(renamed);
-                                    Collections.sort(mSavedComparisons);
-                                    mAdapter.notifyDataSetChanged();
-                                    Prefs.putList(Keys.SAVED_STATES, mSavedComparisons);
-                                }
-                                if (mActionMode != null) {
-                                    mActionMode.finish();
-                                }
+                        alertDialog = new AlertDialog.Builder(getContext())
+                        .setMessage(R.string.give_name)
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            String savedName = name.getText().toString();
+                            if (!Strings.isNullOrEmpty(savedName)) {
+                                SavedComparison old = adapter.getItem(selectedPosition);
+                                SavedComparison renamed = old.rename(savedName);
+                                savedComparisons.remove(old);
+                                savedComparisons.add(renamed);
+                                Collections.sort(savedComparisons);
+                                adapter.notifyDataSetChanged();
+                                Prefs.putList(Keys.SAVED_STATES, savedComparisons);
                             }
-                        });
-                        alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (mActionMode != null) {
-                                    mActionMode.finish();
-                                }
+                            if (actionMode != null) {
+                                actionMode.finish();
                             }
-                        });
-                        mAlertDialog = alert.create();
+                        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                            if (actionMode != null) {
+                                actionMode.finish();
+                            }
+                        }).create();
+                        alertDialog.setView(name, sideMargin, 0, sideMargin, 0);
                     }
 
-                    if (mAlertDialog.isShowing()) {
-                        mAlertDialog.dismiss();
+                    if (alertDialog.isShowing()) {
+                        alertDialog.dismiss();
                     } else {
-                        mAlertDialog.show();
+                        alertDialog.show();
                     }
 
                     return true;
                 case R.id.action_delete:
-                    SavedComparison comparison = mAdapter.getItem(mSelectedPosition);
-                    mSavedComparisons.remove(comparison);
-                    Prefs.putList(Keys.SAVED_STATES, mSavedComparisons);
-                    mAdapter.notifyDataSetChanged();
+                    SavedComparison comparison = adapter.getItem(selectedPosition);
+                    savedComparisons.remove(comparison);
+                    Prefs.putList(Keys.SAVED_STATES, savedComparisons);
+                    adapter.notifyDataSetChanged();
                     mode.finish();
                     return true;
                 default:
@@ -119,11 +108,13 @@ public class SavedFragment extends BaseFragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            mSelectedPosition = -1;
+            actionMode = null;
+            selectedPosition = -1;
             if (Build.VERSION.SDK_INT >= 21) {
                 if (getActivity() != null && getActivity().getWindow() != null) {
-                    getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+                    getActivity()
+                            .getWindow()
+                            .setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
                 }
             }
         }
@@ -132,7 +123,7 @@ public class SavedFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = castOrThrow(Callback.class, context);
+        callback = castOrThrow(Callback.class, context);
     }
 
     @Nullable
@@ -145,31 +136,24 @@ public class SavedFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mSavedComparisons = Prefs.getList(SavedComparison.class, Keys.SAVED_STATES);
-        Collections.sort(mSavedComparisons);
+        savedComparisons = Prefs.getList(SavedComparison.class, Keys.SAVED_STATES);
+        Collections.sort(savedComparisons);
 
-        ListView listView = (ListView) view.findViewById(R.id.list_view);
-        mAdapter = new SavedComparisonsArrayAdapter(getContext(), mSavedComparisons);
-        listView.setAdapter(mAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onLoadSavedComparison(mAdapter.getItem(position));
+        ListView listView = view.findViewById(R.id.list_view);
+        adapter = new SavedComparisonsArrayAdapter(getContext(), savedComparisons);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener((parent, view1, position, id) ->
+                callback.onLoadSavedComparison(adapter.getItem(position)));
+        listView.setOnItemLongClickListener((parent, view12, position, id) -> {
+            if (actionMode != null) {
+                return false;
             }
-        });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mActionMode != null) {
-                    return false;
-                }
 
-                // Start the CAB using the ActionMode.Callback defined above
-                mActionMode = getActivity().startActionMode(mActionModeCallback);
-                mSelectedPosition = position;
-                view.setSelected(true);
-                return true;
-            }
+            // Start the CAB using the ActionMode.Callback defined above
+            actionMode = getActivity().startActionMode(actionModeCallback);
+            selectedPosition = position;
+            view12.setSelected(true);
+            return true;
         });
     }
 

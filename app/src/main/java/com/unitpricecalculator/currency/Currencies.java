@@ -1,7 +1,6 @@
 package com.unitpricecalculator.currency;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
@@ -10,7 +9,6 @@ import com.unitpricecalculator.unit.Units;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Currency;
 import java.util.List;
 
@@ -23,12 +21,7 @@ public final class Currencies {
   public static void showChangeCurrencyDialog(Context context, @Nullable final CurrencyDialogCallback callback) {
     Currency currentCurrency = Units.getCurrency();
     final List<Currency> currencies = new ArrayList<>(Currency.getAvailableCurrencies());
-    Collections.sort(currencies, new Comparator<Currency>() {
-      @Override
-      public int compare(Currency c1, Currency c2) {
-        return c1.getCurrencyCode().compareTo(c2.getCurrencyCode());
-      }
-    });
+    Collections.sort(currencies, (c1, c2) -> c1.getCurrencyCode().compareTo(c2.getCurrencyCode()));
 
     int currentCurrencyIndex = -1;
     String[] labels = new String[currencies.size()];
@@ -47,17 +40,14 @@ public final class Currencies {
         .setSingleChoiceItems(
             labels,
             currentCurrencyIndex,
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int i) {
-                Currency currency = currencies.get(i);
-                Units.setCurrency(currency);
-                dialog.dismiss();
-                if (callback != null) {
-                  callback.onCurrencySelected(currency);
-                }
-              }
-            })
+                (dialog, i) -> {
+                  Currency currency = currencies.get(i);
+                  Units.setCurrency(currency);
+                  dialog.dismiss();
+                  if (callback != null) {
+                    callback.onCurrencySelected(currency);
+                  }
+                })
         .show();
   }
 

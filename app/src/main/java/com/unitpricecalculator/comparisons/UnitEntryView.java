@@ -249,12 +249,16 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
                     baseUnit.getSymbol()));
             mSummaryTextView.setVisibility(View.VISIBLE);
 
-            mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
-            mSummaryTextView.setTextColor(ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
+            mRowNumberTextView.setTextColor(
+                    ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
+            mSummaryTextView.setTextColor(
+                    ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
         } else {
             mSummaryTextView.setVisibility(View.INVISIBLE);
-            mRowNumberTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
-            mSummaryTextView.setTextColor(ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
+            mRowNumberTextView.setTextColor(
+                    ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
+            mSummaryTextView.setTextColor(
+                    ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
         }
     }
 

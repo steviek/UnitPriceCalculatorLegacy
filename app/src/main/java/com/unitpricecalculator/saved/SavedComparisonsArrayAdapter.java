@@ -35,7 +35,7 @@ public class SavedComparisonsArrayAdapter extends ArrayAdapter<SavedComparison> 
         private final TextView title;
 
         public ViewHolder(View view) {
-            this.title = (TextView) view.findViewById(R.id.text_title);
+            this.title = view.findViewById(R.id.text_title);
         }
 
         public TextView getTitle() {

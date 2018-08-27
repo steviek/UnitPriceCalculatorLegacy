@@ -8,7 +8,8 @@ public abstract class BaseFragment extends Fragment {
         try {
             return clazz.cast(object);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException(object.getClass() + " must implement " + clazz + " interface");
+            throw new IllegalArgumentException(
+                    object.getClass() + " must implement " + clazz + " interface");
         }
     }
 

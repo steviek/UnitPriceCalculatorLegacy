@@ -1,6 +1,5 @@
 package com.unitpricecalculator.comparisons;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -42,12 +41,11 @@ import com.unitpricecalculator.util.prefs.Prefs;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
-public final class ComparisonFragment extends BaseFragment implements UnitEntryView.OnUnitEntryChangedListener,
-    SavesState<SavedComparison> {
+public final class ComparisonFragment extends BaseFragment
+        implements UnitEntryView.OnUnitEntryChangedListener, SavesState<SavedComparison> {
 
   private LinearLayout mRowContainer;
   private View mAddRowButton;
@@ -71,17 +69,9 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
 
     mPriceHeader = view.findViewById(R.id.price_header);
     mPriceHeader.setText(Units.getCurrency().getSymbol());
-    mPriceHeader.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Currencies.showChangeCurrencyDialog(getContext(), new Currencies.CurrencyDialogCallback() {
-          @Override
-          public void onCurrencySelected(Currency currency) {
-            mPriceHeader.setText(currency.getSymbol());
-          }
-        });
-      }
-    });
+    mPriceHeader.setOnClickListener(
+            v -> Currencies.showChangeCurrencyDialog(
+                    getContext(), currency -> mPriceHeader.setText(currency.getSymbol())));
 
     mUnitTypeSpinner = view.findViewById(R.id.unit_type_spinner);
     mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());
@@ -108,14 +98,11 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
     }
 
     mAddRowButton = view.findViewById(R.id.add_row_btn);
-    mAddRowButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (mEntryViews.size() == 9) {
-          mAddRowButton.setEnabled(false);
-        }
-        addRowView();
+    mAddRowButton.setOnClickListener(v -> {
+      if (mEntryViews.size() == 9) {
+        mAddRowButton.setEnabled(false);
       }
+      addRowView();
     });
 
     mRemoveRowButton = view.findViewById(R.id.remove_row_btn);
@@ -254,13 +241,10 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
       AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
       alert.setMessage(R.string.give_name);
       alert.setView(view);
-      alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-          String savedName = name.getText().toString();
-          SavedComparison comparison = saveState(savedName);
-          Prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
-        }
+      alert.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+        String savedName = name.getText().toString();
+        SavedComparison comparison = saveState(savedName);
+        Prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
       });
       alert.setNegativeButton(android.R.string.cancel, null);
       mAlertDialog = alert.create();
@@ -305,8 +289,10 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
   }
 
   private CompareUnitChangedEvent getCompareUnit() {
-    Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter()).getUnit(mFinalSpinner.getSelectedItemPosition());
-    String size = NumberUtils.firstParsableDouble(mFinalEditText.getText().toString(), String.valueOf(unit.getDefaultQuantity()));
+    Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
+            .getUnit(mFinalSpinner.getSelectedItemPosition());
+    String size = NumberUtils.firstParsableDouble(
+            mFinalEditText.getText().toString(), String.valueOf(unit.getDefaultQuantity()));
     return new CompareUnitChangedEvent(size, unit);
   }
 
