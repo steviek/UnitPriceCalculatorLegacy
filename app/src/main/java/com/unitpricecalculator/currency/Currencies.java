@@ -2,9 +2,7 @@ package com.unitpricecalculator.currency;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 
 import com.unitpricecalculator.R;
@@ -22,7 +20,6 @@ public final class Currencies {
     void onCurrencySelected(Currency currency);
   }
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
   public static void showChangeCurrencyDialog(Context context, @Nullable final CurrencyDialogCallback callback) {
     Currency currentCurrency = Units.getCurrency();
     final List<Currency> currencies = new ArrayList<>(Currency.getAvailableCurrencies());

@@ -1,8 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
-import android.annotation.TargetApi;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -73,20 +71,17 @@ public final class ComparisonFragment extends BaseFragment implements UnitEntryV
 
     mPriceHeader = view.findViewById(R.id.price_header);
     mPriceHeader.setText(Units.getCurrency().getSymbol());
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      mPriceHeader.setOnClickListener(new View.OnClickListener() {
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        @Override
-        public void onClick(View view) {
-          Currencies.showChangeCurrencyDialog(getContext(), new Currencies.CurrencyDialogCallback() {
-            @Override
-            public void onCurrencySelected(Currency currency) {
-              mPriceHeader.setText(currency.getSymbol());
-            }
-          });
-        }
-      });
-    }
+    mPriceHeader.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Currencies.showChangeCurrencyDialog(getContext(), new Currencies.CurrencyDialogCallback() {
+          @Override
+          public void onCurrencySelected(Currency currency) {
+            mPriceHeader.setText(currency.getSymbol());
+          }
+        });
+      }
+    });
 
     mUnitTypeSpinner = view.findViewById(R.id.unit_type_spinner);
     mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());

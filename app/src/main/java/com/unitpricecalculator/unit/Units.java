@@ -1,7 +1,5 @@
 package com.unitpricecalculator.unit;
 
-import android.os.Build;
-
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
@@ -45,8 +43,7 @@ public final class Units {
     }
 
     public static Currency getCurrency() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-            && Prefs.getString("currency") != null) {
+        if (Prefs.getString("currency") != null) {
             return Currency.getInstance(Prefs.getString("currency"));
         }
         return Currency.getInstance(Locale.getDefault());
