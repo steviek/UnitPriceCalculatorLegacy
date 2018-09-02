@@ -28,7 +28,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
             @Provided Systems systems,
             @Provided Units units,
             UnitType unitType) {
-        this(context, getSymbolsAndUnits(systems, units, unitType, /* selected= */ null));
+        this(context, getSymbolsAndUnits(context, systems, units, unitType, /* selected= */ null));
     }
 
     @AutoFactory
@@ -37,11 +37,11 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
             @Provided Systems systems,
             @Provided Units units,
             Unit selected) {
-        this(context, getSymbolsAndUnits(systems, units, selected.getUnitType(), selected));
+        this(context, getSymbolsAndUnits(context, systems, units, selected.getUnitType(), selected));
     }
 
     private static Pair<ImmutableList<String>, ImmutableList<Unit>> getSymbolsAndUnits(
-            Systems systems, Units units, UnitType unitType, Unit selected) {
+            Context context, Systems systems, Units units, UnitType unitType, Unit selected) {
         ImmutableList.Builder<Unit> unitslist = ImmutableList.builder();
         ImmutableList.Builder<String> symbols = ImmutableList.builder();
 
@@ -50,7 +50,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
         if (selected != null) {
             includedUnits.add(selected);
             unitslist.add(selected);
-            symbols.add(selected.getSymbol());
+            symbols.add(selected.getSymbol(context.getResources()));
         }
 
         for (System system : systems.getPreferredOrder()) {
@@ -59,7 +59,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
                         (selected == null || unit != selected)) {
                     includedUnits.add(unit);
                     unitslist.add(unit);
-                    symbols.add(unit.getSymbol());
+                    symbols.add(unit.getSymbol(context.getResources()));
                 }
             }
         }

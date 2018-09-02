@@ -1,19 +1,16 @@
 package com.unitpricecalculator.unit;
 
 import com.google.common.collect.ImmutableList;
-import com.unitpricecalculator.application.MyApplication;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
-
+import dagger.Reusable;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.inject.Inject;
-
-import dagger.Reusable;
 
 /**
  * Collection of utility functions for {@link Unit}.
@@ -22,10 +19,12 @@ import dagger.Reusable;
 public final class Units {
 
     private final Prefs prefs;
+    private final Bus bus;
 
     @Inject
-    Units(Prefs prefs) {
+    Units(Prefs prefs, Bus bus) {
         this.prefs = prefs;
+        this.bus = bus;
     }
 
     private static Map<UnitType, ImmutableList<Unit>> unitMap = new HashMap<>();
@@ -49,7 +48,7 @@ public final class Units {
 
     public void setCurrentUnitType(UnitType unitType) {
         prefs.putString(Keys.UNIT_TYPE, unitType.name());
-        MyApplication.getInstance().getBus().post(new UnitTypeChangedEvent(unitType));
+        bus.post(new UnitTypeChangedEvent(unitType));
     }
 
     public Currency getCurrency() {

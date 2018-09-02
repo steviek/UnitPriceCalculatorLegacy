@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.inject.ApplicationContext;
 
 import javax.inject.Singleton;
@@ -23,6 +24,12 @@ public interface SingletonModule {
         objectMapper.registerModule(new GuavaModule());
         objectMapper.enableDefaultTyping();
         return objectMapper;
+    }
+
+    @Singleton
+    @Provides
+    static Bus provideBus() {
+        return new Bus();
     }
 
     @Binds

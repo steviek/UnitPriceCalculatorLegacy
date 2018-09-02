@@ -1,5 +1,6 @@
 package com.unitpricecalculator.unit;
 
+import android.content.res.Resources;
 import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -36,7 +37,7 @@ public final class CustomUnit implements Unit {
     }
 
     @Override
-    public String getSymbol() {
+    public String getSymbol(Resources resources) {
         return symbol;
     }
 

@@ -1,31 +1,30 @@
 package com.unitpricecalculator.unit;
 
+import static com.unitpricecalculator.unit.System.IMPERIAL_UK;
+import static com.unitpricecalculator.unit.System.IMPERIAL_US;
+import static com.unitpricecalculator.unit.System.METRIC;
+
 import com.google.common.base.Preconditions;
-import com.unitpricecalculator.application.MyApplication;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
-
+import dagger.Reusable;
 import java.util.Arrays;
 import java.util.Locale;
-
 import javax.inject.Inject;
-
-import dagger.Reusable;
-
-import static com.unitpricecalculator.unit.System.IMPERIAL_UK;
-import static com.unitpricecalculator.unit.System.IMPERIAL_US;
-import static com.unitpricecalculator.unit.System.METRIC;
 
 @Reusable
 public final class Systems {
 
     private final Prefs prefs;
+    private final Bus bus;
 
     @Inject
-    Systems(Prefs prefs) {
+    Systems(Prefs prefs, Bus bus) {
         this.prefs = prefs;
+        this.bus = bus;
     }
 
     private String getDefaultOrder() {
@@ -52,6 +51,6 @@ public final class Systems {
         Preconditions.checkArgument(order.length == 3);
         prefs.putString(Keys.SYSTEM_ORDER, order[0] + "," + order[1] + "," + order[2]);
         Logger.d("Set preferred order: %s", Arrays.toString(order));
-        MyApplication.getInstance().getBus().post(new SystemChangedEvent(order));
+        bus.post(new SystemChangedEvent(order));
     }
 }

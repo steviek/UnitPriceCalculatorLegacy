@@ -16,9 +16,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
@@ -38,6 +38,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     @Inject Units units;
     @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
+    @Inject Bus bus;
 
     private TextView mRowNumberTextView;
     private EditText mCostEditText;
@@ -150,7 +151,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (!this.isInEditMode()) {
-            MyApplication.getInstance().getBus().register(this);
+            bus.register(this);
         }
     }
 
@@ -158,7 +159,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (!this.isInEditMode()) {
-            MyApplication.getInstance().getBus().unregister(this);
+            bus.unregister(this);
         }
     }
 
@@ -251,7 +252,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
             mSummaryTextView.setText(getResources().getString(R.string.text_summary,
                     numberFormat.format(pricePer),
                     mLastCompareUnit.getSize(),
-                    baseUnit.getSymbol()));
+                    baseUnit.getSymbol(getResources())));
             mSummaryTextView.setVisibility(View.VISIBLE);
 
             mRowNumberTextView.setTextColor(

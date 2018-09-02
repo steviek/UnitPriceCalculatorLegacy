@@ -11,24 +11,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.unitpricecalculator.BaseActivity;
-import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.saved.SavedFragment;
-
 import java.io.IOException;
+import javax.inject.Inject;
 
 public final class MainActivity extends BaseActivity
         implements MenuFragment.Callback, SavedFragment.Callback {
 
-    private ObjectMapper objectMapper;
+    @Inject ObjectMapper objectMapper;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -48,8 +46,6 @@ public final class MainActivity extends BaseActivity
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        objectMapper = ((MyApplication) getApplication()).getObjectMapper();
 
         Preconditions.checkNotNull(getSupportActionBar());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

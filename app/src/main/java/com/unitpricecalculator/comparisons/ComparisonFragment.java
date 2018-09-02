@@ -1,5 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -17,10 +18,10 @@ import android.widget.TextView;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
@@ -62,6 +63,7 @@ public final class ComparisonFragment extends BaseFragment
   @Inject Provider<UnitTypeArrayAdapter> unitTypeArrayAdapterProvider;
   @Inject Currencies currencies;
   @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
+  @Inject Bus bus;
 
   private UnitTypeArrayAdapter unitTypeArrayAdapter;
   private LinearLayout mRowContainer;
@@ -142,7 +144,7 @@ public final class ComparisonFragment extends BaseFragment
     mFinalEditText.addTextChangedListener(new AbstractTextWatcher() {
       @Override
       public void afterTextChanged(Editable s) {
-        MyApplication.getInstance().getBus().post(getCompareUnit());
+        bus.post(getCompareUnit());
         evaluateEntries();
       }
     });
@@ -153,7 +155,7 @@ public final class ComparisonFragment extends BaseFragment
       mFinalSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-          MyApplication.getInstance().getBus().post(getCompareUnit());
+          bus.post(getCompareUnit());
           evaluateEntries();
         }
       });
@@ -204,7 +206,7 @@ public final class ComparisonFragment extends BaseFragment
     }
       UnitType unitType = UnitType.fromName(
               unitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
-              MyApplication.getInstance().getResources());
+              getResources());
     String finalSize = mFinalEditText.getText().toString();
     Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
@@ -278,7 +280,7 @@ public final class ComparisonFragment extends BaseFragment
   @Override
   public void onResume() {
     super.onResume();
-    MyApplication.getInstance().getBus().register(this);
+    bus.register(this);
     if (mSavedState != null) {
       restoreState(mSavedState);
       evaluateEntries();
@@ -288,7 +290,7 @@ public final class ComparisonFragment extends BaseFragment
   @Override
   public void onPause() {
     super.onPause();
-    MyApplication.getInstance().getBus().unregister(this);
+    bus.unregister(this);
   }
 
   @Subscribe
@@ -353,6 +355,7 @@ public final class ComparisonFragment extends BaseFragment
     format.setMinimumFractionDigits(2);
     format.setMaximumFractionDigits(8);
 
+    Resources resources = getResources();
     StringBuilder finalSummary = new StringBuilder();
     UnitEntryWithIndex best = unitEntries.get(0);
     if (best.getUnitEntry().getQuantity() == 1) {
@@ -360,20 +363,20 @@ public final class ComparisonFragment extends BaseFragment
               best.getIndex() + 1,
               format.format(best.getUnitEntry().getCost()),
               best.getUnitEntry().getSizeString(),
-              best.getUnitEntry().getUnit().getSymbol(),
+              best.getUnitEntry().getUnit().getSymbol(resources),
               format.format(best.getUnitEntry().pricePer(size, unit)),
               compareUnit.getSize(),
-              unit.getSymbol()));
+              unit.getSymbol(resources)));
     } else {
       finalSummary.append(getResources().getString(R.string.main_final_summary,
               best.getIndex() + 1,
               format.format(best.getUnitEntry().getCost()),
               best.getUnitEntry().getQuantityString(),
               best.getUnitEntry().getSizeString(),
-              best.getUnitEntry().getUnit().getSymbol(),
+              best.getUnitEntry().getUnit().getSymbol(resources),
               format.format(best.getUnitEntry().pricePer(size, unit)),
               compareUnit.getSize(),
-              unit.getSymbol()));
+              unit.getSymbol(resources)));
     }
 
     finalSummary.append("\n\n");
@@ -384,20 +387,20 @@ public final class ComparisonFragment extends BaseFragment
                 entryWithIndex.getIndex() + 1,
                 format.format(entryWithIndex.getUnitEntry().getCost()),
                 entryWithIndex.getUnitEntry().getSizeString(),
-                entryWithIndex.getUnitEntry().getUnit().getSymbol(),
+                entryWithIndex.getUnitEntry().getUnit().getSymbol(resources),
                 format.format(entryWithIndex.getUnitEntry().pricePer(size, unit)),
                 compareUnit.getSize(),
-                unit.getSymbol()));
+                unit.getSymbol(resources)));
       } else {
         finalSummary.append(getResources().getString(R.string.single_row_summary,
                 entryWithIndex.getIndex() + 1,
                 format.format(entryWithIndex.getUnitEntry().getCost()),
                 entryWithIndex.getUnitEntry().getQuantityString(),
                 entryWithIndex.getUnitEntry().getSizeString(),
-                entryWithIndex.getUnitEntry().getUnit().getSymbol(),
+                entryWithIndex.getUnitEntry().getUnit().getSymbol(resources),
                 format.format(entryWithIndex.getUnitEntry().pricePer(size, unit)),
                 compareUnit.getSize(),
-                unit.getSymbol()));
+                unit.getSymbol(resources)));
       }
 
       finalSummary.append("\n");

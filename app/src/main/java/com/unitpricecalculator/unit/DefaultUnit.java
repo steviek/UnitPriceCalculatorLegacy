@@ -1,9 +1,8 @@
 package com.unitpricecalculator.unit;
 
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.R;
 
 public enum DefaultUnit implements Unit {
@@ -57,8 +56,8 @@ public enum DefaultUnit implements Unit {
     }
 
     @Override
-    public String getSymbol() {
-        return MyApplication.getInstance().getResources().getString(symbol);
+    public String getSymbol(Resources resources) {
+        return resources.getString(symbol);
     }
 
     @Override
