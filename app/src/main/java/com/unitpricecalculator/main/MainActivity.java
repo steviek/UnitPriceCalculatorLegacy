@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.unitpricecalculator.BaseActivity;
-import com.unitpricecalculator.MyApplication;
+import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.SavedComparison;

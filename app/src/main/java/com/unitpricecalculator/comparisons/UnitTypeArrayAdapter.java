@@ -1,6 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.res.Resources;
 import android.widget.ArrayAdapter;
 
@@ -11,21 +11,26 @@ import com.unitpricecalculator.unit.Units;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 final class UnitTypeArrayAdapter extends ArrayAdapter<String> {
 
-    UnitTypeArrayAdapter(Context context) {
-        super(context, R.layout.unit_type_spinner_dropdown_item, getValues(context.getResources()));
+    @Inject
+    UnitTypeArrayAdapter(Activity activity, Units units) {
+        super(activity,
+                R.layout.unit_type_spinner_dropdown_item,
+                getValues(units, activity.getResources()));
     }
 
-    private static List<String> getValues(Resources resources) {
+    private static List<String> getValues(Units units, Resources resources) {
         List<String> values = new ArrayList<>();
         for (UnitType unitType : UnitType.values()) {
-            if (unitType == Units.getCurrentUnitType()) {
+            if (unitType == units.getCurrentUnitType()) {
                 values.add(resources.getString(unitType.getName()));
             }
         }
         for (UnitType unitType : UnitType.values()) {
-            if (unitType != Units.getCurrentUnitType()) {
+            if (unitType != units.getCurrentUnitType()) {
                 values.add(resources.getString(unitType.getName()));
             }
         }

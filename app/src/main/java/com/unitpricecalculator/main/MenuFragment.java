@@ -6,11 +6,19 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.inject.FragmentScoped;
+import dagger.android.ContributesAndroidInjector;
 
 public final class MenuFragment extends BaseFragment {
+
+    @dagger.Module
+    public interface Module {
+        @ContributesAndroidInjector
+        @FragmentScoped
+        MenuFragment contributeAndroidInjector();
+    }
 
     private Callback callback;
 

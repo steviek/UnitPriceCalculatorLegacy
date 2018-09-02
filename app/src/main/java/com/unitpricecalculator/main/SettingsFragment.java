@@ -10,11 +10,26 @@ import android.widget.TextView;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.currency.Currencies;
+import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.unit.System;
+import com.unitpricecalculator.unit.Systems;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.view.DragLinearLayout;
+import dagger.android.ContributesAndroidInjector;
+import javax.inject.Inject;
 
 public class SettingsFragment extends BaseFragment {
+
+  @dagger.Module
+  public interface Module {
+    @ContributesAndroidInjector
+    @FragmentScoped
+    SettingsFragment contributeSettingsFragmentInjector();
+  }
+
+  @Inject Units units;
+  @Inject Systems systems;
+  @Inject Currencies currencies;
 
     @Nullable
     @Override
@@ -23,14 +38,14 @@ public class SettingsFragment extends BaseFragment {
 
         final TextView changeCurrencySubtitle = view.findViewById(R.id.change_currency_subtitle);
         view.findViewById(R.id.change_currency_parent).setOnClickListener(
-                v -> Currencies.showChangeCurrencyDialog(
+                v -> currencies.showChangeCurrencyDialog(
                         v.getContext(),
                         currency -> changeCurrencySubtitle.setText(currency.getSymbol())));
-        changeCurrencySubtitle.setText(Units.getCurrency().getSymbol());
+        changeCurrencySubtitle.setText(units.getCurrency().getSymbol());
 
         DragLinearLayout dragLinearLayout = view.findViewById(R.id.drag_linear_layout);
 
-        for (System system : System.getPreferredOrder()) {
+        for (System system : systems.getPreferredOrder()) {
             View rowView = inflater.inflate(R.layout.list_draggable, null);
             ((TextView) rowView.findViewById(R.id.text))
                     .setText(getResources().getString(system.getName()));
@@ -40,11 +55,11 @@ public class SettingsFragment extends BaseFragment {
 
         dragLinearLayout.setOnViewSwapListener(
                 (firstView, firstPosition, secondView, secondPosition) -> {
-                    System[] order = System.getPreferredOrder();
+                    System[] order = systems.getPreferredOrder();
                     System temp = order[firstPosition];
                     order[firstPosition] = order[secondPosition];
                     order[secondPosition] = temp;
-                    System.setPreferredOrder(order);
+                    systems.setPreferredOrder(order);
                 });
 
         return view;

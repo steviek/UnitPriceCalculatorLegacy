@@ -14,18 +14,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
-import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
@@ -37,17 +37,33 @@ import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
-
+import dagger.android.ContributesAndroidInjector;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 public final class ComparisonFragment extends BaseFragment
         implements UnitEntryView.OnUnitEntryChangedListener, SavesState<SavedComparison> {
 
+  @dagger.Module
+  public interface Module {
+    @ContributesAndroidInjector
+    @FragmentScoped
+    ComparisonFragment contributeComparisonFragmentInjector();
+  }
+
+  @Inject Prefs prefs;
+  @Inject Units units;
+  @Inject Provider<UnitTypeArrayAdapter> unitTypeArrayAdapterProvider;
+  @Inject Currencies currencies;
+  @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
+
+  private UnitTypeArrayAdapter unitTypeArrayAdapter;
   private LinearLayout mRowContainer;
   private View mAddRowButton;
   private TextView mRemoveRowButton;
@@ -56,7 +72,6 @@ public final class ComparisonFragment extends BaseFragment
   private TextView mSummaryText;
   private AlertDialog mAlertDialog;
   private Spinner mUnitTypeSpinner;
-  private UnitTypeArrayAdapter mUnitTypeArrayAdapter;
   private TextView mPriceHeader;
 
   private List<UnitEntryView> mEntryViews = new ArrayList<>();
@@ -69,21 +84,21 @@ public final class ComparisonFragment extends BaseFragment
     View view = inflater.inflate(R.layout.fragment_main, container, false);
 
     mPriceHeader = view.findViewById(R.id.price_header);
-    mPriceHeader.setText(Units.getCurrency().getSymbol());
+    mPriceHeader.setText(units.getCurrency().getSymbol());
     mPriceHeader.setOnClickListener(
-            v -> Currencies.showChangeCurrencyDialog(
+            v -> currencies.showChangeCurrencyDialog(
                     getContext(), currency -> mPriceHeader.setText(currency.getSymbol())));
 
     mUnitTypeSpinner = view.findViewById(R.id.unit_type_spinner);
-    mUnitTypeArrayAdapter = new UnitTypeArrayAdapter(getContext());
-    mUnitTypeSpinner.setAdapter(mUnitTypeArrayAdapter);
+    unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get();
+    mUnitTypeSpinner.setAdapter(unitTypeArrayAdapter);
     mUnitTypeSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Logger.d("onItemSelected: %s", parent.getItemAtPosition(position));
         UnitType unitType = UnitType.fromName((String) parent.getItemAtPosition(position),
             getResources());
-        if (Units.getCurrentUnitType() != unitType) {
+        if (units.getCurrentUnitType() != unitType) {
           setUnitType((Spinner) parent, unitType);
         }
       }
@@ -134,7 +149,7 @@ public final class ComparisonFragment extends BaseFragment
 
     mFinalSpinner = view.findViewById(R.id.final_spinner);
     if (mFinalSpinner.getAdapter() == null) {
-      mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+      mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
       mFinalSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -150,9 +165,10 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   private void setUnitType(Spinner parent, UnitType unitType) {
-    Units.setCurrentUnitType(unitType);
-    parent.setAdapter(new UnitTypeArrayAdapter(getContext()));
-    mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), unitType));
+    units.setCurrentUnitType(unitType);
+    unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get();
+    parent.setAdapter(unitTypeArrayAdapter);
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(unitType));
     CompareUnitChangedEvent event = getCompareUnit();
     for (UnitEntryView entryView : mEntryViews) {
       entryView.onCompareUnitChanged(event);
@@ -186,8 +202,9 @@ public final class ComparisonFragment extends BaseFragment
     for (UnitEntryView entryView : mEntryViews) {
       list.add(entryView.saveState());
     }
-    UnitType unitType = UnitType.fromName(mUnitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
-        MyApplication.getInstance().getResources());
+      UnitType unitType = UnitType.fromName(
+              unitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
+              MyApplication.getInstance().getResources());
     String finalSize = mFinalEditText.getText().toString();
     Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
@@ -215,7 +232,7 @@ public final class ComparisonFragment extends BaseFragment
     }
     mFinalEditText.setText(comparison.getFinalQuantity());
     Unit unit = comparison.getFinalUnit();
-    UnitArrayAdapter adapter = UnitArrayAdapter.of(getContext(), unit);
+    UnitArrayAdapter adapter = unitArrayAdapterFactory.create(unit);
     mFinalSpinner.setAdapter(adapter);
     mFinalSpinner.setSelection(0);
     adapter.notifyDataSetChanged();
@@ -228,7 +245,7 @@ public final class ComparisonFragment extends BaseFragment
       entryView.clear();
     }
     mFinalEditText.setText("");
-    mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
     mSummaryText.setText("");
   }
 
@@ -245,7 +262,7 @@ public final class ComparisonFragment extends BaseFragment
       alert.setPositiveButton(android.R.string.ok, (dialog, which) -> {
         String savedName = name.getText().toString();
         SavedComparison comparison = saveState(savedName);
-        Prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
+        prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
       });
       alert.setNegativeButton(android.R.string.cancel, null);
       mAlertDialog = alert.create();
@@ -276,12 +293,12 @@ public final class ComparisonFragment extends BaseFragment
 
   @Subscribe
   public void onUnitTypeChanged(UnitTypeChangedEvent event) {
-    mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), event.getUnitType()));
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(event.getUnitType()));
   }
 
   @Subscribe
   public void onSystemChanged(SystemChangedEvent event) {
-    mFinalSpinner.setAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
   }
 
   @Override
@@ -332,7 +349,7 @@ public final class ComparisonFragment extends BaseFragment
     }
 
     NumberFormat format = NumberFormat.getCurrencyInstance();
-    format.setCurrency(Units.getCurrency());
+    format.setCurrency(units.getCurrency());
     format.setMinimumFractionDigits(2);
     format.setMaximumFractionDigits(8);
 

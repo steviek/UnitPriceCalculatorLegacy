@@ -4,7 +4,6 @@ import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unitpricecalculator.util.prefs.Prefs;
 
 public final class CustomUnit implements Unit {
 
@@ -64,12 +63,21 @@ public final class CustomUnit implements Unit {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(key);
+        dest.writeString(symbol);
+        dest.writeString(system.name());
+        dest.writeString(unitType.name());
+        dest.writeDouble(factor);
     }
 
     public static final Creator<CustomUnit> CREATOR = new Creator<CustomUnit>() {
         @Override
         public CustomUnit createFromParcel(Parcel source) {
-            return Prefs.getObject(CustomUnit.class, source.readString());
+            String key = source.readString();
+            String symbol = source.readString();
+            System system = System.valueOf(source.readString());
+            UnitType unitType = UnitType.valueOf(source.readString());
+            double factor = source.readDouble();
+            return new CustomUnit(key, symbol, system, unitType, factor);
         }
 
         @Override

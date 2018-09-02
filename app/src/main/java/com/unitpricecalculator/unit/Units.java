@@ -1,7 +1,7 @@
 package com.unitpricecalculator.unit;
 
 import com.google.common.collect.ImmutableList;
-import com.unitpricecalculator.MyApplication;
+import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
@@ -11,16 +11,26 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
+
 /**
  * Collection of utility functions for {@link Unit}.
  */
+@Reusable
 public final class Units {
 
-    private Units() {}
+    private final Prefs prefs;
+
+    @Inject
+    Units(Prefs prefs) {
+        this.prefs = prefs;
+    }
 
     private static Map<UnitType, ImmutableList<Unit>> unitMap = new HashMap<>();
 
-    public static ImmutableList<Unit> getUnitsForType(UnitType unitType) {
+    public ImmutableList<Unit> getUnitsForType(UnitType unitType) {
         if (unitMap.get(unitType) == null) {
             ImmutableList.Builder<Unit> list = ImmutableList.builder();
             for (Unit unit : DefaultUnit.values()) {
@@ -33,23 +43,23 @@ public final class Units {
         return unitMap.get(unitType);
     }
 
-    public static UnitType getCurrentUnitType() {
-        return UnitType.valueOf(Prefs.getString(Keys.UNIT_TYPE, UnitType.WEIGHT.name()));
+    public UnitType getCurrentUnitType() {
+        return UnitType.valueOf(prefs.getString(Keys.UNIT_TYPE, UnitType.WEIGHT.name()));
     }
 
-    public static void setCurrentUnitType(UnitType unitType) {
-        Prefs.putString(Keys.UNIT_TYPE, unitType.name());
+    public void setCurrentUnitType(UnitType unitType) {
+        prefs.putString(Keys.UNIT_TYPE, unitType.name());
         MyApplication.getInstance().getBus().post(new UnitTypeChangedEvent(unitType));
     }
 
-    public static Currency getCurrency() {
-        if (Prefs.getString("currency") != null) {
-            return Currency.getInstance(Prefs.getString("currency"));
+    public Currency getCurrency() {
+        if (prefs.getString("currency") != null) {
+            return Currency.getInstance(prefs.getString("currency"));
         }
         return Currency.getInstance(Locale.getDefault());
     }
 
-    public static void setCurrency(Currency currency) {
-        Prefs.putString("currency", currency.getCurrencyCode());
+    public void setCurrency(Currency currency) {
+        prefs.putString("currency", currency.getCurrencyCode());
     }
 }

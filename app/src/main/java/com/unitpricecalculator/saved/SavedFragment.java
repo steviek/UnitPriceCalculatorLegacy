@@ -16,18 +16,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.google.common.base.Strings;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.SavedComparison;
+import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
-
+import dagger.android.ContributesAndroidInjector;
 import java.util.Collections;
 import java.util.List;
+import javax.inject.Inject;
 
 public class SavedFragment extends BaseFragment {
+
+    @dagger.Module
+    public interface Module {
+        @ContributesAndroidInjector
+        @FragmentScoped
+        SavedFragment contributeAndroidInjector();
+    }
+
+    @Inject Prefs prefs;
 
     private ActionMode actionMode;
     private Callback callback;
@@ -74,7 +84,7 @@ public class SavedFragment extends BaseFragment {
                                 savedComparisons.add(renamed);
                                 Collections.sort(savedComparisons);
                                 adapter.notifyDataSetChanged();
-                                Prefs.putList(Keys.SAVED_STATES, savedComparisons);
+                                prefs.putList(Keys.SAVED_STATES, savedComparisons);
                             }
                             if (actionMode != null) {
                                 actionMode.finish();
@@ -97,7 +107,7 @@ public class SavedFragment extends BaseFragment {
                 case R.id.action_delete:
                     SavedComparison comparison = adapter.getItem(selectedPosition);
                     savedComparisons.remove(comparison);
-                    Prefs.putList(Keys.SAVED_STATES, savedComparisons);
+                    prefs.putList(Keys.SAVED_STATES, savedComparisons);
                     adapter.notifyDataSetChanged();
                     mode.finish();
                     return true;
@@ -136,7 +146,7 @@ public class SavedFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        savedComparisons = Prefs.getList(SavedComparison.class, Keys.SAVED_STATES);
+        savedComparisons = prefs.getList(SavedComparison.class, Keys.SAVED_STATES);
         Collections.sort(savedComparisons);
 
         ListView listView = view.findViewById(R.id.list_view);

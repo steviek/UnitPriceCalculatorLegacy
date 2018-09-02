@@ -1,15 +1,11 @@
 package com.unitpricecalculator.util.prefs;
 
-import com.google.common.base.Throwables;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.google.common.base.Throwables;
+import com.unitpricecalculator.inject.ApplicationContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,152 +13,49 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
+
+@Reusable
 public final class Prefs {
 
-    private static ObjectMapper objectMapper;
-    private static SharedPreferences prefs;
+    private final ObjectMapper objectMapper;
+    private final SharedPreferences prefs;
 
-    public static void initialize(Context context, ObjectMapper objectMapper) {
-        prefs = context.getSharedPreferences(context.getPackageName() + "_prefs",
+    @Inject
+    Prefs(@ApplicationContext Context context, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        this.prefs = context.getSharedPreferences(context.getPackageName() + "_prefs",
                 Context.MODE_MULTI_PROCESS);
-        Prefs.objectMapper = objectMapper;
     }
 
-    private static void checkInit() {
-        if (prefs == null) {
-            throw new IllegalStateException("Prefs not initialized!");
-        }
-    }
-
-    private static void apply(SharedPreferences.Editor editor) {
-        if (Build.VERSION.SDK_INT >= 9) {
-            editor.apply();
-        } else {
-            editor.commit();
-        }
-    }
-
-    public static String getString(String key) {
+    public String getString(String key) {
         return getString(key, null);
     }
 
-    public static String getString(String key, String fallback) {
-        checkInit();
+    public String getString(String key, String fallback) {
         return prefs.getString(key, fallback);
     }
 
-    public static void putString(String key, String string) {
-        checkInit();
-        apply(prefs.edit().putString(key, string));
+    public void putString(String key, String string) {
+        prefs.edit().putString(key, string).apply();
     }
 
-    public static int getInt(String key) {
-        return getInt(key, 0);
+
+    public Set<String> getStringSet(String key, Set<String> fallback) {
+        return prefs.getStringSet(key, fallback);
     }
 
-    public static int getInt(String key, int fallback) {
-        checkInit();
-        return prefs.getInt(key, fallback);
+    public void putStringSet(String key, Set<String> set) {
+        prefs.edit().putStringSet(key, set).apply();
     }
 
-    public static void putInt(String key, int i) {
-        checkInit();
-        apply(prefs.edit().putInt(key, i));
-    }
-
-    public static float getFloat(String key) {
-        return getFloat(key, 0f);
-    }
-
-    public static float getFloat(String key, float fallback) {
-        checkInit();
-        return prefs.getFloat(key, fallback);
-    }
-
-    public static void putFloat(String key, float f) {
-        checkInit();
-        apply(prefs.edit().putFloat(key, f));
-    }
-
-    public static long getLong(String key) {
-        return getLong(key, 0);
-    }
-
-    public static long getLong(String key, long fallback) {
-        checkInit();
-        return prefs.getLong(key, fallback);
-    }
-
-    public static void putLong(String key, long l) {
-        checkInit();
-        apply(prefs.edit().putLong(key, l));
-    }
-
-    public static boolean getBoolean(String key) {
-        return getBoolean(key, false);
-    }
-
-    public static boolean getBoolean(String key, boolean fallback) {
-        checkInit();
-        return prefs.getBoolean(key, fallback);
-    }
-
-    public static void putBoolean(String key, boolean b) {
-        checkInit();
-        apply(prefs.edit().putBoolean(key, b));
-    }
-
-    public static Set<String> getStringSet(String key) {
-        return getStringSet(key, new HashSet<String>());
-    }
-
-    public static Set<String> getStringSet(String key, Set<String> fallback) {
-        checkInit();
-        if (Build.VERSION.SDK_INT >= 11) {
-            return prefs.getStringSet(key, fallback);
-        } else {
-            String serializedSet = prefs.getString(key, null);
-            if (serializedSet != null) {
-                try {
-                    JSONArray array = new JSONArray(serializedSet);
-                    Set<String> set = new HashSet<>();
-                    int len = array.length();
-                    for (int i = 0; i < len; i++) {
-                        set.add(array.getString(i));
-                    }
-                    return set;
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                return fallback;
-            }
-        }
-    }
-
-    public static void putStringSet(String key, Set<String> set) {
-        checkInit();
-        if (Build.VERSION.SDK_INT >= 11) {
-            prefs.edit().putStringSet(key, set).apply();
-        } else {
-            if (set != null) {
-                JSONArray array = new JSONArray();
-                for (String s : set) {
-                    array.put(s);
-                }
-                apply(prefs.edit().putString(key, array.toString()));
-            } else {
-                apply(prefs.edit().putString(key, null));
-            }
-        }
-    }
-
-    public static <T> List<T> getList(Class<T> clazz, String key) {
+    public <T> List<T> getList(Class<T> clazz, String key) {
         return getList(clazz, key, new ArrayList<T>());
     }
 
-    public static <T> List<T> getList(Class<T> clazz, String key, List<T> fallback) {
-        checkInit();
+    public <T> List<T> getList(Class<T> clazz, String key, List<T> fallback) {
         Set<String> set = getStringSet(key, null);
         if (set == null) {
             return fallback;
@@ -179,31 +72,30 @@ public final class Prefs {
         }
     }
 
-    public static <T> void putList(String key, List<T> list) {
+    public <T> void putList(String key, List<T> list) {
         Set<String> stringSet = new HashSet<>();
         try {
             for (T t : list) {
                 stringSet.add(objectMapper.writeValueAsString(t));
             }
-            Prefs.putStringSet(key, stringSet);
+            putStringSet(key, stringSet);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    public static <T> void addToList(Class<T> clazz, String key, T object) {
+    public <T> void addToList(Class<T> clazz, String key, T object) {
         List<T> list = getList(clazz, key);
         list.add(object);
         putList(key, list);
     }
 
-    public static <T> T getObject(Class<T> clazz, String key) {
+    public <T> T getObject(Class<T> clazz, String key) {
         return getObject(clazz, key, null);
     }
 
-    public static <T> T getObject(Class<T> clazz, String key, T fallback) {
-        checkInit();
-        String serialized = Prefs.getString(key);
+    public <T> T getObject(Class<T> clazz, String key, T fallback) {
+        String serialized = getString(key);
         if (serialized != null) {
             try {
                 return objectMapper.readValue(serialized, clazz);
@@ -215,8 +107,7 @@ public final class Prefs {
         }
     }
 
-    public static void putObject(String key, Object object) {
-        checkInit();
+    public void putObject(String key, Object object) {
         try {
             prefs.edit().putString(key, objectMapper.writeValueAsString(object)).apply();
         } catch (Exception e) {

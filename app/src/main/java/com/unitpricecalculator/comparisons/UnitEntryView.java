@@ -14,15 +14,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.squareup.otto.Subscribe;
-import com.unitpricecalculator.MyApplication;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.inject.ViewInjection;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
@@ -31,10 +31,13 @@ import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
-
 import java.text.NumberFormat;
+import javax.inject.Inject;
 
 public final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
+
+    @Inject Units units;
+    @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
 
     private TextView mRowNumberTextView;
     private EditText mCostEditText;
@@ -61,12 +64,14 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     public UnitEntryView(Context context) {
         super(context);
+        ViewInjection.inject(this);
         LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
         onFinishInflate();
     }
 
     public UnitEntryView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        ViewInjection.inject(this);
         LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
     }
 
@@ -85,7 +90,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
         mSizeEditText.setText(entryRow.getSize());
         mQuantityEditText.setText(entryRow.getQuantity());
         mUnit = entryRow.getUnit();
-        refreshAdapter(UnitArrayAdapter.of(getContext(), mUnit));
+        refreshAdapter(unitArrayAdapterFactory.create(mUnit));
         syncViews();
     }
 
@@ -95,12 +100,12 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     @Subscribe
     public void onUnitTypeChanged(UnitTypeChangedEvent event) {
-        refreshAdapter(UnitArrayAdapter.of(getContext(), event.getUnitType()));
+        refreshAdapter(unitArrayAdapterFactory.create(event.getUnitType()));
     }
 
     @Subscribe
     public void onSystemOrderChanged(SystemChangedEvent event) {
-        refreshAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+        refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
     }
 
     @Subscribe
@@ -191,14 +196,14 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
         mInflated = true;
 
         if (!this.isInEditMode()) {
-            refreshAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType()));
+            refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
             mUnitSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Unit unit = ((UnitArrayAdapter) parent.getAdapter()).getUnit(position);
                     if (unit != mUnit) {
                         mUnit = unit;
-                        mUnitSpinner.setAdapter(UnitArrayAdapter.of(parent.getContext(), mUnit));
+                        mUnitSpinner.setAdapter(unitArrayAdapterFactory.create(mUnit));
                         onUnitChanged();
                         syncViews();
                     }
@@ -240,7 +245,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
             }
             double pricePer = unitEntry.get().pricePer(baseSize, baseUnit);
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
-            numberFormat.setCurrency(Units.getCurrency());
+            numberFormat.setCurrency(units.getCurrency());
             numberFormat.setMinimumFractionDigits(2);
             numberFormat.setMaximumFractionDigits(8);
             mSummaryTextView.setText(getResources().getString(R.string.text_summary,
@@ -266,7 +271,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
         mCostEditText.setText("");
         mQuantityEditText.setText("");
         mSizeEditText.setText("");
-        refreshAdapter(UnitArrayAdapter.of(getContext(), Units.getCurrentUnitType().getBase()));
+        refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType().getBase()));
         syncViews();
     }
 

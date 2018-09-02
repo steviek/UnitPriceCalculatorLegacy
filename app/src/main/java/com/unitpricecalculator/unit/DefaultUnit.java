@@ -3,7 +3,7 @@ package com.unitpricecalculator.unit;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.unitpricecalculator.MyApplication;
+import com.unitpricecalculator.application.MyApplication;
 import com.unitpricecalculator.R;
 
 public enum DefaultUnit implements Unit {
