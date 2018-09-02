@@ -1,12 +1,9 @@
 package com.unitpricecalculator.currency;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.unit.Units;
-
 import dagger.Reusable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +25,7 @@ public final class Currencies {
     void onCurrencySelected(Currency currency);
   }
 
-  public void showChangeCurrencyDialog(Context context, @Nullable final CurrencyDialogCallback callback) {
+  public void showChangeCurrencyDialog(Context context, CurrencyDialogCallback callback) {
     Currency currentCurrency = units.getCurrency();
     final List<Currency> currencies = new ArrayList<>(Currency.getAvailableCurrencies());
     Collections.sort(currencies, (c1, c2) -> c1.getCurrencyCode().compareTo(c2.getCurrencyCode()));

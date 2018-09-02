@@ -1,6 +1,5 @@
 package com.unitpricecalculator.saved;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,9 +37,9 @@ public class SavedFragment extends BaseFragment {
     }
 
     @Inject Prefs prefs;
+    @Inject Callback callback;
 
     private ActionMode actionMode;
-    private Callback callback;
     private int selectedPosition;
 
     private SavedComparisonsArrayAdapter adapter;
@@ -129,12 +128,6 @@ public class SavedFragment extends BaseFragment {
             }
         }
     };
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        callback = castOrThrow(Callback.class, context);
-    }
 
     @Nullable
     @Override

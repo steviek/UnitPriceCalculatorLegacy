@@ -12,14 +12,4 @@ public abstract class BaseFragment extends Fragment {
         AndroidSupportInjection.inject(this);
         super.onAttach(context);
     }
-
-    protected <T> T castOrThrow(Class<T> clazz, Object object) {
-        try {
-            return clazz.cast(object);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(
-                    object.getClass() + " must implement " + clazz + " interface");
-        }
-    }
-
 }

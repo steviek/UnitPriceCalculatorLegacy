@@ -28,5 +28,11 @@ public interface MainActivityModule {
 
         @Binds
         Activity bindActivity(MainActivity activity);
+
+        @Binds
+        SavedFragment.Callback bindSavedFragmentCallback(MainActivity activity);
+
+        @Binds
+        MenuFragment.Callback bindMenuFragmentCallback(MainActivity activity);
     }
 }

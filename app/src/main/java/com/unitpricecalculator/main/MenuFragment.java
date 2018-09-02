@@ -1,6 +1,5 @@
 package com.unitpricecalculator.main;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,6 +9,7 @@ import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.inject.FragmentScoped;
 import dagger.android.ContributesAndroidInjector;
+import javax.inject.Inject;
 
 public final class MenuFragment extends BaseFragment {
 
@@ -20,13 +20,7 @@ public final class MenuFragment extends BaseFragment {
         MenuFragment contributeAndroidInjector();
     }
 
-    private Callback callback;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        callback = castOrThrow(Callback.class, context);
-    }
+    @Inject Callback callback;
 
     @Nullable
     @Override
