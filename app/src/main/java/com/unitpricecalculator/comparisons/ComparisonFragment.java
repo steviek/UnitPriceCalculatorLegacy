@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -257,6 +258,7 @@ public final class ComparisonFragment extends BaseFragment
       final EditText name = view.findViewById(R.id.comparison_label);
       name.setInputType(InputType.TYPE_CLASS_TEXT);
       name.setHint(R.string.enter_name);
+      name.requestFocus();
 
       AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
       alert.setMessage(R.string.give_name);
@@ -268,6 +270,7 @@ public final class ComparisonFragment extends BaseFragment
       });
       alert.setNegativeButton(android.R.string.cancel, null);
       mAlertDialog = alert.create();
+      mAlertDialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     if (mAlertDialog.isShowing()) {
