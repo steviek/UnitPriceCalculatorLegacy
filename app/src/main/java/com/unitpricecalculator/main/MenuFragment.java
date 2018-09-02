@@ -1,7 +1,7 @@
 package com.unitpricecalculator.main;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,28 +22,25 @@ public final class MenuFragment extends BaseFragment {
 
     @Inject Callback callback;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_menu, container, false);
+    public View onCreateView(
+        LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view.findViewById(R.id.btn_new)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.NEW));
-        view.findViewById(R.id.btn_saved)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.SAVED));
-        view.findViewById(R.id.btn_feedback)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.FEEDBACK));
-        view.findViewById(R.id.btn_rate)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.RATE));
-        view.findViewById(R.id.btn_share)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.SHARE));
-        view.findViewById(R.id.btn_settings)
-                .setOnClickListener(new MenuEventClickListener(MenuEvent.SETTINGS));
+        View view = inflater.inflate(R.layout.fragment_menu, container, /* attachToRoot= */ false);
+        bindView(view, R.id.btn_new, MenuEvent.NEW);
+        bindView(view, R.id.btn_saved, MenuEvent.SAVED);
+        bindView(view, R.id.btn_feedback, MenuEvent.FEEDBACK);
+        bindView(view, R.id.btn_rate, MenuEvent.RATE);
+        bindView(view, R.id.btn_share, MenuEvent.SHARE);
+        bindView(view, R.id.btn_settings, MenuEvent.SETTINGS);
 
         view.findViewById(R.id.btn_share).setVisibility(View.GONE);
 
         return view;
+    }
+
+    private void bindView(View view, @IdRes int buttonId, MenuEvent menuEvent) {
+        view.findViewById(buttonId).setOnClickListener(v -> callback.onMenuEvent(menuEvent));
     }
 
     public enum MenuEvent {
@@ -57,19 +54,5 @@ public final class MenuFragment extends BaseFragment {
 
     public interface Callback {
         void onMenuEvent(MenuEvent event);
-    }
-
-    private class MenuEventClickListener implements View.OnClickListener {
-
-        private final MenuEvent menuEvent;
-
-        public MenuEventClickListener(MenuEvent menuEvent) {
-            this.menuEvent = menuEvent;
-        }
-
-        @Override
-        public void onClick(View v) {
-            callback.onMenuEvent(menuEvent);
-        }
     }
 }
