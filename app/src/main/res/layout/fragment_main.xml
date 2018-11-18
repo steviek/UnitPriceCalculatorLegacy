@@ -85,21 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/container_header"
             android:layout_centerHorizontal="true"
-            android:orientation="vertical">
-
-            <com.unitpricecalculator.comparisons.UnitEntryView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp" />
-
-            <com.unitpricecalculator.comparisons.UnitEntryView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp" />
-
-        </LinearLayout>
+            android:orientation="vertical"/>
 
         <RelativeLayout
             android:id="@+id/button_container"

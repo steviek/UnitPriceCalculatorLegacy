@@ -23,7 +23,6 @@
   <string name="gallon_symbol">gal</string>
   <string name="length">Longitud</string>
   <string name="litre_symbol">l</string>
-  <string name="main_final_summary">La opción más économica es fila %1$d\n%2$s por %3$s x %4$s %5$s = %6$s por %7$s %8$s</string>
   <string name="metre_symbol">m</string>
   <string name="metric">Métrico</string>
   <string name="milligram_symbol">mg</string>
@@ -51,7 +50,6 @@
   <string name="size">Tamaño</string>
   <string name="tablespoon_symbol">tbsp</string>
   <string name="teaspoon_symbol">tsp</string>
-  <string name="text_summary">%1$s por %2$s %3$s</string>
   <string name="unit">Unidad</string>
   <string name="unit_symbol">unidad</string>
   <string name="unit_type">Tipo de unidad:</string>
@@ -67,4 +65,9 @@
   <string name="yard_symbol">yarda</string>
   <string name="change_currency_symbol">Cambiar el símbolo monetario</string>
   <string name="dozen_symbol">docena</string>
+
+  <string name="main_final_summary">La opción más économica es fila %1$d</string>
+  <string name="m_per_u">%1$s por %2$s</string>
+  <string name="m_per_s_u">%1$s por %2$s %3$s</string>
+  <string name="m_per_qxs_u">%1$s por %2$s x %3$s %4$s</string>
 </resources>

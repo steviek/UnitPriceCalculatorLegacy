@@ -3,18 +3,17 @@ package com.unitpricecalculator.comparisons;
 import android.content.Context;
 import android.util.Pair;
 import android.widget.ArrayAdapter;
-
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.unitpricecalculator.R;
 import com.unitpricecalculator.inject.ApplicationContext;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Systems;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,7 +67,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
 
     private UnitArrayAdapter(
             Context context, Pair<ImmutableList<String>, ImmutableList<Unit>> symbolsAndUnits) {
-        super(context, android.R.layout.simple_dropdown_item_1line, symbolsAndUnits.first);
+        super(context, R.layout.unit_type_spinner_dropdown_item, symbolsAndUnits.first);
         this.units = Preconditions.checkNotNull(symbolsAndUnits.second);
     }
 

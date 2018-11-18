@@ -10,7 +10,7 @@ public final class ApplicationModule {
 
     private final MyApplication application;
 
-    public ApplicationModule(MyApplication application) {
+    ApplicationModule(MyApplication application) {
         this.application = application;
     }
 

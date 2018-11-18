@@ -2,6 +2,7 @@ package com.unitpricecalculator.util.logger;
 
 import android.util.Log;
 
+import com.unitpricecalculator.BuildConfig;
 import java.util.Locale;
 
 /**
@@ -9,55 +10,47 @@ import java.util.Locale;
  */
 public final class Logger {
 
-    private static String tag;
-    private static boolean shouldLog;
-
-    public static void initialize(String tag, boolean shouldLog) {
-        Logger.tag = tag;
-        Logger.shouldLog = shouldLog;
-    }
+    private static final String TAG = "UnitPriceCalculator";
+    private static final boolean SHOULD_LOG = BuildConfig.DEBUG;
 
     public static void d(String format, Object... args) {
         if (shouldLog()) {
-            Log.d(tag, String.format(Locale.getDefault(), format, args));
+            Log.d(TAG, String.format(Locale.getDefault(), format, args));
         }
     }
 
     public static void e(String format, Object... args) {
         if (shouldLog()) {
-            Log.e(tag, String.format(Locale.getDefault(), format, args));
+            Log.e(TAG, String.format(Locale.getDefault(), format, args));
         }
     }
 
     public static void e(Throwable e) {
         if (shouldLog()) {
-            Log.e(tag, e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
     public static void i(String format, Object... args) {
         if (shouldLog()) {
-            Log.i(tag, String.format(Locale.getDefault(), format, args));
+            Log.i(TAG, String.format(Locale.getDefault(), format, args));
         }
     }
 
     public static void v(String format, Object... args) {
         if (shouldLog()) {
-            Log.v(tag, String.format(Locale.getDefault(), format, args));
+            Log.v(TAG, String.format(Locale.getDefault(), format, args));
         }
     }
 
     public static void w(String format, Object... args) {
         if (shouldLog()) {
-            Log.w(tag, String.format(Locale.getDefault(), format, args));
+            Log.w(TAG, String.format(Locale.getDefault(), format, args));
         }
     }
 
     private static boolean shouldLog() {
-        if (tag == null) {
-            throw new IllegalStateException("Logger not initialized!");
-        }
-        return shouldLog;
+        return SHOULD_LOG;
     }
 
 }

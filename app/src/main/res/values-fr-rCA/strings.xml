@@ -8,5 +8,8 @@
     <string name="inch_symbol">po</string>
     <string name="foot_symbol">pi</string>
     <string name="yard_symbol">vg</string>
+    <string name="square_yard_symbol">vg\u00B2</string>
+    <string name="square_inch_symbol">po\u00B2</string>
+    <string name="square_foot_symbol">pi\u00B2</string>
 
 </resources>

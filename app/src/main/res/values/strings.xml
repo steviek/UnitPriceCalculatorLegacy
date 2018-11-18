@@ -18,16 +18,17 @@
     <string name="change_currency_symbol">Change Currency</string>
 
     <string name="show_price_per">Show price per:</string>
-    <string name="text_summary">%1$s per %2$s %3$s</string>
-    <string name="main_final_summary">The most economical option is row %1$d\n%2$s per %3$s x %4$s %5$s = %6$s per %7$s %8$s</string>
-    <string name="main_final_summary_no_number">The most economical option is row %1$d\n%2$s per %3$s %4$s = %5$s per %6$s %7$s</string>
-    <string name="single_row_summary">%1$d: %2$s per %3$s x %4$s %5$s = %6$s per %7$s %8$s</string>
-    <string name="single_row_summary_no_number">%1$d: %2$s per %3$s %4$s = %5$s per %6$s %7$s</string>
+    <string name="main_final_summary">The most economical option is row %1$d</string>
+    <string name="m_per_u">%1$s per %2$s</string>
+    <string name="m_per_s_u">%1$s per %2$s %3$s</string>
+    <string name="m_per_qxs_u">%1$s per %2$s x %3$s %4$s</string>
 
     <string name="save">Save</string>
     <string name="clear">Clear</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
     <string name="give_name">Please enter a name for this comparison</string>
     <string name="enter_name">Enter name here</string>
     <string name="saved_from_date">Saved on %1$s</string>
@@ -47,6 +48,7 @@
     <string name="milligram_symbol">mg</string>
     <string name="ounce_symbol">oz</string>
     <string name="pound_symbol">lbs</string>
+    <string name="stone_symbol">st</string>
 
     <!-- VOLUME -->
     <string name="volume">Volume</string>
@@ -71,15 +73,31 @@
     <!-- LENGTH -->
     <string name="length">Length</string>
     <string name="metre_symbol">m</string>
+    <string name="kilometre_symbol">km</string>
     <string name="centimetre_symbol">cm</string>
     <string name="millimetre_symbol">mm</string>
     <string name="inch_symbol">in</string>
     <string name="foot_symbol">ft</string>
     <string name="yard_symbol">yd</string>
+    <string name="mile_symbol">mi</string>
 
     <string name="quantity">Quantity</string>
     <string name="unit_symbol">unit</string>
     <string name="dozen_symbol">dozen</string>
+
+    <!-- AREA -->
+    <string name="area">Area</string>
+    <string name="square_metre_symbol">m\u00B2</string>
+    <string name="square_centimetre_symbol">cm\u00B2</string>
+    <string name="square_millimetre_symbol">mm\u00B2</string>
+    <string name="square_kilometre_symbol">km\u00B2</string>
+    <string name="are_symbol">a</string>
+    <string name="hectare_symbol">ha</string>
+    <string name="acre_symbol">ac</string>
+    <string name="square_foot_symbol">ft\u00B2</string>
+    <string name="square_inch_symbol">in\u00B2</string>
+    <string name="square_yard_symbol">yd\u00B2</string>
+    <string name="square_mile_symbol">mi\u00B2</string>
 
     <string name="send_email">Send Email</string>
     <string name="feedback_subject">Feedback for Unit Price Calculator</string>

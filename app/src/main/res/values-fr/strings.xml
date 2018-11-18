@@ -1,85 +1,104 @@
 <resources>
-    <string name="app_name">Calculatrice prix unitaire</string>
+  <string name="app_name">Calculatrice prix unitaire</string>
 
-    <string name="unit_type">Type d\'unité:</string>
-    <string name="metric">Métrique</string>
-    <string name="imperial">Impérial</string>
-    <string name="imperial_us">Impérial (ÉU)</string>
-    <string name="imperial_uk">Impérial (GB)</string>
+  <string name="unit_type">Type d\'unité:</string>
+  <string name="metric">Métrique</string>
+  <string name="imperial">Impérial</string>
+  <string name="imperial_us">Impérial (ÉU)</string>
+  <string name="imperial_uk">Impérial (GB)</string>
 
-    <string name="price">Prix</string>
-    <string name="size">Taille</string>
-    <string name="unit">Unité</string>
+  <string name="price">Prix</string>
+  <string name="size">Taille</string>
+  <string name="unit">Unité</string>
 
-    <string name="preferred_system">Ordre de système d\'unité</string>
-    <string name="drag_and_drop_prompt">Glisser-poser pour réordonner</string>
-    <string name="add_row">AJOUTER RANGÉE</string>
-    <string name="remove_row">ANNULER RANGÉE</string>
+  <string name="preferred_system">Ordre de système d\'unité</string>
+  <string name="drag_and_drop_prompt">Glisser-poser pour réordonner</string>
+  <string name="add_row">AJOUTER RANGÉE</string>
+  <string name="remove_row">SUPPRIMER RANGÉE</string>
 
-    <string name="show_price_per">Montre prix par:</string>
-    <string name="text_summary">%1$s par %2$s %3$s</string>
-    <string name="main_final_summary">La choix la plus économique est %1$d\n%2$s par %3$s x %4$s %5$s = %6$s par %7$s %8$s</string>
+  <string name="show_price_per">Montre prix par:</string>
+  <string name="main_final_summary">La choix la plus économique est rangée %1$d</string>
+  <string name="m_per_u">%1$s par %2$s</string>
+  <string name="m_per_s_u">%1$s par %2$s %3$s</string>
+  <string name="m_per_qxs_u">%1$s par %2$s x %3$s %4$s</string>
 
-    <string name="save">Sauvegarder</string>
-    <string name="clear">Effacer</string>
-    <string name="rename">Renommer</string>
-    <string name="delete">Annuler</string>
-    <string name="give_name">Veuiller donner un nom à cette comparaison</string>
-    <string name="enter_name">Nom ici</string>
-    <string name="saved_from_date">Sauvegardé %1$s</string>
+  <string name="save">Sauvegarder</string>
+  <string name="clear">Effacer</string>
+  <string name="rename">Renommer</string>
+  <string name="delete">Supprimer</string>
+  <string name="give_name">Veuiller donner un nom à cette comparaison</string>
+  <string name="enter_name">Nom ici</string>
+  <string name="saved_from_date">Sauvegardé %1$s</string>
 
-    <string name="current_comparison">Comparaison actuelle</string>
-    <string name="saved_comparisons">Comparaisons sauvegardées</string>
-    <string name="rate_app">Évaluer Appli</string>
-    <string name="settings">Préférences</string>
-    <string name="share_app">Partager Apppli</string>
-    <string name="send_feedback">Donner Feedback</string>
-    <string name="no_email_client">Aucun client de courriel est installé</string>
+  <string name="current_comparison">Comparaison actuelle</string>
+  <string name="saved_comparisons">Comparaisons sauvegardées</string>
+  <string name="rate_app">Évaluer Appli</string>
+  <string name="settings">Préférences</string>
+  <string name="share_app">Partager Apppli</string>
+  <string name="send_feedback">Donner Feedback</string>
+  <string name="no_email_client">Aucun client de courriel est installé</string>
 
 
-    <!-- MASS -->
-    <string name="weight">Poids</string>
-    <string name="pound_symbol">lb</string>
+  <!-- MASS -->
+  <string name="weight">Poids</string>
+  <string name="pound_symbol">lb</string>
 
-    <!-- VOLUME -->
-    <string name="volume">Volume</string>
-    <string name="cup_symbol">c</string>
-    <string name="tablespoon_symbol">cas</string>
-    <string name="teaspoon_symbol">CàC</string>
-    <string name="us_gallon_symbol">gal US</string>
-    <string name="us_quart_symbol">qt US</string>
-    <string name="us_pint_symbol">pt US</string>
-    <string name="us_cup_symbol">c US</string>
-    <string name="us_fluid_ounce_symbol">oz US</string>
-    <string name="us_tablespoon_symbol">cas US</string>
-    <string name="us_teaspoon_symbol">CàC US</string>
+  <!-- VOLUME -->
+  <string name="volume">Volume</string>
+  <string name="cup_symbol">c</string>
+  <string name="tablespoon_symbol">cas</string>
+  <string name="teaspoon_symbol">CàC</string>
+  <string name="us_gallon_symbol">gal US</string>
+  <string name="us_quart_symbol">qt US</string>
+  <string name="us_pint_symbol">pt US</string>
+  <string name="us_cup_symbol">c US</string>
+  <string name="us_fluid_ounce_symbol">oz US</string>
+  <string name="us_tablespoon_symbol">cas US</string>
+  <string name="us_teaspoon_symbol">CàC US</string>
 
-    <!-- LENGTH -->
-    <string name="length">Longueur</string>
-    <string name="inch_symbol">p</string>
+  <!-- LENGTH -->
+  <string name="length">Longueur</string>
+  <string name="inch_symbol">p</string>
 
-    <string name="quantity">Quantité</string>
-    <string name="unit_symbol">unité</string>
+  <string name="quantity">Quantité</string>
+  <string name="unit_symbol">unité</string>
 
-    <string name="send_email">Envoyer Courriel</string>
-    <string name="feedback_subject">Feedback pour Calculatrice prix unitaire</string>
+  <string name="send_email">Envoyer Courriel</string>
+  <string name="feedback_subject">Feedback pour Calculatrice prix unitaire</string>
   <string name="kilogram_symbol">kg</string>
-    <string name="foot_symbol">ft</string>
-    <string name="centimetre_symbol">cm</string>
-    <string name="cubic_centimetre_symbol">cc</string>
-    <string name="fluid_ounce_symbol">oz</string>
-    <string name="gallon_symbol">gal</string>
-    <string name="gram_symbol">g</string>
-    <string name="litre_symbol">L</string>
-    <string name="metre_symbol">m</string>
-    <string name="milligram_symbol">mg</string>
-    <string name="millilitre_symbol">mL</string>
-    <string name="millimetre_symbol">mm</string>
-    <string name="ounce_symbol">oz</string>
-    <string name="pint_symbol">pt</string>
-    <string name="quart_symbol">qt</string>
-    <string name="yard_symbol">yd</string>
+  <string name="foot_symbol">ft</string>
+  <string name="centimetre_symbol">cm</string>
+  <string name="cubic_centimetre_symbol">cc</string>
+  <string name="fluid_ounce_symbol">oz</string>
+  <string name="gallon_symbol">gal</string>
+  <string name="gram_symbol">g</string>
+  <string name="litre_symbol">L</string>
+  <string name="metre_symbol">m</string>
+  <string name="milligram_symbol">mg</string>
+  <string name="millilitre_symbol">mL</string>
+  <string name="millimetre_symbol">mm</string>
+  <string name="ounce_symbol">oz</string>
+  <string name="pint_symbol">pt</string>
+  <string name="quart_symbol">qt</string>
+  <string name="yard_symbol">yd</string>
   <string name="change_currency_symbol">Changer la devise</string>
-    <string name="dozen_symbol">douzaine</string>
+  <string name="dozen_symbol">douzaine</string>
+  <string name="move_up">Déplacer en haut</string>
+  <string name="move_down">Déplacer en bas</string>
+  <string name="stone_symbol">st</string>
+  <string name="kilometre_symbol">km</string>
+  <string name="mile_symbol">mi</string>
+  <string name="area">Superficie</string>
+  <string name="square_metre_symbol">m\u00B2</string>
+  <string name="square_centimetre_symbol">cm\u00B2</string>
+  <string name="square_millimetre_symbol">mm\u00B2</string>
+  <string name="square_kilometre_symbol">km\u00B2</string>
+  <string name="are_symbol">a</string>
+  <string name="hectare_symbol">ha</string>
+  <string name="acre_symbol">ac</string>
+  <string name="square_foot_symbol">ft\u00B2</string>
+  <string name="square_inch_symbol">p\u00B2</string>
+  <string name="square_yard_symbol">yd\u00B2</string>
+  <string name="square_mile_symbol">mi\u00B2</string>
 
 </resources>

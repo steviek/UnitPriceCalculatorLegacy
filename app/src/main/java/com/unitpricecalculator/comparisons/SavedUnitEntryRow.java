@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 import com.unitpricecalculator.unit.Unit;
 
 public class SavedUnitEntryRow {
@@ -12,17 +13,20 @@ public class SavedUnitEntryRow {
     private final String quantity;
     private final String size;
     private final Unit unit;
+    private final String note;
 
     @JsonCreator
     public SavedUnitEntryRow(
             @JsonProperty("cost") String cost,
             @JsonProperty("quantity") String quantity,
             @JsonProperty("size") String size,
-            @JsonProperty("unit") Unit unit) {
+            @JsonProperty("unit") Unit unit,
+            @JsonProperty("note") String note) {
         this.cost = Preconditions.checkNotNull(cost);
         this.quantity = Preconditions.checkNotNull(quantity);
         this.size = Preconditions.checkNotNull(size);
         this.unit = Preconditions.checkNotNull(unit);
+        this.note = Strings.nullToEmpty(note);
     }
 
     public String getCost() {
@@ -41,6 +45,10 @@ public class SavedUnitEntryRow {
         return unit;
     }
 
+    public String getNote() {
+        return note;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,6 +59,7 @@ public class SavedUnitEntryRow {
         if (cost != null ? !cost.equals(that.cost) : that.cost != null) return false;
         if (quantity != null ? !quantity.equals(that.quantity) : that.quantity != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
+        if (!note.equals(this.note)) return false;
         return !(unit != null ? !unit.equals(that.unit) : that.unit != null);
 
     }
