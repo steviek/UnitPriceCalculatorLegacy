@@ -18,6 +18,10 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="FileNameEditText" parent="AppTheme">
+        <item name="colorAccent">#0D47A1</item>
+    </style>
+
     <style name="RowTextView" parent="RowItem">
         <item name="android:gravity">center</item>
         <item name="android:textSize">14sp</item>

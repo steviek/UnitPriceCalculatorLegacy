@@ -117,13 +117,14 @@ public final class MainActivity extends BaseActivity
     menu.clear();
     switch (mState) {
       case MAIN:
-        setTitle(R.string.app_name);
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return false;
       case SETTINGS:
+        getSupportActionBar().setDisplayShowCustomEnabled(false);
         setTitle(R.string.settings);
         return true;
       case SAVED:
+        getSupportActionBar().setCustomView(null);
+        getSupportActionBar().setDisplayShowCustomEnabled(false);
         setTitle(R.string.saved_comparisons);
         return true;
     }

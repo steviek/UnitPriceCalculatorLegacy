@@ -114,4 +114,8 @@ public final class Prefs {
             throw Throwables.propagate(e);
         }
     }
+
+    public void remove(String key) {
+        prefs.edit().remove(key).apply();
+    }
 }

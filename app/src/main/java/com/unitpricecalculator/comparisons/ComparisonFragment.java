@@ -1,19 +1,27 @@
 package com.unitpricecalculator.comparisons;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.ActionMode.Callback;
+import android.view.ContextThemeWrapper;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -32,25 +40,25 @@ import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
+import com.unitpricecalculator.saved.SavedComparisonManager;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
+import com.unitpricecalculator.util.MenuItems;
 import com.unitpricecalculator.util.NumberUtils;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
-import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
+import com.unitpricecalculator.util.sometimes.MutableSometimes;
 import dagger.android.ContributesAndroidInjector;
 import java.lang.ref.WeakReference;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.inject.Inject;
@@ -58,6 +66,15 @@ import javax.inject.Provider;
 
 public final class ComparisonFragment extends BaseFragment
     implements UnitEntryView.OnUnitEntryChangedListener, SavesState<SavedComparison> {
+
+  @IntDef({STATE_EMPTY, STATE_DIRTY, STATE_SAVED})
+  private @interface State {
+
+  }
+
+  private static final int STATE_EMPTY = 0;
+  private static final int STATE_DIRTY = 1;
+  private static final int STATE_SAVED = 2;
 
   @dagger.Module
   public interface Module {
@@ -79,6 +96,10 @@ public final class ComparisonFragment extends BaseFragment
   UnitArrayAdapterFactory unitArrayAdapterFactory;
   @Inject
   Bus bus;
+  @Inject
+  AppCompatActivity activity;
+  @Inject
+  SavedComparisonManager savedComparisonManager;
 
   private UnitTypeArrayAdapter unitTypeArrayAdapter;
   private LinearLayout mRowContainer;
@@ -90,17 +111,24 @@ public final class ComparisonFragment extends BaseFragment
   private AlertDialog mAlertDialog;
   private Spinner mUnitTypeSpinner;
   private TextView mPriceHeader;
+  private TextView savedChangesStatus;
   private ActionMode actionMode;
+  private final MutableSometimes<EditText> fileNameEditText = MutableSometimes.create();
+  private final MutableSometimes<MenuItem> saveMenuItem = MutableSometimes.create();
 
   private List<UnitEntryView> mEntryViews = new ArrayList<>();
 
-  private SavedComparison mSavedState;
-
   @Nullable
+  private SavedComparison pendingSavedStateToRestore;
+  private Optional<SavedComparison> lastKnownSavedState = Optional.absent();
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+    savedChangesStatus = view.findViewById(R.id.saved_changes_status);
 
     mPriceHeader = view.findViewById(R.id.price_header);
     mPriceHeader.setText(units.getCurrency().getSymbol());
@@ -150,7 +178,7 @@ public final class ComparisonFragment extends BaseFragment
       @Override
       public void afterTextChanged(Editable s) {
         bus.post(getCompareUnit());
-        evaluateEntries();
+        refreshViews();
       }
     });
 
@@ -161,7 +189,7 @@ public final class ComparisonFragment extends BaseFragment
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
           bus.post(getCompareUnit());
-          evaluateEntries();
+          refreshViews();
         }
       });
     }
@@ -174,6 +202,41 @@ public final class ComparisonFragment extends BaseFragment
     return view;
   }
 
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    LayoutInflater layoutInflater =
+        LayoutInflater.from(new ContextThemeWrapper(getActivity(), R.style.FileNameEditText));
+    EditText editText =
+        (EditText) layoutInflater.inflate(R.layout.action_bar_edit_text, /* root= */ null);
+    editText.setOnKeyListener((v, keyCode, event) -> {
+      if (event.getAction() == KeyEvent.ACTION_DOWN &&
+          keyCode == KeyEvent.KEYCODE_ENTER) {
+        InputMethodManager imm =
+            (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        return true;
+      }
+      return false;
+    });
+    Logger.d("Stevie - setting file name edit text");
+    fileNameEditText.set(editText);
+    if (lastKnownSavedState.isPresent()) {
+      editText.setText(lastKnownSavedState.get().getName());
+    }
+  }
+
+  @Override
+  public void onPrepareOptionsMenu(Menu menu) {
+    super.onPrepareOptionsMenu(menu);
+    fileNameEditText
+        .whenPresent(editText -> activity.getSupportActionBar().setCustomView(editText));
+    activity.getSupportActionBar().setDisplayShowCustomEnabled(true);
+    activity.setTitle("");
+    activity.getMenuInflater().inflate(R.menu.menu_main, menu);
+    saveMenuItem.set(menu.findItem(R.id.action_save));
+  }
+
   private void setUnitType(Spinner parent, UnitType unitType) {
     units.setCurrentUnitType(unitType);
     unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get();
@@ -183,7 +246,7 @@ public final class ComparisonFragment extends BaseFragment
     for (UnitEntryView entryView : mEntryViews) {
       entryView.onCompareUnitChanged(event);
     }
-    evaluateEntries();
+    refreshViews();
   }
 
   private UnitEntryView addRowView() {
@@ -279,16 +342,20 @@ public final class ComparisonFragment extends BaseFragment
       });
       return true;
     });
-    evaluateEntries();
+    refreshViews();
     return entryView;
   }
 
   @Override
   public SavedComparison saveState() {
-    return saveState(null);
+    return getSavedState();
   }
 
-  private SavedComparison saveState(String name) {
+  private SavedComparison getSavedState() {
+    if (pendingSavedStateToRestore != null) {
+      return pendingSavedStateToRestore;
+    }
+
     ImmutableList.Builder<SavedUnitEntryRow> list = ImmutableList.builder();
     for (UnitEntryView entryView : mEntryViews) {
       list.add(entryView.saveState());
@@ -299,20 +366,28 @@ public final class ComparisonFragment extends BaseFragment
     String finalSize = mFinalEditText.getText().toString();
     Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
-    String savedName = name;
-    if (Strings.isNullOrEmpty(savedName)) {
-      DateFormat df = DateFormat.getDateTimeInstance();
-      savedName =
-          getString(R.string.saved_from_date, df.format(new Date(System.currentTimeMillis())));
-    }
-    return new SavedComparison(savedName, unitType, list.build(), finalSize, finalUnit,
+    String savedName =
+        fileNameEditText.map(editText -> editText.getText().toString()).or("");
+
+    String key = lastKnownSavedState.transform(SavedComparison::getKey)
+        .or(String.valueOf(System.currentTimeMillis()));
+
+    return new SavedComparison(key, savedName, unitType, list.build(), finalSize, finalUnit,
         units.getCurrency().getCurrencyCode());
   }
 
   @Override
   public void restoreState(SavedComparison comparison) {
+    lastKnownSavedState = Optional.of(comparison);
+    pendingSavedStateToRestore = comparison;
+
     if (mRowContainer == null || getContext() == null) {
-      mSavedState = comparison;
+      return;
+    }
+
+    Optional<EditText> fileNameEditTextOptional = fileNameEditText.toOptional();
+    if (!fileNameEditTextOptional.isPresent()) {
+      fileNameEditText.whenPresent(() -> restoreState(comparison));
       return;
     }
 
@@ -341,9 +416,11 @@ public final class ComparisonFragment extends BaseFragment
       }
     }
 
+    fileNameEditTextOptional.get().setText(comparison.getName());
+
     adapter.notifyDataSetChanged();
 
-    mSavedState = null;
+    pendingSavedStateToRestore = null;
   }
 
   public void clear() {
@@ -353,9 +430,18 @@ public final class ComparisonFragment extends BaseFragment
     mFinalEditText.setText("");
     mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
     mSummaryText.setText("");
+    fileNameEditText.whenPresent(editText -> editText.setText(""));
+    lastKnownSavedState = Optional.absent();
+    refreshViews();
   }
 
   public void save() {
+    if (!Strings
+        .isNullOrEmpty(fileNameEditText.map(editText -> editText.getText().toString()).orNull())) {
+      save(getSavedState());
+      return;
+    }
+
     if (mAlertDialog == null) {
       View view = LayoutInflater.from(getContext()).inflate(R.layout.view_enter_name, null);
       final EditText name = view.findViewById(R.id.comparison_label);
@@ -367,9 +453,34 @@ public final class ComparisonFragment extends BaseFragment
       alert.setMessage(R.string.give_name);
       alert.setView(view);
       alert.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-        String savedName = name.getText().toString();
-        SavedComparison comparison = saveState(savedName);
-        prefs.addToList(SavedComparison.class, Keys.SAVED_STATES, comparison);
+        String newName = name.getText().toString();
+        Preconditions.checkState(!Strings.isNullOrEmpty(newName));
+        fileNameEditText.whenPresent(editText -> {
+          editText.setText(newName);
+          save(getSavedState());
+        });
+      });
+
+      name.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+          if (mAlertDialog == null || s == null) {
+            return;
+          }
+
+          mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+              .setEnabled(!Strings.isNullOrEmpty(s.toString()));
+        }
       });
       alert.setNegativeButton(android.R.string.cancel, null);
       mAlertDialog = alert.create();
@@ -380,16 +491,24 @@ public final class ComparisonFragment extends BaseFragment
       mAlertDialog.dismiss();
     } else {
       mAlertDialog.show();
+      mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
+  }
+
+  private void save(SavedComparison comparison) {
+    Preconditions.checkNotNull(comparison.getKey());
+    savedComparisonManager.putSavedComparison(comparison);
+    lastKnownSavedState = Optional.of(comparison);
+    refreshViews();
   }
 
   @Override
   public void onResume() {
     super.onResume();
     bus.register(this);
-    if (mSavedState != null) {
-      restoreState(mSavedState);
-      evaluateEntries();
+    if (pendingSavedStateToRestore != null) {
+      restoreState(pendingSavedStateToRestore);
+      refreshViews();
     }
   }
 
@@ -413,7 +532,7 @@ public final class ComparisonFragment extends BaseFragment
 
   @Override
   public void onUnitEntryChanged(Optional<UnitEntry> unitEntry) {
-    evaluateEntries();
+    refreshViews();
     finishActionMode();
   }
 
@@ -425,7 +544,23 @@ public final class ComparisonFragment extends BaseFragment
     return new CompareUnitChangedEvent(size, unit);
   }
 
-  private void evaluateEntries() {
+  private void refreshViews() {
+    SavedComparison currentState = getSavedState();
+
+    if (currentState.isEmpty() && lastKnownSavedState.transform(SavedComparison::isEmpty)
+        .or(true)) {
+      savedChangesStatus.setVisibility(View.INVISIBLE);
+      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
+    } else if (currentState.equals(lastKnownSavedState.orNull())) {
+      savedChangesStatus.setVisibility(View.VISIBLE);
+      savedChangesStatus.setText(R.string.all_changes_saved);
+      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
+    } else {
+      savedChangesStatus.setVisibility(View.VISIBLE);
+      savedChangesStatus.setText(R.string.unsaved_changes);
+      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, true));
+    }
+
     CompareUnitChangedEvent compareUnit = getCompareUnit();
     double size = Double.parseDouble(compareUnit.getSize());
     Unit unit = compareUnit.getUnit();
@@ -577,7 +712,7 @@ public final class ComparisonFragment extends BaseFragment
       minEntryView.setFocusedViewId(minFocusedViewId.get());
     }
 
-    evaluateEntries();
+    refreshViews();
   }
 
   private void removeRow(int index) {
@@ -601,7 +736,7 @@ public final class ComparisonFragment extends BaseFragment
       mEntryViews.get(i).setRowNumber(i);
     }
 
-    evaluateEntries();
+    refreshViews();
   }
 
   private static final class UnitEntryWithIndex {
