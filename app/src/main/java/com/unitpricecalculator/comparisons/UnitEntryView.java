@@ -3,14 +3,15 @@ package com.unitpricecalculator.comparisons;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -22,6 +23,7 @@ import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BuildConfig;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
+import com.unitpricecalculator.events.NoteChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.inject.ViewInjection;
@@ -29,6 +31,7 @@ import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
+import com.unitpricecalculator.util.AlertDialogs;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
@@ -57,7 +60,10 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private Spinner mUnitSpinner;
   private View mInputFieldsContainer;
 
-  private TextView mSummaryTextView;
+  private TextView inlineSummaryTextView;
+  private TextView belowSummaryTextView;
+  private TextView noteTextView;
+  private Button noteButton;
   private CompareUnitChangedEvent mLastCompareUnit;
 
   private OnUnitEntryChangedListener mListener;
@@ -75,6 +81,28 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private boolean mInflated = false;
   private boolean mInActionMode = false;
   private int mRowNumber;
+  private String note;
+
+  private final OnClickListener noteOnClickListener = v -> {
+    EditText editText =
+        (EditText) LayoutInflater.from(getContext()).inflate(R.layout.enter_note_edit_text, null);
+    int margin = getResources().getDimensionPixelOffset(R.dimen.horizontal_margin);
+    editText.setText(note);
+    editText.requestFocus();
+    editText.setSelectAllOnFocus(true);
+
+    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+          if (!Strings.nullToEmpty(note).equals(editText.getText().toString())) {
+            note = editText.getText().toString();
+            bus.post(new NoteChangedEvent());
+          }
+        }).setNegativeButton(android.R.string.cancel, null)
+        .create();
+    alertDialog.setView(editText, margin, margin, margin, 0);
+    alertDialog.show();
+    AlertDialogs.materialize(alertDialog);
+  };
 
   public UnitEntryView(Context context) {
     super(context);
@@ -96,7 +124,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
         mQuantityEditText.getText().toString(),
         mSizeEditText.getText().toString(),
         mUnit,
-        "" /* TODO: support note */);
+        note);
   }
 
   @Override
@@ -105,6 +133,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     mSizeEditText.setText(entryRow.getSize());
     mQuantityEditText.setText(entryRow.getQuantity());
     mUnit = entryRow.getUnit();
+    note = entryRow.getNote();
     refreshAdapter(unitArrayAdapterFactory.create(mUnit));
     syncViews();
   }
@@ -256,10 +285,13 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     mUnitSpinner = findViewById(R.id.unit_spinner);
 
-    mSummaryTextView = findViewById(R.id.text_summary);
-    mSummaryTextView.setGravity(oneLine
-        ? Gravity.START | Gravity.CENTER_VERTICAL
-        : Gravity.CENTER);
+    inlineSummaryTextView = findViewById(R.id.text_summary_inline);
+    belowSummaryTextView = findViewById(R.id.text_summary_below);
+    noteTextView = findViewById(R.id.text_note);
+    noteTextView.setOnClickListener(noteOnClickListener);
+
+    noteButton = findViewById(R.id.note_button);
+    noteButton.setOnClickListener(noteOnClickListener);
 
     mInputFieldsContainer = findViewById(R.id.input_fields_container);
 
@@ -314,27 +346,41 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     int focusedColor = 0xffDDDDDD;
     int unfocusedColor = Color.TRANSPARENT;
 
+    TextView summaryTextView;
+    if (Strings.isNullOrEmpty(note)) {
+      noteTextView.setVisibility(View.GONE);
+      summaryTextView = inlineSummaryTextView;
+      belowSummaryTextView.setVisibility(View.GONE);
+      noteButton.setText(R.string.add_note);
+    } else {
+      noteTextView.setVisibility(View.VISIBLE);
+      noteTextView.setText(note);
+      summaryTextView = belowSummaryTextView;
+      inlineSummaryTextView.setVisibility(View.GONE);
+      noteButton.setText(R.string.edit_note);
+    }
+
     Optional<UnitEntry> unitEntry = getEntry();
     if (unitEntry.isPresent() && mLastCompareUnit != null) {
       Unit baseUnit = mLastCompareUnit.getUnit();
       if (unitEntry.get().getUnit().getUnitType() != baseUnit.getUnitType()) {
         return;
       }
-      mSummaryTextView.setText(getSummaryText(unitEntry.get(), baseUnit));
-      mSummaryTextView.setVisibility(View.VISIBLE);
+      summaryTextView.setText(getSummaryText(unitEntry.get(), baseUnit));
+      summaryTextView.setVisibility(View.VISIBLE);
 
       mRowNumberTextView.setTextColor(
           ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
-      mSummaryTextView.setTextColor(
+      summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
 
       setBackgroundColor(mInActionMode ? focusedColor : unfocusedColor);
       mInputFieldsContainer.setBackgroundColor(unfocusedColor);
     } else {
-      mSummaryTextView.setVisibility(View.INVISIBLE);
+      summaryTextView.setVisibility(View.INVISIBLE);
       mRowNumberTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
-      mSummaryTextView.setTextColor(
+      summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
 
       setBackgroundColor(unfocusedColor);
@@ -346,6 +392,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     mCostEditText.setText("");
     mQuantityEditText.setText("");
     mSizeEditText.setText("");
+    note = "";
     refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType().getBase()));
     syncViews();
   }

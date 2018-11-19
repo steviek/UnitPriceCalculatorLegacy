@@ -23,6 +23,7 @@ import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.inject.FragmentScoped;
+import com.unitpricecalculator.util.AlertDialogs;
 import dagger.android.ContributesAndroidInjector;
 import java.util.List;
 import javax.inject.Inject;
@@ -125,6 +126,7 @@ public class SavedFragment extends BaseFragment {
             alertDialog.dismiss();
           } else {
             alertDialog.show();
+            AlertDialogs.materialize(alertDialog);
           }
 
           return true;

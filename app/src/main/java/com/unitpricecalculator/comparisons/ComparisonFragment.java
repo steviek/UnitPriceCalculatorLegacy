@@ -2,6 +2,7 @@ package com.unitpricecalculator.comparisons;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -37,6 +38,8 @@ import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
+import com.unitpricecalculator.events.CurrencyChangedEvent;
+import com.unitpricecalculator.events.NoteChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
@@ -45,12 +48,14 @@ import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
+import com.unitpricecalculator.util.AlertDialogs;
 import com.unitpricecalculator.util.MenuItems;
 import com.unitpricecalculator.util.NumberUtils;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
+import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 import com.unitpricecalculator.util.sometimes.MutableSometimes;
 import dagger.android.ContributesAndroidInjector;
@@ -61,6 +66,7 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -112,11 +118,35 @@ public final class ComparisonFragment extends BaseFragment
   private Spinner mUnitTypeSpinner;
   private TextView mPriceHeader;
   private TextView savedChangesStatus;
+  private View savedChangesDivider;
   private ActionMode actionMode;
   private final MutableSometimes<EditText> fileNameEditText = MutableSometimes.create();
   private final MutableSometimes<MenuItem> saveMenuItem = MutableSometimes.create();
 
   private List<UnitEntryView> mEntryViews = new ArrayList<>();
+  private final Handler handler = new Handler();
+
+  private Optional<Integer> savedChangesCountdown = Optional.absent();
+
+  private final Runnable savedChangesCountdownTick = new Runnable() {
+    @Override
+    public void run() {
+      if (savedChangesStatus == null || !savedChangesCountdown.isPresent()) {
+        return;
+      }
+
+      int tick = savedChangesCountdown.get();
+      savedChangesStatus.setText(getString(R.string.all_changes_saved, tick));
+      if (tick >= 1) {
+        savedChangesCountdown = Optional.of(tick - 1);
+        handler.postDelayed(this, TimeUnit.SECONDS.toMillis(1));
+      } else {
+        savedChangesCountdown = Optional.absent();
+        savedChangesStatus.setVisibility(View.GONE);
+        savedChangesDivider.setVisibility(View.GONE);
+      }
+    }
+  };
 
   @Nullable
   private SavedComparison pendingSavedStateToRestore;
@@ -129,12 +159,12 @@ public final class ComparisonFragment extends BaseFragment
     View view = inflater.inflate(R.layout.fragment_main, container, false);
 
     savedChangesStatus = view.findViewById(R.id.saved_changes_status);
+    savedChangesDivider = view.findViewById(R.id.saved_changes_divider);
 
     mPriceHeader = view.findViewById(R.id.price_header);
     mPriceHeader.setText(units.getCurrency().getSymbol());
     mPriceHeader.setOnClickListener(
-        v -> currencies.showChangeCurrencyDialog(
-            getContext(), currency -> mPriceHeader.setText(currency.getSymbol())));
+        v -> currencies.showChangeCurrencyDialog());
 
     mUnitTypeSpinner = view.findViewById(R.id.unit_type_spinner);
     unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get();
@@ -492,10 +522,17 @@ public final class ComparisonFragment extends BaseFragment
     } else {
       mAlertDialog.show();
       mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+      AlertDialogs.materialize(mAlertDialog);
     }
   }
 
   private void save(SavedComparison comparison) {
+    if (!prefs.getBoolean(Keys.HAS_CLICKED_SAVE)) {
+      prefs.putBoolean(Keys.HAS_CLICKED_SAVE, true);
+      savedChangesCountdown = Optional.of(10);
+      savedChangesCountdownTick.run();
+    }
+
     Preconditions.checkNotNull(comparison.getKey());
     savedComparisonManager.putSavedComparison(comparison);
     lastKnownSavedState = Optional.of(comparison);
@@ -530,6 +567,19 @@ public final class ComparisonFragment extends BaseFragment
     finishActionMode();
   }
 
+  @Subscribe
+  public void onNoteChanged(NoteChangedEvent noteChangedEvent) {
+    refreshViews();
+  }
+
+  @Subscribe
+  public void onCurrencyChanged(CurrencyChangedEvent event) {
+    if (mPriceHeader != null) {
+      mPriceHeader.setText(event.getCurrency().getSymbol());
+      refreshViews();
+    }
+  }
+
   @Override
   public void onUnitEntryChanged(Optional<UnitEntry> unitEntry) {
     refreshViews();
@@ -547,18 +597,32 @@ public final class ComparisonFragment extends BaseFragment
   private void refreshViews() {
     SavedComparison currentState = getSavedState();
 
-    if (currentState.isEmpty() && lastKnownSavedState.transform(SavedComparison::isEmpty)
-        .or(true)) {
-      savedChangesStatus.setVisibility(View.INVISIBLE);
-      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
-    } else if (currentState.equals(lastKnownSavedState.orNull())) {
-      savedChangesStatus.setVisibility(View.VISIBLE);
-      savedChangesStatus.setText(R.string.all_changes_saved);
-      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
+    boolean hasClickedSave = prefs.getBoolean(Keys.HAS_CLICKED_SAVE);
+    if (hasClickedSave) {
+      if (!savedChangesCountdown.isPresent()) {
+        savedChangesStatus.setVisibility(View.GONE);
+        savedChangesDivider.setVisibility(View.GONE);
+      }
+      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item,
+          !currentState.isEmpty() && (!(lastKnownSavedState.isPresent() && !currentState
+              .equals(lastKnownSavedState)))));
     } else {
-      savedChangesStatus.setVisibility(View.VISIBLE);
-      savedChangesStatus.setText(R.string.unsaved_changes);
-      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, true));
+      if (currentState.isEmpty() && lastKnownSavedState.transform(SavedComparison::isEmpty)
+          .or(true)) {
+        savedChangesStatus.setVisibility(View.INVISIBLE);
+        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
+        savedChangesDivider.setVisibility(View.INVISIBLE);
+      } else if (currentState.equals(lastKnownSavedState.orNull())) {
+        savedChangesStatus.setVisibility(View.VISIBLE);
+        savedChangesStatus.setText(R.string.all_changes_saved);
+        savedChangesDivider.setVisibility(View.VISIBLE);
+        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
+      } else {
+        savedChangesStatus.setVisibility(View.VISIBLE);
+        savedChangesStatus.setText(R.string.unsaved_changes);
+        savedChangesDivider.setVisibility(View.VISIBLE);
+        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, true));
+      }
     }
 
     CompareUnitChangedEvent compareUnit = getCompareUnit();

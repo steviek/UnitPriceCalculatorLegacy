@@ -115,6 +115,14 @@ public final class Prefs {
         }
     }
 
+    public boolean getBoolean(String key) {
+        return prefs.getBoolean(key, false);
+    }
+
+    public void putBoolean(String key, boolean value) {
+        prefs.edit().putBoolean(key, value).apply();
+    }
+
     public void remove(String key) {
         prefs.edit().remove(key).apply();
     }

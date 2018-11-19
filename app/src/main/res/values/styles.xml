@@ -32,13 +32,8 @@
 
     </style>
 
-    <style name="FlatButton">
-        <item name="android:padding">8dp</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:clickable">true</item>
-        <item name="android:textColor">@color/add_remove_button</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:gravity">center</item>
+    <style name="FlatButton" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
     <style name="Menu" />

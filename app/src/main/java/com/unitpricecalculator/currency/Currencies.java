@@ -1,8 +1,10 @@
 package com.unitpricecalculator.currency;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.app.AlertDialog;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.events.CurrencyChangedEvent;
 import com.unitpricecalculator.unit.Units;
 import dagger.Reusable;
 import java.util.ArrayList;
@@ -15,17 +17,17 @@ import javax.inject.Inject;
 public final class Currencies {
 
   private final Units units;
+  private final Bus bus;
+  private final Activity activity;
 
   @Inject
-  Currencies(Units units) {
+  Currencies(Units units, Bus bus, Activity activity) {
     this.units = units;
+    this.bus = bus;
+    this.activity = activity;
   }
 
-  public interface CurrencyDialogCallback {
-    void onCurrencySelected(Currency currency);
-  }
-
-  public void showChangeCurrencyDialog(Context context, CurrencyDialogCallback callback) {
+  public void showChangeCurrencyDialog() {
     Currency currentCurrency = units.getCurrency();
     final List<Currency> currencies = new ArrayList<>(Currency.getAvailableCurrencies());
     Collections.sort(currencies, (c1, c2) -> c1.getCurrencyCode().compareTo(c2.getCurrencyCode()));
@@ -42,19 +44,17 @@ public final class Currencies {
       }
     }
 
-    new AlertDialog.Builder(context)
+    new AlertDialog.Builder(activity)
         .setTitle(R.string.change_currency_symbol)
         .setSingleChoiceItems(
             labels,
             currentCurrencyIndex,
-                (dialog, i) -> {
-                  Currency currency = currencies.get(i);
-                  units.setCurrency(currency);
-                  dialog.dismiss();
-                  if (callback != null) {
-                    callback.onCurrencySelected(currency);
-                  }
-                })
+            (dialog, i) -> {
+              Currency currency = currencies.get(i);
+              units.setCurrency(currency);
+              dialog.dismiss();
+              bus.post(new CurrencyChangedEvent(currency));
+            })
         .show();
   }
 

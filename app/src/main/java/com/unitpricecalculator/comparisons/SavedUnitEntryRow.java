@@ -90,7 +90,7 @@ public class SavedUnitEntryRow {
     if (size != null ? !size.equals(that.size) : that.size != null) {
       return false;
     }
-    if (!note.equals(this.note)) {
+    if (!note.equals(that.note)) {
       return false;
     }
     return !(unit != null ? !unit.equals(that.unit) : that.unit != null);
