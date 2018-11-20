@@ -101,5 +101,11 @@
   <string name="square_inch_symbol">in\u00B2</string>
   <string name="square_yard_symbol">yd\u00B2</string>
   <string name="square_mile_symbol">mi\u00B2</string>
+  <string name="untitled_italics"><i>Untitled</i></string>
+  <string name="unsaved_changes">You have unsaved changes. Click on the save button to save.</string>
+  <string name="all_changes_saved">All changes are saved. From now on, the save button will indicate when you have changes to save.\n\nThis message will disappear and not return in %1$d…</string>
+  <string name="add_note">Add note</string>
+  <string name="edit_note">Edit note</string>
+  <string name="enter_note_hint">Enter a note</string>
 
 </resources>

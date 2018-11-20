@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Calculadora preço unitário</string>
-  <string name="add_row">ADICIONAR FILA</string>
+  <string name="add_row">Adicionar fila</string>
   <string name="clear">Apagar</string>
   <string name="current_comparison">Comparação atual</string>
   <string name="delete">Apagar</string>
@@ -37,10 +37,10 @@
   <string name="quantity">Quantidade</string>
   <string name="quart_symbol">quarto</string>
   <string name="rate_app">Classificar Aplicativo</string>
-  <string name="remove_row">APAGAR FILA</string>
+  <string name="remove_row">Apagar fila</string>
   <string name="rename">Renomear</string>
-  <string name="save">Guardar</string>
-  <string name="saved_comparisons">Comparações guardadas</string>
+  <string name="save">Salvar</string>
+  <string name="saved_comparisons">Comparações salvadas</string>
   <string name="saved_from_date">Guardada %1$s</string>
   <string name="send_email">Enviar por e-mail</string>
   <string name="send_feedback">Enviar feedback</string>
@@ -70,5 +70,28 @@
   <string name="m_per_u">%1$s por %2$s</string>
   <string name="m_per_s_u">%1$s por %2$s %3$s</string>
   <string name="m_per_qxs_u">%1$s por %2$s x %3$s %4$s</string>
+  <string name="move_up">Subir</string>
+  <string name="move_down">Baixar</string>
+  <string name="stone_symbol">st</string>
+  <string name="kilometre_symbol">km</string>
+  <string name="mile_symbol">mi</string>
+  <string name="area">Área</string>
+  <string name="square_metre_symbol">m²</string>
+  <string name="square_centimetre_symbol">cm²</string>
+  <string name="square_millimetre_symbol">mm²</string>
+  <string name="square_kilometre_symbol">km²</string>
+  <string name="are_symbol">a</string>
+  <string name="hectare_symbol">ha</string>
+  <string name="acre_symbol">ac</string>
+  <string name="square_foot_symbol">pé²</string>
+  <string name="square_inch_symbol">ins²</string>
+  <string name="square_yard_symbol">jarda²</string>
+  <string name="square_mile_symbol">mi²</string>
+  <string name="untitled_italics"><i>Sem título</i></string>
+  <string name="add_note">Agregar nota</string>
+  <string name="edit_note">Editar nota</string>
+  <string name="enter_note_hint">Insera una nota</string>
+  <string name="unsaved_changes">Tem modificações não salvas. Clique no botão para salvar.</string>
+  <string name="all_changes_saved">Todas as modificações são salvas. De agora em diante, o botão indicará que há algo para salvar.\n\nEsta mensagem irá desaparecer em %1$d…</string>
 
 </resources>
