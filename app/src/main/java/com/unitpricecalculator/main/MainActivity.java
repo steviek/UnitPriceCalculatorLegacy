@@ -24,7 +24,9 @@ import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.saved.SavedFragment;
+import com.unitpricecalculator.unit.Units;
 import java.io.IOException;
+import java.util.Currency;
 import javax.inject.Inject;
 
 public final class MainActivity extends BaseActivity
@@ -35,6 +37,9 @@ public final class MainActivity extends BaseActivity
 
   @Inject
   Bus bus;
+
+  @Inject
+  Units units;
 
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
@@ -265,6 +270,18 @@ public final class MainActivity extends BaseActivity
 
   @Override
   public void onLoadSavedComparison(SavedComparison comparison) {
+    String currencyCode = comparison.getCurrencyCode();
+    if (currencyCode != null) {
+      try {
+        Currency currency = Currency.getInstance(currencyCode);
+        if (currency != null) {
+          units.setCurrency(currency);
+        }
+      } catch (IllegalArgumentException e) {
+        // This currency used to be supported and no longer is, oh well.
+      }
+    }
+
     savedComparisonToLoad = comparison;
     changeState(State.MAIN);
   }

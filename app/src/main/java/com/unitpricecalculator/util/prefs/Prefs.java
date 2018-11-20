@@ -2,20 +2,17 @@ package com.unitpricecalculator.util.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.unitpricecalculator.inject.ApplicationContext;
-
+import dagger.Reusable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.inject.Inject;
-
-import dagger.Reusable;
 
 @Reusable
 public final class Prefs {
@@ -57,6 +54,7 @@ public final class Prefs {
 
     public <T> List<T> getList(Class<T> clazz, String key, List<T> fallback) {
         Set<String> set = getStringSet(key, null);
+        Log.d("Stevie", "trying to get list: " + set);
         if (set == null) {
             return fallback;
         } else {

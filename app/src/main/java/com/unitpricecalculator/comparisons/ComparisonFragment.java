@@ -3,7 +3,6 @@ package com.unitpricecalculator.comparisons;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -63,7 +62,6 @@ import dagger.android.ContributesAndroidInjector;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -72,15 +70,6 @@ import javax.inject.Provider;
 
 public final class ComparisonFragment extends BaseFragment
     implements UnitEntryView.OnUnitEntryChangedListener, SavesState<SavedComparison> {
-
-  @IntDef({STATE_EMPTY, STATE_DIRTY, STATE_SAVED})
-  private @interface State {
-
-  }
-
-  private static final int STATE_EMPTY = 0;
-  private static final int STATE_DIRTY = 1;
-  private static final int STATE_SAVED = 2;
 
   @dagger.Module
   public interface Module {
@@ -452,18 +441,6 @@ public final class ComparisonFragment extends BaseFragment
     UnitArrayAdapter adapter = unitArrayAdapterFactory.create(unit);
     mFinalSpinner.setAdapter(adapter);
     mFinalSpinner.setSelection(0);
-
-    String currencyCode = comparison.getCurrencyCode();
-    if (currencyCode != null) {
-      try {
-        Currency currency = Currency.getInstance(currencyCode);
-        if (currency != null) {
-          units.setCurrency(currency);
-        }
-      } catch (IllegalArgumentException e) {
-        // This currency used to be supported and no longer is, oh well.
-      }
-    }
 
     draftKey = comparison.getKey();
 
