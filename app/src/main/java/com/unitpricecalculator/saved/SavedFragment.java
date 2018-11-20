@@ -19,9 +19,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.google.common.base.Strings;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.SavedComparison;
+import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.util.AlertDialogs;
 import dagger.android.ContributesAndroidInjector;
@@ -43,6 +45,8 @@ public class SavedFragment extends BaseFragment {
   SavedComparisonManager savedComparisonManager;
   @Inject
   Callback callback;
+  @Inject
+  Bus bus;
 
   private ActionMode actionMode;
   private int selectedPosition;
@@ -133,7 +137,8 @@ public class SavedFragment extends BaseFragment {
         case R.id.action_delete:
           SavedComparison comparison = adapter.getItem(selectedPosition);
           savedComparisons.remove(comparison);
-          savedComparisonManager.removeSavedComparisons(comparison);
+          savedComparisonManager.removeSavedComparison(comparison);
+          bus.post(new SavedComparisonDeletedEvent(comparison.getKey()));
           adapter.notifyDataSetChanged();
           mode.finish();
           return true;

@@ -1,6 +1,8 @@
 package com.unitpricecalculator.comparisons;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -10,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +40,6 @@ import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
-import java.text.NumberFormat;
 import java.util.Locale;
 import javax.inject.Inject;
 
@@ -46,6 +49,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private static final int SIZE = 1;
   private static final int QUANTITY = 2;
 
+  @Inject
+  Activity activity;
   @Inject
   Units units;
   @Inject
@@ -91,17 +96,37 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     editText.requestFocus();
     editText.setSelectAllOnFocus(true);
 
-    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+    DialogInterface.OnClickListener onClickListener = (dialog, which) -> {
+      switch (which) {
+        case DialogInterface.BUTTON_POSITIVE:
           if (!Strings.nullToEmpty(note).equals(editText.getText().toString())) {
             note = editText.getText().toString();
             bus.post(new NoteChangedEvent());
           }
-        }).setNegativeButton(android.R.string.cancel, null)
+          break;
+        case DialogInterface.BUTTON_NEUTRAL:
+          note = "";
+          bus.post(new NoteChangedEvent());
+          break;
+      }
+      InputMethodManager imm =
+          (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(editText.getWindowToken(),
+          InputMethodManager.HIDE_NOT_ALWAYS);
+    };
+
+    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        .setPositiveButton(android.R.string.ok, onClickListener)
+        .setNegativeButton(android.R.string.cancel, onClickListener)
+        .setNeutralButton(R.string.delete, onClickListener)
         .create();
     alertDialog.setView(editText, margin, margin, margin, 0);
+    alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     alertDialog.show();
     AlertDialogs.materialize(alertDialog);
+    if (Strings.isNullOrEmpty(note)) {
+      alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setVisibility(View.GONE);
+    }
   };
 
   public UnitEntryView(Context context) {
@@ -374,18 +399,15 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
 
-      setBackgroundColor(mInActionMode ? focusedColor : unfocusedColor);
-      mInputFieldsContainer.setBackgroundColor(unfocusedColor);
     } else {
       summaryTextView.setVisibility(View.INVISIBLE);
       mRowNumberTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
       summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
-
-      setBackgroundColor(unfocusedColor);
-      mInputFieldsContainer.setBackgroundColor(mInActionMode ? focusedColor : unfocusedColor);
     }
+    setBackgroundColor(mInActionMode ? focusedColor : unfocusedColor);
+
   }
 
   public void clear() {
@@ -407,21 +429,18 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   }
 
   private String getSummaryText(UnitEntry unitEntry, Unit baseUnit) {
-    NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
-    numberFormat.setCurrency(units.getCurrency());
-    numberFormat.setMinimumFractionDigits(2);
-    numberFormat.setMaximumFractionDigits(8);
-
     double baseSize = Double.parseDouble(mLastCompareUnit.getSize());
     double pricePer = unitEntry.pricePer(baseSize, baseUnit);
 
+    String formattedPricePer = units.getFormatter().apply(pricePer);
+
     if (baseSize == 1) {
       return getResources().getString(R.string.m_per_u,
-          numberFormat.format(pricePer),
+          formattedPricePer,
           baseUnit.getSymbol(getResources()));
     } else {
       return getResources().getString(R.string.m_per_s_u,
-          numberFormat.format(pricePer),
+          formattedPricePer,
           mLastCompareUnit.getSize(),
           baseUnit.getSymbol(getResources()));
     }

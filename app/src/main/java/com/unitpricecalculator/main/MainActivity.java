@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +16,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseActivity;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.SavedComparison;
+import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.saved.SavedFragment;
 import java.io.IOException;
 import javax.inject.Inject;
@@ -29,15 +33,20 @@ public final class MainActivity extends BaseActivity
   @Inject
   ObjectMapper objectMapper;
 
+  @Inject
+  Bus bus;
+
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
 
   private ComparisonFragment mComparisonFragment;
   private SettingsFragment mSettingsFragment;
-  private SavedComparison mMainState;
   private SavedFragment mSavedFragment;
 
-  private State mState;
+  @Nullable private SavedComparison draftComparison;
+  @Nullable private SavedComparison savedComparisonToLoad;
+
+  private State currentState;
 
   private enum State {
     MAIN, SETTINGS, SAVED
@@ -64,7 +73,7 @@ public final class MainActivity extends BaseActivity
     mSavedFragment = new SavedFragment();
 
     if (savedInstanceState != null) {
-      mState = State.valueOf(savedInstanceState.getString("state"));
+      currentState = State.valueOf(savedInstanceState.getString("state"));
       try {
         mComparisonFragment.restoreState(
             objectMapper.readValue(
@@ -74,20 +83,32 @@ public final class MainActivity extends BaseActivity
         throw new RuntimeException(e);
       }
     } else {
-      mState = State.MAIN;
+      currentState = State.MAIN;
     }
 
     getSupportFragmentManager()
         .beginTransaction()
-        .replace(R.id.content_frame, getFragment(mState))
+        .replace(R.id.content_frame, getFragment(currentState))
         .replace(R.id.menu_frame, new MenuFragment())
         .commit();
   }
 
   @Override
+  protected void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
+
+  @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putString("state", mState.name());
+    outState.putString("state", currentState.name());
     if (mComparisonFragment != null) {
       try {
         outState.putString(
@@ -115,7 +136,7 @@ public final class MainActivity extends BaseActivity
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     menu.clear();
-    switch (mState) {
+    switch (currentState) {
       case MAIN:
         return false;
       case SETTINGS:
@@ -187,6 +208,13 @@ public final class MainActivity extends BaseActivity
     }
   }
 
+  @Subscribe
+  public void onSavedComparisonDeleted(SavedComparisonDeletedEvent event) {
+    if (draftComparison != null && draftComparison.getKey().equals(event.getKey())) {
+      draftComparison = null;
+    }
+  }
+
   private Fragment getFragment(State state) {
     switch (state) {
       case SETTINGS:
@@ -199,19 +227,26 @@ public final class MainActivity extends BaseActivity
     throw new IllegalArgumentException("Unexpected state: " + state);
   }
 
-  private void changeState(State state) {
+  private void changeState(State newState) {
     mDrawerLayout.closeDrawers();
-    if (state == mState) {
+    if (newState == currentState) {
       return;
     }
 
-    if (mState == State.MAIN) {
-      mMainState = mComparisonFragment.saveState();
+    if (currentState == State.MAIN) {
+      draftComparison = mComparisonFragment.saveState();
     }
 
-    switch (state) {
+    switch (newState) {
       case MAIN:
-        mComparisonFragment.restoreState(mMainState);
+        if (savedComparisonToLoad != null) {
+          mComparisonFragment.loadSavedComparison(savedComparisonToLoad);
+          savedComparisonToLoad = null;
+        } else if (draftComparison != null){
+          mComparisonFragment.restoreState(draftComparison);
+        } else {
+          mComparisonFragment.clear();
+        }
         break;
       case SETTINGS:
         hideSoftKeyboard();
@@ -220,17 +255,17 @@ public final class MainActivity extends BaseActivity
         hideSoftKeyboard();
         break;
     }
-    mState = state;
+    currentState = newState;
     getSupportFragmentManager()
         .beginTransaction()
-        .replace(R.id.content_frame, getFragment(mState))
+        .replace(R.id.content_frame, getFragment(currentState))
         .commit();
     invalidateOptionsMenu();
   }
 
   @Override
   public void onLoadSavedComparison(SavedComparison comparison) {
-    mMainState = comparison;
+    savedComparisonToLoad = comparison;
     changeState(State.MAIN);
   }
 }

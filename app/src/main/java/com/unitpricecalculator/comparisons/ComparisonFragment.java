@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -60,7 +61,6 @@ import com.unitpricecalculator.util.prefs.Prefs;
 import com.unitpricecalculator.util.sometimes.MutableSometimes;
 import dagger.android.ContributesAndroidInjector;
 import java.lang.ref.WeakReference;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -122,6 +122,7 @@ public final class ComparisonFragment extends BaseFragment
   private ActionMode actionMode;
   private final MutableSometimes<EditText> fileNameEditText = MutableSometimes.create();
   private final MutableSometimes<MenuItem> saveMenuItem = MutableSometimes.create();
+  private final MutableSometimes<Object> resumed = MutableSometimes.create();
 
   private List<UnitEntryView> mEntryViews = new ArrayList<>();
   private final Handler handler = new Handler();
@@ -249,7 +250,22 @@ public final class ComparisonFragment extends BaseFragment
       }
       return false;
     });
-    Logger.d("Stevie - setting file name edit text");
+    editText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+      }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        refreshViews();
+      }
+    });
     fileNameEditText.set(editText);
     if (lastKnownSavedState.isPresent()) {
       editText.setText(lastKnownSavedState.get().getName());
@@ -260,7 +276,9 @@ public final class ComparisonFragment extends BaseFragment
   public void onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
     fileNameEditText
-        .whenPresent(editText -> activity.getSupportActionBar().setCustomView(editText));
+        .whenPresent(editText -> {
+          activity.getSupportActionBar().setCustomView(editText);
+        });
     activity.getSupportActionBar().setDisplayShowCustomEnabled(true);
     activity.setTitle("");
     activity.getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -408,7 +426,6 @@ public final class ComparisonFragment extends BaseFragment
 
   @Override
   public void restoreState(SavedComparison comparison) {
-    lastKnownSavedState = Optional.of(comparison);
     pendingSavedStateToRestore = comparison;
 
     if (mRowContainer == null || getContext() == null) {
@@ -453,15 +470,27 @@ public final class ComparisonFragment extends BaseFragment
     pendingSavedStateToRestore = null;
   }
 
+  public void loadSavedComparison(SavedComparison savedComparison) {
+    lastKnownSavedState = Optional.of(savedComparison);
+    restoreState(savedComparison);
+  }
+
   public void clear() {
-    for (UnitEntryView entryView : mEntryViews) {
-      entryView.clear();
+    lastKnownSavedState = Optional.absent();
+
+    if (!resumed.toOptional().isPresent()) {
+      resumed.whenPresent(this::clear);
+      return;
     }
+
+    mRowContainer.removeAllViewsInLayout();
+    mEntryViews.clear();
+    addRowView();
+    addRowView();
     mFinalEditText.setText("");
     mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
     mSummaryText.setText("");
     fileNameEditText.whenPresent(editText -> editText.setText(""));
-    lastKnownSavedState = Optional.absent();
     refreshViews();
   }
 
@@ -513,8 +542,8 @@ public final class ComparisonFragment extends BaseFragment
         }
       });
       alert.setNegativeButton(android.R.string.cancel, null);
+      alert.setOnDismissListener(dialog -> mAlertDialog = null);
       mAlertDialog = alert.create();
-      mAlertDialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     if (mAlertDialog.isShowing()) {
@@ -522,6 +551,7 @@ public final class ComparisonFragment extends BaseFragment
     } else {
       mAlertDialog.show();
       mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+      mAlertDialog.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
       AlertDialogs.materialize(mAlertDialog);
     }
   }
@@ -547,12 +577,14 @@ public final class ComparisonFragment extends BaseFragment
       restoreState(pendingSavedStateToRestore);
       refreshViews();
     }
+    resumed.set(new Object());
   }
 
   @Override
   public void onPause() {
     super.onPause();
     bus.unregister(this);
+    resumed.set(null);
   }
 
   @Subscribe
@@ -604,8 +636,8 @@ public final class ComparisonFragment extends BaseFragment
         savedChangesDivider.setVisibility(View.GONE);
       }
       saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item,
-          !currentState.isEmpty() && (!(lastKnownSavedState.isPresent() && !currentState
-              .equals(lastKnownSavedState)))));
+          !currentState.isEmpty() && !(lastKnownSavedState.isPresent() && currentState
+              .equals(lastKnownSavedState.get()))));
     } else {
       if (currentState.isEmpty() && lastKnownSavedState.transform(SavedComparison::isEmpty)
           .or(true)) {
@@ -657,15 +689,10 @@ public final class ComparisonFragment extends BaseFragment
       return;
     }
 
-    NumberFormat format = NumberFormat.getCurrencyInstance();
-    format.setCurrency(units.getCurrency());
-    format.setMinimumFractionDigits(2);
-    format.setMaximumFractionDigits(8);
-
     StringBuilder finalSummary = new StringBuilder();
     UnitEntryWithIndex best = unitEntries.get(0);
     finalSummary.append(getString(R.string.main_final_summary, best.getIndex() + 1)).append('\n');
-    appendSingleRowSummary(finalSummary, best.getUnitEntry(), compareUnit, format);
+    appendSingleRowSummary(finalSummary, best.getUnitEntry(), compareUnit);
 
     finalSummary.append("\n\n");
 
@@ -673,7 +700,7 @@ public final class ComparisonFragment extends BaseFragment
       finalSummary.append(
           String.format(Locale.getDefault(), "%d: ", entryWithIndex.getIndex() + 1));
 
-      appendSingleRowSummary(finalSummary, entryWithIndex.getUnitEntry(), compareUnit, format);
+      appendSingleRowSummary(finalSummary, entryWithIndex.getUnitEntry(), compareUnit);
     }
 
     mSummaryText.setText(finalSummary);
@@ -693,11 +720,12 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   private void appendSingleRowSummary(StringBuilder message, UnitEntry unitEntry,
-      CompareUnitChangedEvent compareUnitChangedEvent, NumberFormat format) {
+      CompareUnitChangedEvent compareUnitChangedEvent) {
     Unit compareUnit = compareUnitChangedEvent.getUnit();
     String compareSize = compareUnitChangedEvent.getSize();
 
-    String formattedEntryCostString = format.format(unitEntry.getCost());
+    Function<Double, String> formatter = units.getFormatter();
+    String formattedEntryCostString = formatter.apply(unitEntry.getCost());
     String unitEntrySymbol = unitEntry.getUnit().getSymbol(getResources());
 
     if (unitEntry.getQuantity() == 1 && unitEntry.getSizeString().equals("1")) {
@@ -715,7 +743,7 @@ public final class ComparisonFragment extends BaseFragment
     message.append(" = ");
 
     String formattedCompareUnitCost =
-        format.format(unitEntry.pricePer(Double.parseDouble(compareSize), compareUnit));
+        formatter.apply(unitEntry.pricePer(Double.parseDouble(compareSize), compareUnit));
     String compareUnitSymbol = compareUnit.getSymbol(getResources());
 
     if (compareSize.equals("1")) {

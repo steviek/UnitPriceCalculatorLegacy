@@ -53,7 +53,7 @@ public final class SavedComparisonManager {
     }
   }
 
-  public void removeSavedComparisons(SavedComparison savedComparison) {
+  public void removeSavedComparison(SavedComparison savedComparison) {
     prefs.edit().remove(savedComparison.getKey()).apply();
   }
 

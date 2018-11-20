@@ -33,7 +33,7 @@
     </style>
 
     <style name="FlatButton" parent="@style/Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/button_text_color</item>
     </style>
 
     <style name="Menu" />
