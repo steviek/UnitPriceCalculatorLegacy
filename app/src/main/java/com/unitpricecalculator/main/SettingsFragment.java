@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
@@ -36,8 +37,22 @@ public class SettingsFragment extends BaseFragment {
   Systems systems;
   @Inject
   Currencies currencies;
+  @Inject
+  Bus bus;
 
   private final MutableSometimes<TextView> changeCurrencySubtitle = MutableSometimes.create();
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    bus.register(this);
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    bus.unregister(this);
+  }
 
   @Nullable
   @Override
@@ -46,6 +61,7 @@ public class SettingsFragment extends BaseFragment {
     View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
     changeCurrencySubtitle.set(view.findViewById(R.id.change_currency_subtitle));
+    changeCurrencySubtitle.toOptional().get().setText(units.getCurrency().getSymbol());
     view.findViewById(R.id.change_currency_parent).setOnClickListener(
         v -> currencies.showChangeCurrencyDialog());
 

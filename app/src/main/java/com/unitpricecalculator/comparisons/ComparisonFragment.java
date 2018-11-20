@@ -132,7 +132,8 @@ public final class ComparisonFragment extends BaseFragment
   private final Runnable savedChangesCountdownTick = new Runnable() {
     @Override
     public void run() {
-      if (savedChangesStatus == null || !savedChangesCountdown.isPresent()) {
+      if (savedChangesStatus == null || !savedChangesCountdown.isPresent()
+          || getContext() == null) {
         return;
       }
 
@@ -151,6 +152,7 @@ public final class ComparisonFragment extends BaseFragment
 
   @Nullable
   private SavedComparison pendingSavedStateToRestore;
+  private String draftKey = String.valueOf(System.currentTimeMillis());
   private Optional<SavedComparison> lastKnownSavedState = Optional.absent();
 
   @Override
@@ -395,22 +397,22 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   @Override
-  public SavedComparison saveState() {
-    return getSavedState();
+  public SavedComparison saveState(Context context) {
+    return getSavedState(context);
   }
 
-  private SavedComparison getSavedState() {
+  private SavedComparison getSavedState(Context context) {
     if (pendingSavedStateToRestore != null) {
       return pendingSavedStateToRestore;
     }
 
     ImmutableList.Builder<SavedUnitEntryRow> list = ImmutableList.builder();
     for (UnitEntryView entryView : mEntryViews) {
-      list.add(entryView.saveState());
+      list.add(entryView.saveState(context));
     }
     UnitType unitType = UnitType.fromName(
         unitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
-        getResources());
+        context.getResources());
     String finalSize = mFinalEditText.getText().toString();
     Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
@@ -418,7 +420,7 @@ public final class ComparisonFragment extends BaseFragment
         fileNameEditText.map(editText -> editText.getText().toString()).or("");
 
     String key = lastKnownSavedState.transform(SavedComparison::getKey)
-        .or(String.valueOf(System.currentTimeMillis()));
+        .or(draftKey);
 
     return new SavedComparison(key, savedName, unitType, list.build(), finalSize, finalUnit,
         units.getCurrency().getCurrencyCode());
@@ -463,6 +465,8 @@ public final class ComparisonFragment extends BaseFragment
       }
     }
 
+    draftKey = comparison.getKey();
+
     fileNameEditTextOptional.get().setText(comparison.getName());
 
     adapter.notifyDataSetChanged();
@@ -491,13 +495,14 @@ public final class ComparisonFragment extends BaseFragment
     mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
     mSummaryText.setText("");
     fileNameEditText.whenPresent(editText -> editText.setText(""));
+    draftKey = String.valueOf(System.currentTimeMillis());
     refreshViews();
   }
 
   public void save() {
     if (!Strings
         .isNullOrEmpty(fileNameEditText.map(editText -> editText.getText().toString()).orNull())) {
-      save(getSavedState());
+      save(getSavedState(getContext()));
       return;
     }
 
@@ -516,7 +521,7 @@ public final class ComparisonFragment extends BaseFragment
         Preconditions.checkState(!Strings.isNullOrEmpty(newName));
         fileNameEditText.whenPresent(editText -> {
           editText.setText(newName);
-          save(getSavedState());
+          save(getSavedState(getContext()));
         });
       });
 
@@ -627,7 +632,7 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   private void refreshViews() {
-    SavedComparison currentState = getSavedState();
+    SavedComparison currentState = getSavedState(getContext());
 
     boolean hasClickedSave = prefs.getBoolean(Keys.HAS_CLICKED_SAVE);
     if (hasClickedSave) {

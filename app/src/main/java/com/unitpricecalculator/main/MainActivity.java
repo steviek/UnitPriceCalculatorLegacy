@@ -113,7 +113,7 @@ public final class MainActivity extends BaseActivity
       try {
         outState.putString(
             "mainFragment",
-            objectMapper.writeValueAsString(mComparisonFragment.saveState()));
+            objectMapper.writeValueAsString(mComparisonFragment.saveState(this)));
       } catch (JsonProcessingException e) {
         throw Throwables.propagate(e);
       }
@@ -234,7 +234,7 @@ public final class MainActivity extends BaseActivity
     }
 
     if (currentState == State.MAIN) {
-      draftComparison = mComparisonFragment.saveState();
+      draftComparison = mComparisonFragment.saveState(this);
     }
 
     switch (newState) {

@@ -143,7 +143,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   }
 
   @Override
-  public SavedUnitEntryRow saveState() {
+  public SavedUnitEntryRow saveState(Context context) {
     return new SavedUnitEntryRow(
         mCostEditText.getText().toString(),
         mQuantityEditText.getText().toString(),

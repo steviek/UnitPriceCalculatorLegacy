@@ -31,7 +31,6 @@
               android:id="@+id/change_currency_subtitle"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:text="@string/drag_and_drop_prompt"
               android:textColor="@color/secondaryText"
               android:textSize="14sp"
               android:paddingLeft="16dp"
