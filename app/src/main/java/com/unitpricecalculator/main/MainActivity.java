@@ -21,6 +21,7 @@ import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseActivity;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
+import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.saved.SavedFragment;
@@ -48,8 +49,7 @@ public final class MainActivity extends BaseActivity
   private SettingsFragment mSettingsFragment;
   private SavedFragment mSavedFragment;
 
-  @Nullable private SavedComparison draftComparison;
-  @Nullable private SavedComparison savedComparisonToLoad;
+  @Nullable private ComparisonFragmentState comparisonFragmentState;
 
   private State currentState;
 
@@ -83,7 +83,7 @@ public final class MainActivity extends BaseActivity
         mComparisonFragment.restoreState(
             objectMapper.readValue(
                 savedInstanceState.getString("mainFragment"),
-                SavedComparison.class));
+                ComparisonFragmentState.class));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -215,8 +215,13 @@ public final class MainActivity extends BaseActivity
 
   @Subscribe
   public void onSavedComparisonDeleted(SavedComparisonDeletedEvent event) {
+    if (comparisonFragmentState == null) {
+      return;
+    }
+
+    SavedComparison draftComparison = comparisonFragmentState.getCurrentComparison();
     if (draftComparison != null && draftComparison.getKey().equals(event.getKey())) {
-      draftComparison = null;
+      comparisonFragmentState = null;
     }
   }
 
@@ -239,16 +244,13 @@ public final class MainActivity extends BaseActivity
     }
 
     if (currentState == State.MAIN) {
-      draftComparison = mComparisonFragment.saveState(this);
+      comparisonFragmentState = mComparisonFragment.saveState(this);
     }
 
     switch (newState) {
       case MAIN:
-        if (savedComparisonToLoad != null) {
-          mComparisonFragment.loadSavedComparison(savedComparisonToLoad);
-          savedComparisonToLoad = null;
-        } else if (draftComparison != null){
-          mComparisonFragment.restoreState(draftComparison);
+        if (comparisonFragmentState != null) {
+          mComparisonFragment.restoreState(comparisonFragmentState);
         } else {
           mComparisonFragment.clear();
         }
@@ -282,7 +284,7 @@ public final class MainActivity extends BaseActivity
       }
     }
 
-    savedComparisonToLoad = comparison;
+    comparisonFragmentState = new ComparisonFragmentState(comparison, comparison);
     changeState(State.MAIN);
   }
 }

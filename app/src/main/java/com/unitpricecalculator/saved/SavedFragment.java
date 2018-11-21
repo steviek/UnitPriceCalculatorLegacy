@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +25,7 @@ import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.util.AlertDialogs;
+import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import dagger.android.ContributesAndroidInjector;
 import java.util.List;
 import javax.inject.Inject;
@@ -107,17 +107,7 @@ public class SavedFragment extends BaseFragment {
                 }).setOnDismissListener(dialog -> alertDialog = null).create();
             alertDialog.setView(nameEditText, sideMargin, 0, sideMargin, 0);
 
-            nameEditText.addTextChangedListener(new TextWatcher() {
-              @Override
-              public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-              }
-
-              @Override
-              public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-              }
-
+            nameEditText.addTextChangedListener(new AbstractTextWatcher() {
               @Override
               public void afterTextChanged(Editable s) {
                 alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)

@@ -36,6 +36,7 @@ import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.AlertDialogs;
+import com.unitpricecalculator.util.Consumer;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
@@ -127,6 +128,13 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     if (Strings.isNullOrEmpty(note)) {
       alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setVisibility(View.GONE);
     }
+    editText.addTextChangedListener(new AbstractTextWatcher() {
+      @Override
+      public void afterTextChanged(Editable s) {
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            .setEnabled(!s.toString().isEmpty());
+      }
+    });
   };
 
   public UnitEntryView(Context context) {
@@ -154,9 +162,9 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   @Override
   public void restoreState(SavedUnitEntryRow entryRow) {
-    mCostEditText.setText(entryRow.getCost());
-    mSizeEditText.setText(entryRow.getSize());
-    mQuantityEditText.setText(entryRow.getQuantity());
+    withoutTextWatcher(mCostEditText, editText -> editText.setText(entryRow.getCost()));
+    withoutTextWatcher(mSizeEditText, editText -> editText.setText(entryRow.getSize()));
+    withoutTextWatcher(mQuantityEditText, editText -> editText.setText(entryRow.getQuantity()));
     mUnit = entryRow.getUnit();
     note = entryRow.getNote();
     refreshAdapter(unitArrayAdapterFactory.create(mUnit));
@@ -411,12 +419,18 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   }
 
   public void clear() {
-    mCostEditText.setText("");
-    mQuantityEditText.setText("");
-    mSizeEditText.setText("");
+    withoutTextWatcher(mCostEditText, editText -> editText.setText(""));
+    withoutTextWatcher(mQuantityEditText, editText -> editText.setText(""));
+    withoutTextWatcher(mSizeEditText, editText -> editText.setText(""));
     note = "";
     refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType().getBase()));
     syncViews();
+  }
+
+  private void withoutTextWatcher(EditText editText, Consumer<EditText> consumer) {
+    editText.removeTextChangedListener(mTextWatcher);
+    consumer.consume(editText);
+    editText.addTextChangedListener(mTextWatcher);
   }
 
   public void setEvaluation(Evaluation evaluation) {

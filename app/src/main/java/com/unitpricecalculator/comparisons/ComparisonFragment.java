@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.ActionMode.Callback;
@@ -69,7 +68,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public final class ComparisonFragment extends BaseFragment
-    implements UnitEntryView.OnUnitEntryChangedListener, SavesState<SavedComparison> {
+    implements UnitEntryView.OnUnitEntryChangedListener, SavesState<ComparisonFragmentState> {
 
   @dagger.Module
   public interface Module {
@@ -140,7 +139,7 @@ public final class ComparisonFragment extends BaseFragment
   };
 
   @Nullable
-  private SavedComparison pendingSavedStateToRestore;
+  private ComparisonFragmentState pendingSavedStateToRestore;
   private String draftKey = String.valueOf(System.currentTimeMillis());
   private Optional<SavedComparison> lastKnownSavedState = Optional.absent();
 
@@ -241,17 +240,7 @@ public final class ComparisonFragment extends BaseFragment
       }
       return false;
     });
-    editText.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-      }
-
+    editText.addTextChangedListener(new AbstractTextWatcher() {
       @Override
       public void afterTextChanged(Editable s) {
         refreshViews();
@@ -386,13 +375,13 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   @Override
-  public SavedComparison saveState(Context context) {
-    return getSavedState(context);
+  public ComparisonFragmentState saveState(Context context) {
+    return new ComparisonFragmentState(getCurrentState(context), lastKnownSavedState.orNull());
   }
 
-  private SavedComparison getSavedState(Context context) {
+  private SavedComparison getCurrentState(Context context) {
     if (pendingSavedStateToRestore != null) {
-      return pendingSavedStateToRestore;
+      return pendingSavedStateToRestore.getCurrentComparison();
     }
 
     ImmutableList.Builder<SavedUnitEntryRow> list = ImmutableList.builder();
@@ -416,8 +405,8 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   @Override
-  public void restoreState(SavedComparison comparison) {
-    pendingSavedStateToRestore = comparison;
+  public void restoreState(ComparisonFragmentState state) {
+    pendingSavedStateToRestore = state;
 
     if (mRowContainer == null || getContext() == null) {
       return;
@@ -425,11 +414,13 @@ public final class ComparisonFragment extends BaseFragment
 
     Optional<EditText> fileNameEditTextOptional = fileNameEditText.toOptional();
     if (!fileNameEditTextOptional.isPresent()) {
-      fileNameEditText.whenPresent(() -> restoreState(comparison));
+      fileNameEditText.whenPresent(() -> restoreState(state));
       return;
     }
 
+    lastKnownSavedState = Optional.fromNullable(state.getLastKnownSavedComparison());
     mRowContainer.removeAllViewsInLayout();
+    SavedComparison comparison = state.getCurrentComparison();
     setUnitType(mUnitTypeSpinner, comparison.getUnitType());
     mEntryViews.clear();
     for (SavedUnitEntryRow entryRow : comparison.getSavedUnitEntryRows()) {
@@ -446,14 +437,9 @@ public final class ComparisonFragment extends BaseFragment
 
     fileNameEditTextOptional.get().setText(comparison.getName());
 
-    adapter.notifyDataSetChanged();
-
     pendingSavedStateToRestore = null;
-  }
-
-  public void loadSavedComparison(SavedComparison savedComparison) {
-    lastKnownSavedState = Optional.of(savedComparison);
-    restoreState(savedComparison);
+    adapter.notifyDataSetChanged();
+    refreshViews();
   }
 
   public void clear() {
@@ -479,7 +465,7 @@ public final class ComparisonFragment extends BaseFragment
   public void save() {
     if (!Strings
         .isNullOrEmpty(fileNameEditText.map(editText -> editText.getText().toString()).orNull())) {
-      save(getSavedState(getContext()));
+      save(getCurrentState(getContext()));
       return;
     }
 
@@ -498,21 +484,11 @@ public final class ComparisonFragment extends BaseFragment
         Preconditions.checkState(!Strings.isNullOrEmpty(newName));
         fileNameEditText.whenPresent(editText -> {
           editText.setText(newName);
-          save(getSavedState(getContext()));
+          save(getCurrentState(getContext()));
         });
       });
 
-      name.addTextChangedListener(new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
+      name.addTextChangedListener(new AbstractTextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {
           if (mAlertDialog == null || s == null) {
@@ -609,7 +585,11 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   private void refreshViews() {
-    SavedComparison currentState = getSavedState(getContext());
+    if (pendingSavedStateToRestore != null) {
+      return;
+    }
+
+    SavedComparison currentState = getCurrentState(getContext());
 
     boolean hasClickedSave = prefs.getBoolean(Keys.HAS_CLICKED_SAVE);
     if (hasClickedSave) {
@@ -829,6 +809,26 @@ public final class ComparisonFragment extends BaseFragment
 
     public UnitEntry getUnitEntry() {
       return unitEntry;
+    }
+  }
+
+  public static final class State {
+    @Nullable private final SavedComparison lastKnownSavedState;
+    private final SavedComparison draftState;
+
+    public State(@Nullable SavedComparison lastKnownSavedState,
+        SavedComparison draftState) {
+      this.lastKnownSavedState = lastKnownSavedState;
+      this.draftState = draftState;
+    }
+
+    @Nullable
+    public SavedComparison getLastKnownSavedState() {
+      return lastKnownSavedState;
+    }
+
+    public SavedComparison getDraftState() {
+      return draftState;
     }
   }
 }
