@@ -72,7 +72,7 @@ public final class SavedComparisonManager {
         putSavedComparison(new SavedComparison(String.valueOf(key++), name, decodedUnitType,
             unitEntryRowBuilder.build(), finalQuantity, decodedUnit, /* currencyCode= */ null));
       } catch (JSONException e) {
-        throw new RuntimeException(e);
+        // We failed, just skip it and destroy the old saved files.
       }
     }
 

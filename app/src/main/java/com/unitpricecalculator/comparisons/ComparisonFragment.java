@@ -183,9 +183,6 @@ public final class ComparisonFragment extends BaseFragment
 
     mAddRowButton = view.findViewById(R.id.add_row_btn);
     mAddRowButton.setOnClickListener(v -> {
-      if (mEntryViews.size() == 9) {
-        mAddRowButton.setEnabled(false);
-      }
       addRowView();
     });
 
@@ -287,7 +284,6 @@ public final class ComparisonFragment extends BaseFragment
         .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
     entryView.setPadding((int) dp16, 0, (int) dp16, 0);
     entryView.setRowNumber(mEntryViews.size() - 1);
-    mRemoveRowButton.setEnabled(true);
     entryView.setOnUnitEntryChangedListener(this);
     entryView.onCompareUnitChanged(getCompareUnit());
     entryView.setLongClickable(true);
@@ -592,31 +588,21 @@ public final class ComparisonFragment extends BaseFragment
     SavedComparison currentState = getCurrentState(getContext());
 
     boolean hasClickedSave = prefs.getBoolean(Keys.HAS_CLICKED_SAVE);
-    if (hasClickedSave) {
-      if (!savedChangesCountdown.isPresent()) {
-        savedChangesStatus.setVisibility(View.GONE);
-        savedChangesDivider.setVisibility(View.GONE);
-      }
-      saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item,
-          !currentState.isEmpty() && !(lastKnownSavedState.isPresent() && currentState
-              .equals(lastKnownSavedState.get()))));
-    } else {
-      if (currentState.isEmpty() && lastKnownSavedState.transform(SavedComparison::isEmpty)
-          .or(true)) {
-        savedChangesStatus.setVisibility(View.INVISIBLE);
-        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
-        savedChangesDivider.setVisibility(View.INVISIBLE);
-      } else if (currentState.equals(lastKnownSavedState.orNull())) {
-        savedChangesStatus.setVisibility(View.VISIBLE);
-        savedChangesStatus.setText(R.string.all_changes_saved);
-        savedChangesDivider.setVisibility(View.VISIBLE);
-        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, false));
-      } else {
-        savedChangesStatus.setVisibility(View.VISIBLE);
-        savedChangesStatus.setText(R.string.unsaved_changes);
-        savedChangesDivider.setVisibility(View.VISIBLE);
-        saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, true));
-      }
+    boolean canSave =
+        (currentState.isEmpty() && lastKnownSavedState.isPresent()) ||
+            (!currentState.isEmpty() && !currentState.equals(lastKnownSavedState.orNull()));
+    saveMenuItem.whenPresent(item -> MenuItems.setEnabled(item, canSave));
+
+    if (hasClickedSave && !savedChangesCountdown.isPresent()) {
+      savedChangesStatus.setVisibility(View.GONE);
+      savedChangesDivider.setVisibility(View.GONE);
+    } else if (!hasClickedSave && canSave) {
+      savedChangesStatus.setVisibility(View.VISIBLE);
+      savedChangesStatus.setText(R.string.unsaved_changes);
+      savedChangesDivider.setVisibility(View.VISIBLE);
+    } else if (!hasClickedSave) {
+      savedChangesStatus.setVisibility(View.GONE);
+      savedChangesDivider.setVisibility(View.GONE);
     }
 
     CompareUnitChangedEvent compareUnit = getCompareUnit();
@@ -648,37 +634,39 @@ public final class ComparisonFragment extends BaseFragment
       for (UnitEntryView entryView : mEntryViews) {
         entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
       }
-      return;
-    }
+    } else {
+      StringBuilder finalSummary = new StringBuilder();
+      UnitEntryWithIndex best = unitEntries.get(0);
+      finalSummary.append(getString(R.string.main_final_summary, best.getIndex() + 1)).append('\n');
+      appendSingleRowSummary(finalSummary, best.getUnitEntry(), compareUnit);
 
-    StringBuilder finalSummary = new StringBuilder();
-    UnitEntryWithIndex best = unitEntries.get(0);
-    finalSummary.append(getString(R.string.main_final_summary, best.getIndex() + 1)).append('\n');
-    appendSingleRowSummary(finalSummary, best.getUnitEntry(), compareUnit);
+      finalSummary.append("\n\n");
 
-    finalSummary.append("\n\n");
+      for (UnitEntryWithIndex entryWithIndex : unitEntries) {
+        finalSummary.append(
+            String.format(Locale.getDefault(), "%d: ", entryWithIndex.getIndex() + 1));
 
-    for (UnitEntryWithIndex entryWithIndex : unitEntries) {
-      finalSummary.append(
-          String.format(Locale.getDefault(), "%d: ", entryWithIndex.getIndex() + 1));
+        appendSingleRowSummary(finalSummary, entryWithIndex.getUnitEntry(), compareUnit);
+      }
 
-      appendSingleRowSummary(finalSummary, entryWithIndex.getUnitEntry(), compareUnit);
-    }
+      mSummaryText.setText(finalSummary);
 
-    mSummaryText.setText(finalSummary);
-
-    for (UnitEntryView entryView : mEntryViews) {
-      Optional<UnitEntry> entry = entryView.getEntry();
-      if (entry.isPresent()) {
-        if (entry.get().pricePer(size, unit) <= best.getUnitEntry().pricePer(size, unit)) {
-          entryView.setEvaluation(UnitEntryView.Evaluation.GOOD);
+      for (UnitEntryView entryView : mEntryViews) {
+        Optional<UnitEntry> entry = entryView.getEntry();
+        if (entry.isPresent()) {
+          if (entry.get().pricePer(size, unit) <= best.getUnitEntry().pricePer(size, unit)) {
+            entryView.setEvaluation(UnitEntryView.Evaluation.GOOD);
+          } else {
+            entryView.setEvaluation(UnitEntryView.Evaluation.BAD);
+          }
         } else {
-          entryView.setEvaluation(UnitEntryView.Evaluation.BAD);
+          entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
         }
-      } else {
-        entryView.setEvaluation(UnitEntryView.Evaluation.NEUTRAL);
       }
     }
+
+    mRemoveRowButton.setEnabled(mEntryViews.size() > 1);
+    mAddRowButton.setEnabled(mEntryViews.size() < 10);
   }
 
   private void appendSingleRowSummary(StringBuilder message, UnitEntry unitEntry,
@@ -772,11 +760,6 @@ public final class ComparisonFragment extends BaseFragment
   private void removeRow(int index) {
     Preconditions.checkState(mEntryViews.size() > 1);
 
-    if (mEntryViews.size() == 2) {
-      mRemoveRowButton.setEnabled(false);
-    }
-    mAddRowButton.setEnabled(true);
-
     UnitEntryView entryView = mEntryViews.remove(index);
 
     if (entryView.getFocusedViewId().isPresent()) {
@@ -813,7 +796,9 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   public static final class State {
-    @Nullable private final SavedComparison lastKnownSavedState;
+
+    @Nullable
+    private final SavedComparison lastKnownSavedState;
     private final SavedComparison draftState;
 
     public State(@Nullable SavedComparison lastKnownSavedState,
