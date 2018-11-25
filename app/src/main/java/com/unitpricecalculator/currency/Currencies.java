@@ -2,6 +2,8 @@ package com.unitpricecalculator.currency;
 
 import android.app.Activity;
 import android.support.v7.app.AlertDialog;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Optional;
 import com.squareup.otto.Bus;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CurrencyChangedEvent;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 
 @Reusable
@@ -56,6 +59,28 @@ public final class Currencies {
               bus.post(new CurrencyChangedEvent(currency));
             })
         .show();
+  }
+
+  public static Optional<Currency> parseCurrencySafely(String currencyCode) {
+    Currency currency = null;
+
+    try {
+      currency = Currency.getInstance(currencyCode);
+    } catch (Exception e) {
+      // There was an exception getting the currency.
+    }
+
+    return Optional.fromNullable(currency);
+  }
+
+  public static Currency getSafeDefaultCurrency() {
+    Currency currency = null;
+    try {
+      currency = Currency.getInstance(Locale.getDefault());
+    } catch (Exception e) {
+      // Locale did not have a currency.
+    }
+    return MoreObjects.firstNonNull(currency, Currency.getInstance("USD"));
   }
 
 }

@@ -14,7 +14,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -23,6 +25,7 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
+import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.saved.SavedFragment;
 import com.unitpricecalculator.unit.Units;
@@ -49,7 +52,8 @@ public final class MainActivity extends BaseActivity
   private SettingsFragment mSettingsFragment;
   private SavedFragment mSavedFragment;
 
-  @Nullable private ComparisonFragmentState comparisonFragmentState;
+  @Nullable
+  private ComparisonFragmentState comparisonFragmentState;
 
   private State currentState;
 
@@ -272,18 +276,14 @@ public final class MainActivity extends BaseActivity
 
   @Override
   public void onLoadSavedComparison(SavedComparison comparison) {
-    String currencyCode = comparison.getCurrencyCode();
-    if (currencyCode != null) {
-      try {
-        Currency currency = Currency.getInstance(currencyCode);
-        if (currency != null) {
-          units.setCurrency(currency);
-        }
-      } catch (IllegalArgumentException e) {
-        // This currency used to be supported and no longer is, oh well.
+    if (Strings.isNullOrEmpty(comparison.getCurrencyCode())) {
+      comparison = comparison.addCurrency(units.getCurrency().getCurrencyCode());
+    } else {
+      Optional<Currency> currency = Currencies.parseCurrencySafely(comparison.getCurrencyCode());
+      if (currency.isPresent()) {
+        units.setCurrency(currency.get());
       }
     }
-
     comparisonFragmentState = new ComparisonFragmentState(comparison, comparison);
     changeState(State.MAIN);
   }

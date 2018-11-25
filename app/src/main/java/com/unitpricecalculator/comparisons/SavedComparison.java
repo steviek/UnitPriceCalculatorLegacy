@@ -149,6 +149,14 @@ public final class SavedComparison implements Comparable<SavedComparison> {
         currencyCode);
   }
 
+  /**
+   * Generates a copy of this comparison with the provided name.  The original object is unaffected.
+   */
+  public SavedComparison addCurrency(String currencyCode) {
+    return new SavedComparison(key, name, unitType, savedUnitEntryRows, finalQuantity, finalUnit,
+        currencyCode);
+  }
+
   @Override
   public int compareTo(@NonNull SavedComparison another) {
     return key.compareTo(another.key);

@@ -337,7 +337,6 @@ public final class ComparisonFragment extends BaseFragment
           int rowNumber = entryView.getRowNumber();
           if (item.getItemId() == R.id.action_delete) {
             removeRow(rowNumber);
-            mode.finish();
             return true;
           } else if (item.getItemId() == R.id.action_up) {
             swapRows(rowNumber, rowNumber - 1);
@@ -366,6 +365,7 @@ public final class ComparisonFragment extends BaseFragment
       });
       return true;
     });
+    finishActionMode();
     refreshViews();
     return entryView;
   }
@@ -773,6 +773,8 @@ public final class ComparisonFragment extends BaseFragment
       mEntryViews.get(i).setRowNumber(i);
     }
 
+    finishActionMode();
+
     refreshViews();
   }
 
@@ -792,28 +794,6 @@ public final class ComparisonFragment extends BaseFragment
 
     public UnitEntry getUnitEntry() {
       return unitEntry;
-    }
-  }
-
-  public static final class State {
-
-    @Nullable
-    private final SavedComparison lastKnownSavedState;
-    private final SavedComparison draftState;
-
-    public State(@Nullable SavedComparison lastKnownSavedState,
-        SavedComparison draftState) {
-      this.lastKnownSavedState = lastKnownSavedState;
-      this.draftState = draftState;
-    }
-
-    @Nullable
-    public SavedComparison getLastKnownSavedState() {
-      return lastKnownSavedState;
-    }
-
-    public SavedComparison getDraftState() {
-      return draftState;
     }
   }
 }

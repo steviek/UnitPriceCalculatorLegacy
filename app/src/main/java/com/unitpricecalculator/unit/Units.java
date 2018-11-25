@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.squareup.otto.Bus;
+import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
@@ -11,7 +12,6 @@ import dagger.Reusable;
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -26,8 +26,10 @@ public final class Units {
   private final Prefs prefs;
   private final Bus bus;
 
-  @Nullable private Currency currency;
-  @Nullable private Function<Double, String> costFormatter;
+  @Nullable
+  private Currency currency;
+  @Nullable
+  private Function<Double, String> costFormatter;
 
   @Inject
   Units(Prefs prefs, Bus bus) {
@@ -66,12 +68,13 @@ public final class Units {
 
     String savedCurrency = prefs.getString(KEY_CURRENCY);
     if (savedCurrency != null) {
-      currency = Currency.getInstance(prefs.getString(KEY_CURRENCY));
+      currency =
+          Currencies.parseCurrencySafely(savedCurrency).or(Currencies.getSafeDefaultCurrency());
       costFormatter = null;
       return currency;
     }
 
-    currency = Currency.getInstance(Locale.getDefault());
+    currency = Currencies.getSafeDefaultCurrency();
     costFormatter = null;
     return currency;
   }
