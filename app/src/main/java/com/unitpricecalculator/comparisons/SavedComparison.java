@@ -1,13 +1,10 @@
 package com.unitpricecalculator.comparisons;
 
 import android.support.annotation.NonNull;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.unitpricecalculator.unit.Unit;
+import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.UnitType;
+import java.util.List;
 import javax.annotation.Nullable;
 
 public final class SavedComparison implements Comparable<SavedComparison> {
@@ -17,21 +14,20 @@ public final class SavedComparison implements Comparable<SavedComparison> {
   private final String key;
   private final String name;
   private final UnitType unitType;
-  private final ImmutableList<SavedUnitEntryRow> savedUnitEntryRows;
+  private final List<SavedUnitEntryRow> savedUnitEntryRows;
   private final String finalQuantity;
-  private final Unit finalUnit;
+  private final DefaultUnit finalUnit;
   @Nullable
   private final String currencyCode;
 
-  @JsonCreator
   public SavedComparison(
-      @JsonProperty("key") @Nullable String key,
-      @JsonProperty("name") String name,
-      @JsonProperty("unitType") UnitType unitType,
-      @JsonProperty("entryRows") ImmutableList<SavedUnitEntryRow> savedUnitEntryRows,
-      @JsonProperty("finalQuantity") String finalQuantity,
-      @JsonProperty("finalUnit") Unit finalUnit,
-      @JsonProperty("currencyCode") @Nullable String currencyCode) {
+      @Nullable String key,
+      String name,
+      UnitType unitType,
+      List<SavedUnitEntryRow> savedUnitEntryRows,
+      String finalQuantity,
+      DefaultUnit finalUnit,
+      @Nullable String currencyCode) {
 
     if (key == null) {
       long newKey = System.currentTimeMillis();
@@ -50,7 +46,7 @@ public final class SavedComparison implements Comparable<SavedComparison> {
     this.currencyCode = currencyCode;
   }
 
-  public ImmutableList<SavedUnitEntryRow> getSavedUnitEntryRows() {
+  public List<SavedUnitEntryRow> getSavedUnitEntryRows() {
     return savedUnitEntryRows;
   }
 
@@ -58,7 +54,7 @@ public final class SavedComparison implements Comparable<SavedComparison> {
     return finalQuantity;
   }
 
-  public Unit getFinalUnit() {
+  public DefaultUnit getFinalUnit() {
     return finalUnit;
   }
 
@@ -162,7 +158,6 @@ public final class SavedComparison implements Comparable<SavedComparison> {
     return key.compareTo(another.key);
   }
 
-  @JsonIgnore
   boolean isEmpty() {
     if (!Strings.isNullOrEmpty(name)) {
       return false;

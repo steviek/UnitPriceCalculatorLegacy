@@ -37,12 +37,12 @@ public final class Units {
     this.bus = bus;
   }
 
-  private static Map<UnitType, ImmutableList<Unit>> unitMap = new HashMap<>();
+  private static Map<UnitType, ImmutableList<DefaultUnit>> unitMap = new HashMap<>();
 
-  public ImmutableList<Unit> getUnitsForType(UnitType unitType) {
+  public ImmutableList<DefaultUnit> getUnitsForType(UnitType unitType) {
     if (unitMap.get(unitType) == null) {
-      ImmutableList.Builder<Unit> list = ImmutableList.builder();
-      for (Unit unit : DefaultUnit.values()) {
+      ImmutableList.Builder<DefaultUnit> list = ImmutableList.builder();
+      for (DefaultUnit unit : DefaultUnit.values()) {
         if (unit.getUnitType() == unitType) {
           list.add(unit);
         }

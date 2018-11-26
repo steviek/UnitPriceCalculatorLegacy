@@ -1,27 +1,24 @@
 package com.unitpricecalculator.comparisons;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.unitpricecalculator.unit.Unit;
+import com.unitpricecalculator.unit.DefaultUnit;
 
 public class SavedUnitEntryRow {
 
   private final String cost;
   private final String quantity;
   private final String size;
-  private final Unit unit;
+  private final DefaultUnit unit;
   private final String note;
 
-  @JsonCreator
   public SavedUnitEntryRow(
-      @JsonProperty("cost") String cost,
-      @JsonProperty("quantity") String quantity,
-      @JsonProperty("size") String size,
-      @JsonProperty("unit") Unit unit,
-      @JsonProperty("note") String note) {
+      String cost,
+      String quantity,
+      String size,
+      DefaultUnit unit,
+      @Nullable String note) {
     this.cost = Preconditions.checkNotNull(cost);
     this.quantity = Preconditions.checkNotNull(quantity);
     this.size = Preconditions.checkNotNull(size);
@@ -41,7 +38,7 @@ public class SavedUnitEntryRow {
     return size;
   }
 
-  public Unit getUnit() {
+  public DefaultUnit getUnit() {
     return unit;
   }
 
@@ -49,7 +46,6 @@ public class SavedUnitEntryRow {
     return note;
   }
 
-  @JsonIgnore
   boolean isEmpty() {
     if (!Strings.isNullOrEmpty(cost)) {
       return false;

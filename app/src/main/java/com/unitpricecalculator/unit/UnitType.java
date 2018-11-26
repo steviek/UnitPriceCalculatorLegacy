@@ -22,7 +22,7 @@ public enum UnitType {
     return name;
   }
 
-  public Unit getBase() {
+  public DefaultUnit getBase() {
     return DefaultUnit.valueOf(base);
   }
 

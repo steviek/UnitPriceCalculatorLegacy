@@ -3,17 +3,15 @@ package com.unitpricecalculator.saved;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
+import com.unitpricecalculator.json.ObjectMapper;
 import com.unitpricecalculator.unit.DefaultUnit;
-import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 import dagger.Reusable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +54,7 @@ public final class SavedComparisonManager {
         String finalQuantity = jsonObject.getString("finalQuantity");
 
         JSONArray finalUnit = jsonObject.getJSONArray("finalUnit");
-        Unit decodedUnit = DefaultUnit.valueOf(finalUnit.getString(1));
+        DefaultUnit decodedUnit = DefaultUnit.valueOf(finalUnit.getString(1));
 
         JSONArray savedUnitEntryRows =
             jsonObject.getJSONArray("savedUnitEntryRows").getJSONArray(1);
@@ -66,7 +64,7 @@ public final class SavedComparisonManager {
           String cost = row.getString("cost");
           String quantity = row.getString("quantity");
           String size = row.getString("size");
-          Unit unit = DefaultUnit.valueOf(row.getJSONArray("unit").getString(1));
+          DefaultUnit unit = DefaultUnit.valueOf(row.getJSONArray("unit").getString(1));
           unitEntryRowBuilder.add(new SavedUnitEntryRow(cost, quantity, size, unit, ""));
         }
         putSavedComparison(new SavedComparison(String.valueOf(key++), name, decodedUnitType,
@@ -82,7 +80,7 @@ public final class SavedComparisonManager {
   public void putSavedComparison(SavedComparison savedComparison) {
     try {
       prefs.edit()
-          .putString(savedComparison.getKey(), objectMapper.writeValueAsString(savedComparison))
+          .putString(savedComparison.getKey(), objectMapper.toJson(savedComparison))
           .apply();
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -98,11 +96,7 @@ public final class SavedComparisonManager {
 
     List<SavedComparison> list = new ArrayList<>(map.size());
     for (Object value : map.values()) {
-      try {
-        list.add(objectMapper.readValue((String) value, SavedComparison.class));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      list.add(objectMapper.fromJson(SavedComparison.class, (String) value));
     }
 
     // Sort in reverse to show newer saved values at the top.

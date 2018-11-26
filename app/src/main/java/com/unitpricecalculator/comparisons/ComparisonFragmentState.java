@@ -1,8 +1,7 @@
 package com.unitpricecalculator.comparisons;
 
 import android.support.annotation.Nullable;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 
 public final class ComparisonFragmentState {
 
@@ -10,10 +9,9 @@ public final class ComparisonFragmentState {
   @Nullable
   private final SavedComparison lastKnownSavedComparison;
 
-  @JsonCreator
   public ComparisonFragmentState(
-      @JsonProperty("currentComparison") SavedComparison currentComparison,
-      @JsonProperty("lastKnownSavedComparison") @Nullable SavedComparison lastKnownSavedComparison) {
+      SavedComparison currentComparison,
+      @Nullable SavedComparison lastKnownSavedComparison) {
     this.currentComparison = currentComparison;
     this.lastKnownSavedComparison = lastKnownSavedComparison;
   }
@@ -25,5 +23,26 @@ public final class ComparisonFragmentState {
   @Nullable
   public SavedComparison getLastKnownSavedComparison() {
     return lastKnownSavedComparison;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ComparisonFragmentState that = (ComparisonFragmentState) o;
+    return Objects.equals(currentComparison, that.currentComparison) &&
+        Objects.equals(lastKnownSavedComparison, that.lastKnownSavedComparison);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = currentComparison.hashCode();
+    result =
+        31 * result + (lastKnownSavedComparison != null ? lastKnownSavedComparison.hashCode() : 0);
+    return result;
   }
 }

@@ -3,11 +3,10 @@ package com.unitpricecalculator.util.prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.unitpricecalculator.inject.ApplicationContext;
+import com.unitpricecalculator.json.ObjectMapper;
 import dagger.Reusable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +60,7 @@ public final class Prefs {
             try {
                 List<T> list = new ArrayList<>();
                 for (String s : set) {
-                    list.add(objectMapper.readValue(s, clazz));
+                    list.add(objectMapper.fromJson(clazz, s));
                 }
                 return list;
             } catch (Exception e) {
@@ -74,7 +73,7 @@ public final class Prefs {
         Set<String> stringSet = new HashSet<>();
         try {
             for (T t : list) {
-                stringSet.add(objectMapper.writeValueAsString(t));
+                stringSet.add(objectMapper.toJson(t));
             }
             putStringSet(key, stringSet);
         } catch (Exception e) {
@@ -93,24 +92,11 @@ public final class Prefs {
     }
 
     public <T> T getObject(Class<T> clazz, String key, T fallback) {
-        String serialized = getString(key);
-        if (serialized != null) {
-            try {
-                return objectMapper.readValue(serialized, clazz);
-            } catch (IOException e) {
-                throw Throwables.propagate(e);
-            }
-        } else {
-            return fallback;
-        }
+        return objectMapper.fromJsonOptional(clazz, getString(key)).or(fallback);
     }
 
     public void putObject(String key, Object object) {
-        try {
-            prefs.edit().putString(key, objectMapper.writeValueAsString(object)).apply();
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
+        prefs.edit().putString(key, objectMapper.toJson(object)).apply();
     }
 
     public boolean getBoolean(String key) {

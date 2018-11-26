@@ -9,9 +9,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.inject.ApplicationContext;
+import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Systems;
-import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
 import java.util.HashSet;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 final class UnitArrayAdapter extends ArrayAdapter<String> {
 
-    private final ImmutableList<Unit> units;
+    private final ImmutableList<DefaultUnit> units;
 
     @AutoFactory
     UnitArrayAdapter(
@@ -35,16 +35,16 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
             @Provided @ApplicationContext Context context,
             @Provided Systems systems,
             @Provided Units units,
-            Unit selected) {
+        DefaultUnit selected) {
         this(context, getSymbolsAndUnits(context, systems, units, selected.getUnitType(), selected));
     }
 
-    private static Pair<ImmutableList<String>, ImmutableList<Unit>> getSymbolsAndUnits(
-            Context context, Systems systems, Units units, UnitType unitType, Unit selected) {
-        ImmutableList.Builder<Unit> unitslist = ImmutableList.builder();
+    private static Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> getSymbolsAndUnits(
+            Context context, Systems systems, Units units, UnitType unitType, DefaultUnit selected) {
+        ImmutableList.Builder<DefaultUnit> unitslist = ImmutableList.builder();
         ImmutableList.Builder<String> symbols = ImmutableList.builder();
 
-        Set<Unit> includedUnits = new HashSet<>();
+        Set<DefaultUnit> includedUnits = new HashSet<>();
 
         if (selected != null) {
             includedUnits.add(selected);
@@ -53,7 +53,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
         }
 
         for (System system : systems.getPreferredOrder()) {
-            for (Unit unit : units.getUnitsForType(unitType)) {
+            for (DefaultUnit unit : units.getUnitsForType(unitType)) {
                 if (!includedUnits.contains(unit) && unit.getSystem().is(system) &&
                         (selected == null || unit != selected)) {
                     includedUnits.add(unit);
@@ -66,12 +66,12 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
     }
 
     private UnitArrayAdapter(
-            Context context, Pair<ImmutableList<String>, ImmutableList<Unit>> symbolsAndUnits) {
+            Context context, Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> symbolsAndUnits) {
         super(context, R.layout.unit_type_spinner_dropdown_item, symbolsAndUnits.first);
         this.units = Preconditions.checkNotNull(symbolsAndUnits.second);
     }
 
-    Unit getUnit(int position) {
+    DefaultUnit getUnit(int position) {
         return units.get(position);
     }
 }

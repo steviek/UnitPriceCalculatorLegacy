@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.google.auto.factory.AutoFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.squareup.otto.Bus;
@@ -37,6 +37,7 @@ import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.AlertDialogs;
 import com.unitpricecalculator.util.Consumer;
+import com.unitpricecalculator.util.Localization;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
@@ -44,6 +45,7 @@ import com.unitpricecalculator.util.logger.Logger;
 import java.util.Locale;
 import javax.inject.Inject;
 
+@AutoFactory
 public final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
 
   private static final int COST = 0;
@@ -74,7 +76,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   private OnUnitEntryChangedListener mListener;
 
-  private Unit mUnit;
+  private DefaultUnit mUnit;
   private Evaluation mEvaluation = Evaluation.NEUTRAL;
 
   private TextWatcher mTextWatcher = new AbstractTextWatcher() {
@@ -142,12 +144,6 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     ViewInjection.inject(this);
     LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
     onFinishInflate();
-  }
-
-  public UnitEntryView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    ViewInjection.inject(this);
-    LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
   }
 
   @Override
@@ -248,7 +244,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       UnitEntry.Builder unitEntry = UnitEntry.builder();
 
       unitEntry.setCostString(mCostEditText.getText().toString());
-      unitEntry.setCost(Double.parseDouble(mCostEditText.getText().toString()));
+      unitEntry.setCost(Localization.parseDoubleOrThrow(mCostEditText.getText().toString()));
 
       if (Strings.isNullOrEmpty(mQuantityEditText.getText().toString())) {
         unitEntry.setQuantity(1);
@@ -263,7 +259,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
         unitEntry.setSizeString("1");
       } else {
         unitEntry.setSizeString(mSizeEditText.getText().toString());
-        unitEntry.setSize(Double.parseDouble(mSizeEditText.getText().toString()));
+        unitEntry.setSize(Localization.parseDoubleOrThrow(mSizeEditText.getText().toString()));
       }
 
       unitEntry.setUnit(getSelectedUnit());
@@ -309,12 +305,15 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     mCostEditText = findViewById(R.id.price_edit_text);
     mCostEditText.addTextChangedListener(mTextWatcher);
+    Localization.addLocalizedKeyListener(mCostEditText);
 
     mQuantityEditText = findViewById(R.id.number_edit_text);
     mQuantityEditText.addTextChangedListener(mTextWatcher);
+    Localization.addLocalizedKeyListener(mQuantityEditText);
 
     mSizeEditText = findViewById(R.id.size_edit_text);
     mSizeEditText.addTextChangedListener(mTextWatcher);
+    Localization.addLocalizedKeyListener(mSizeEditText);
 
     mUnitSpinner = findViewById(R.id.unit_spinner);
 
@@ -335,7 +334,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       mUnitSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-          Unit unit = ((UnitArrayAdapter) parent.getAdapter()).getUnit(position);
+          DefaultUnit unit = ((UnitArrayAdapter) parent.getAdapter()).getUnit(position);
           if (unit != mUnit) {
             mUnit = unit;
             mUnitSpinner.setAdapter(unitArrayAdapterFactory.create(mUnit));
@@ -443,7 +442,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   }
 
   private String getSummaryText(UnitEntry unitEntry, Unit baseUnit) {
-    double baseSize = Double.parseDouble(mLastCompareUnit.getSize());
+    double baseSize = Localization.parseDoubleOrThrow(mLastCompareUnit.getSize());
     double pricePer = unitEntry.pricePer(baseSize, baseUnit);
 
     String formattedPricePer = units.getFormatter().apply(pricePer);

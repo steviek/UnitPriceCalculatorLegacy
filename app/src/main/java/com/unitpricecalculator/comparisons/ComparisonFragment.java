@@ -43,11 +43,13 @@ import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
 import com.unitpricecalculator.saved.SavedComparisonManager;
+import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.AlertDialogs;
+import com.unitpricecalculator.util.Localization;
 import com.unitpricecalculator.util.MenuItems;
 import com.unitpricecalculator.util.NumberUtils;
 import com.unitpricecalculator.util.SavesState;
@@ -182,14 +184,10 @@ public final class ComparisonFragment extends BaseFragment
     }
 
     mAddRowButton = view.findViewById(R.id.add_row_btn);
-    mAddRowButton.setOnClickListener(v -> {
-      addRowView();
-    });
+    mAddRowButton.setOnClickListener(v -> addRowView());
 
     mRemoveRowButton = view.findViewById(R.id.remove_row_btn);
-    mRemoveRowButton.setOnClickListener(v -> {
-      removeRow(mEntryViews.size() - 1);
-    });
+    mRemoveRowButton.setOnClickListener(v -> removeRow(mEntryViews.size() - 1));
 
     mFinalEditText = view.findViewById(R.id.final_size);
     mFinalEditText.addTextChangedListener(new AbstractTextWatcher() {
@@ -199,6 +197,7 @@ public final class ComparisonFragment extends BaseFragment
         refreshViews();
       }
     });
+    Localization.addLocalizedKeyListener(mFinalEditText);
 
     mFinalSpinner = view.findViewById(R.id.final_spinner);
     if (mFinalSpinner.getAdapter() == null) {
@@ -388,7 +387,7 @@ public final class ComparisonFragment extends BaseFragment
         unitTypeArrayAdapter.getItem(mUnitTypeSpinner.getSelectedItemPosition()),
         context.getResources());
     String finalSize = mFinalEditText.getText().toString();
-    Unit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
+    DefaultUnit finalUnit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
     String savedName =
         fileNameEditText.map(editText -> editText.getText().toString()).or("");
@@ -424,7 +423,7 @@ public final class ComparisonFragment extends BaseFragment
       entryView.restoreState(entryRow);
     }
     mFinalEditText.setText(comparison.getFinalQuantity());
-    Unit unit = comparison.getFinalUnit();
+    DefaultUnit unit = comparison.getFinalUnit();
     UnitArrayAdapter adapter = unitArrayAdapterFactory.create(unit);
     mFinalSpinner.setAdapter(adapter);
     mFinalSpinner.setSelection(0);
@@ -606,7 +605,7 @@ public final class ComparisonFragment extends BaseFragment
     }
 
     CompareUnitChangedEvent compareUnit = getCompareUnit();
-    double size = Double.parseDouble(compareUnit.getSize());
+    double size = Localization.parseDoubleOrThrow(compareUnit.getSize());
     Unit unit = compareUnit.getUnit();
 
     if (Strings.isNullOrEmpty(mFinalEditText.getText().toString())) {
@@ -693,7 +692,8 @@ public final class ComparisonFragment extends BaseFragment
     message.append(" = ");
 
     String formattedCompareUnitCost =
-        formatter.apply(unitEntry.pricePer(Double.parseDouble(compareSize), compareUnit));
+        formatter
+            .apply(unitEntry.pricePer(Localization.parseDoubleOrThrow(compareSize), compareUnit));
     String compareUnitSymbol = compareUnit.getSymbol(getResources());
 
     if (compareSize.equals("1")) {

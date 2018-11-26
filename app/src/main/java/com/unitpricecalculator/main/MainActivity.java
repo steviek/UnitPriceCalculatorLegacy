@@ -12,12 +12,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseActivity;
@@ -27,9 +24,9 @@ import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
+import com.unitpricecalculator.json.ObjectMapper;
 import com.unitpricecalculator.saved.SavedFragment;
 import com.unitpricecalculator.unit.Units;
-import java.io.IOException;
 import java.util.Currency;
 import javax.inject.Inject;
 
@@ -37,13 +34,13 @@ public final class MainActivity extends BaseActivity
     implements MenuFragment.Callback, SavedFragment.Callback {
 
   @Inject
-  ObjectMapper objectMapper;
-
-  @Inject
   Bus bus;
 
   @Inject
   Units units;
+
+  @Inject
+  ObjectMapper objectMapper;
 
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
@@ -83,14 +80,9 @@ public final class MainActivity extends BaseActivity
 
     if (savedInstanceState != null) {
       currentState = State.valueOf(savedInstanceState.getString("state"));
-      try {
-        mComparisonFragment.restoreState(
-            objectMapper.readValue(
-                savedInstanceState.getString("mainFragment"),
-                ComparisonFragmentState.class));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      mComparisonFragment.restoreState(
+          objectMapper.fromJson(ComparisonFragmentState.class,
+              savedInstanceState.getString("mainFragment")));
     } else {
       currentState = State.MAIN;
     }
@@ -119,13 +111,10 @@ public final class MainActivity extends BaseActivity
     super.onSaveInstanceState(outState);
     outState.putString("state", currentState.name());
     if (mComparisonFragment != null) {
-      try {
-        outState.putString(
-            "mainFragment",
-            objectMapper.writeValueAsString(mComparisonFragment.saveState(this)));
-      } catch (JsonProcessingException e) {
-        throw Throwables.propagate(e);
-      }
+      outState.putString(
+          "mainFragment",
+          objectMapper.toJson(mComparisonFragment.saveState(this)));
+
     }
   }
 
