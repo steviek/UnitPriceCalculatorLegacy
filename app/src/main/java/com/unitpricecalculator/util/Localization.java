@@ -1,7 +1,6 @@
 package com.unitpricecalculator.util;
 
 import android.text.Editable;
-import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.widget.EditText;
 import com.google.common.base.Optional;
@@ -16,11 +15,8 @@ public final class Localization {
       return;
     }
 
-    String addLocaleMaybe = localeSeparator == ',' ? "" : "" + localeSeparator;
-
-    KeyListener separatorKeyListener =
-        DigitsKeyListener.getInstance("0123456789.," + addLocaleMaybe);
-    editText.setKeyListener(separatorKeyListener);
+    KeyListener keyListener = LocalizedDigitsKeyListener.create();
+    editText.setKeyListener(keyListener);
 
     editText.addTextChangedListener(new AbstractTextWatcher() {
       @Override
@@ -51,12 +47,23 @@ public final class Localization {
 
 
   public static Optional<Double> parseDoubleSafely(String input) {
-    char localeSeparator = DecimalFormatSymbols.getInstance().getMonetaryDecimalSeparator();
-    if (localeSeparator == '.') {
+    int firstNonDigit = getIndexOfFirstNonDigit(input);
+    if (firstNonDigit == -1) {
       return maybeParseDouble(input);
     }
 
-    return maybeParseDouble(input.replace(',', '.').replace(localeSeparator, '.'));
+    char separator = input.charAt(firstNonDigit);
+    return maybeParseDouble(input.replace(separator, '.'));
+  }
+
+  private static int getIndexOfFirstNonDigit(String input) {
+    int len = input.length();
+    for (int i = 0; i < len; i++) {
+      if (!Character.isDigit(input.charAt(i))) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   private static Optional<Double> maybeParseDouble(String input) {
