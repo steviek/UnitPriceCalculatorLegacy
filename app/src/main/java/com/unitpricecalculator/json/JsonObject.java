@@ -2,7 +2,7 @@ package com.unitpricecalculator.json;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.unitpricecalculator.json.JsonUtils.JsonThrowingSupplier;
 import javax.annotation.Nonnull;
 import org.json.JSONArray;

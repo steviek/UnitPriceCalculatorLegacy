@@ -1,7 +1,7 @@
 package com.unitpricecalculator.currency;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.squareup.otto.Bus;

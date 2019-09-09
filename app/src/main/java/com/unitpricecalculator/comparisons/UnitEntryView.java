@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -19,6 +17,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import com.google.auto.factory.AutoFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -52,14 +52,10 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private static final int SIZE = 1;
   private static final int QUANTITY = 2;
 
-  @Inject
-  Activity activity;
-  @Inject
-  Units units;
-  @Inject
-  UnitArrayAdapterFactory unitArrayAdapterFactory;
-  @Inject
-  Bus bus;
+  @Inject Activity activity;
+  @Inject Units units;
+  @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
+  @Inject Bus bus;
 
   private TextView mRowNumberTextView;
   private EditText mCostEditText;

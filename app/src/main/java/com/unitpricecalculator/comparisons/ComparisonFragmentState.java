@@ -1,6 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.util.Objects;
 
 public final class ComparisonFragmentState {

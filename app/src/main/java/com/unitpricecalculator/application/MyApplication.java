@@ -1,15 +1,14 @@
 package com.unitpricecalculator.application;
 
-import android.app.Activity;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import dagger.android.HasAndroidInjector;
 import javax.inject.Inject;
 
-public final class MyApplication extends MultiDexApplication implements HasActivityInjector {
+public final class MyApplication extends MultiDexApplication implements HasAndroidInjector {
 
-    @Inject DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    @Inject DispatchingAndroidInjector<Object> dispatchingAndroidInjector;
 
     @Override
     public void onCreate() {
@@ -22,7 +21,7 @@ public final class MyApplication extends MultiDexApplication implements HasActiv
     }
 
     @Override
-    public AndroidInjector<Activity> activityInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return dispatchingAndroidInjector;
     }
 }

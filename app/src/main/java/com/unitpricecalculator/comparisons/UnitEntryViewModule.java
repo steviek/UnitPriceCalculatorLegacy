@@ -1,15 +1,14 @@
 package com.unitpricecalculator.comparisons;
 
 import android.app.Activity;
-import android.view.View;
 import com.squareup.otto.Bus;
 import com.unitpricecalculator.comparisons.UnitEntryViewModule.UnitEntryViewComponent;
-import com.unitpricecalculator.inject.ViewKey;
 import com.unitpricecalculator.unit.Units;
 import dagger.Module;
 import dagger.Provides;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjector;
+import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import javax.inject.Provider;
 
@@ -18,8 +17,8 @@ public interface UnitEntryViewModule {
 
   @Provides
   @IntoMap
-  @ViewKey(UnitEntryView.class)
-  static AndroidInjector.Factory<? extends View> provideAndroidInjector(
+  @ClassKey(UnitEntryView.class)
+  static AndroidInjector.Factory<?> provideAndroidInjector(
       Provider<Activity> activity,
       Provider<Units> units,
       Provider<UnitArrayAdapterFactory> unitArrayAdapterFactory,

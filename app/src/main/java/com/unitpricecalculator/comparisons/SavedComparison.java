@@ -1,6 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.common.base.Strings;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.UnitType;

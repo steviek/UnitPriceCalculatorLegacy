@@ -1,6 +1,6 @@
 package com.unitpricecalculator.json;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;

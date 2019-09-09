@@ -2,7 +2,7 @@ package com.unitpricecalculator.util;
 
 import android.content.DialogInterface;
 import android.os.Build.VERSION;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 
 public final class AlertDialogs {
 

@@ -2,7 +2,7 @@ package com.unitpricecalculator.json;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import dagger.Reusable;

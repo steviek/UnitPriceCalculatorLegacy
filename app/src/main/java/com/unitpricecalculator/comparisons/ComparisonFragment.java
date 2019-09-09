@@ -3,9 +3,6 @@ package com.unitpricecalculator.comparisons;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.TypedValue;
@@ -26,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -59,15 +57,21 @@ import com.unitpricecalculator.util.logger.Logger;
 import com.unitpricecalculator.util.prefs.Keys;
 import com.unitpricecalculator.util.prefs.Prefs;
 import com.unitpricecalculator.util.sometimes.MutableSometimes;
-import dagger.android.ContributesAndroidInjector;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import dagger.android.ContributesAndroidInjector;
 
 public final class ComparisonFragment extends BaseFragment
     implements UnitEntryView.OnUnitEntryChangedListener, SavesState<ComparisonFragmentState> {

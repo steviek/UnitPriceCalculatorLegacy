@@ -1,7 +1,7 @@
 package com.unitpricecalculator.main;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.UnitEntryViewModule;
 import com.unitpricecalculator.inject.ActivityScoped;

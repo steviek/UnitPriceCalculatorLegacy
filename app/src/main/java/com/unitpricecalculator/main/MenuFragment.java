@@ -1,7 +1,7 @@
 package com.unitpricecalculator.main;
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

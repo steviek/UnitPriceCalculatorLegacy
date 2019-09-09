@@ -1,6 +1,6 @@
 package com.unitpricecalculator.comparisons;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.unitpricecalculator.unit.DefaultUnit;
