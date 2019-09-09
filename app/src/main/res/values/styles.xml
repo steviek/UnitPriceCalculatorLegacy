@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -43,8 +43,9 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#de000000</item>
+        <item name="android:textColor">@color/primaryText</item>
         <item name="android:drawablePadding">24dp</item>
+        <item name="android:drawableTint">@color/primaryText</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
         <item name="android:clickable">true</item>

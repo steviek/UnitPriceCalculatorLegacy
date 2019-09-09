@@ -371,7 +371,6 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       return;
     }
 
-    int focusedColor = 0xffDDDDDD;
     int unfocusedColor = Color.TRANSPARENT;
 
     TextView summaryTextView;
@@ -409,7 +408,10 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
     }
-    setBackgroundColor(mInActionMode ? focusedColor : unfocusedColor);
+    setBackgroundColor(
+        mInActionMode
+            ? ContextCompat.getColor(getContext(), R.color.row_focused_color)
+            : unfocusedColor);
 
   }
 
