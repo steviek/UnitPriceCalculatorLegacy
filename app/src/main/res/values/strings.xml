@@ -109,7 +109,7 @@
   <string name="add_note">Add note</string>
   <string name="edit_note">Edit note</string>
   <string name="enter_note_hint">Enter a note</string>
-  <string name="dark_mode">Dark theme</string>
+  <string name="dark_mode">Dark mode</string>
   <string name="dark_mode_match_device">Match device</string>
   <string name="dark_mode_always_dark">Always dark</string>
   <string name="dark_mode_always_light">Always light</string>

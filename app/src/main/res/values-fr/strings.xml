@@ -106,5 +106,9 @@
   <string name="add_note">Ajouter note</string>
   <string name="edit_note">Éditer note</string>
   <string name="enter_note_hint">Rempli une note</string>
+  <string name="dark_mode">Thème foncé</string>
+  <string name="dark_mode_match_device">En fonction du fond d\'écran</string>
+  <string name="dark_mode_always_dark">Toujours foncé</string>
+  <string name="dark_mode_always_light">Toujours clair</string>
 
 </resources>

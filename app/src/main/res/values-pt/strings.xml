@@ -93,5 +93,9 @@
   <string name="enter_note_hint">Insera una nota</string>
   <string name="unsaved_changes">Tem modificações não salvas. Clique no botão para salvar.</string>
   <string name="all_changes_saved">Todas as modificações são salvas. De agora em diante, o botão indicará que há algo para salvar.\n\nEsta mensagem irá desaparecer em %1$d…</string>
+  <string name="dark_mode">Tema escuro</string>
+  <string name="dark_mode_match_device">Baseado no plano de fundo</string>
+  <string name="dark_mode_always_dark">Sempre escuro</string>
+  <string name="dark_mode_always_light">Sempre claro</string>
 
 </resources>
