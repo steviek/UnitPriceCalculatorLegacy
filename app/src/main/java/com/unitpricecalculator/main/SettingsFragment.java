@@ -13,6 +13,9 @@ import com.unitpricecalculator.R;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.CurrencyChangedEvent;
 import com.unitpricecalculator.inject.FragmentScoped;
+import com.unitpricecalculator.mode.DarkModeDialogFragment;
+import com.unitpricecalculator.mode.DarkModeManager;
+import com.unitpricecalculator.mode.DarkModeStateChangedEvent;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Systems;
 import com.unitpricecalculator.unit.Units;
@@ -31,16 +34,14 @@ public class SettingsFragment extends BaseFragment {
     SettingsFragment contributeSettingsFragmentInjector();
   }
 
-  @Inject
-  Units units;
-  @Inject
-  Systems systems;
-  @Inject
-  Currencies currencies;
-  @Inject
-  Bus bus;
+  @Inject Units units;
+  @Inject Systems systems;
+  @Inject Currencies currencies;
+  @Inject Bus bus;
+  @Inject DarkModeManager darkModeManager;
 
   private final MutableSometimes<TextView> changeCurrencySubtitle = MutableSometimes.create();
+  private final MutableSometimes<TextView> darkModeSubtitle = MutableSometimes.create();
 
   @Override
   public void onStart() {
@@ -57,11 +58,12 @@ public class SettingsFragment extends BaseFragment {
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+                           Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-    changeCurrencySubtitle.set(view.findViewById(R.id.change_currency_subtitle));
-    changeCurrencySubtitle.toOptional().get().setText(units.getCurrency().getSymbol());
+    TextView changeCurrencySubtitleTextView = view.findViewById(R.id.change_currency_subtitle);
+    changeCurrencySubtitle.set(changeCurrencySubtitleTextView);
+    changeCurrencySubtitleTextView.setText(units.getCurrency().getSymbol());
     view.findViewById(R.id.change_currency_parent).setOnClickListener(
         v -> currencies.showChangeCurrencyDialog());
 
@@ -84,6 +86,12 @@ public class SettingsFragment extends BaseFragment {
           systems.setPreferredOrder(order);
         });
 
+    TextView darkModeSubtitleTextView = view.findViewById(R.id.dark_mode_subtitle);
+    darkModeSubtitle.set(darkModeSubtitleTextView);
+    darkModeSubtitleTextView.setText(darkModeManager.getCurrentDarkModeState().getLabelResId());
+    view.findViewById(R.id.dark_mode_parent)
+        .setOnClickListener(v -> DarkModeDialogFragment.show(getChildFragmentManager()));
+
     return view;
   }
 
@@ -91,5 +99,10 @@ public class SettingsFragment extends BaseFragment {
   public void onCurrencyChangedEvent(CurrencyChangedEvent event) {
     changeCurrencySubtitle
         .whenPresent(textView -> textView.setText(event.getCurrency().getSymbol()));
+  }
+
+  @Subscribe
+  public void onDarkModeStateChanged(DarkModeStateChangedEvent event) {
+    darkModeSubtitle.whenPresent(textView -> textView.setText(event.getNewState().getLabelResId()));
   }
 }

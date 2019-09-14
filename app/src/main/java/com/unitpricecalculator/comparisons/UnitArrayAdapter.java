@@ -8,7 +8,7 @@ import com.google.auto.factory.Provided;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.inject.ApplicationContext;
+import com.unitpricecalculator.inject.ActivityContext;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Systems;
@@ -23,7 +23,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
 
     @AutoFactory
     UnitArrayAdapter(
-            @Provided @ApplicationContext Context context,
+            @Provided @ActivityContext Context context,
             @Provided Systems systems,
             @Provided Units units,
             UnitType unitType) {
@@ -32,7 +32,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
 
     @AutoFactory
     UnitArrayAdapter(
-            @Provided @ApplicationContext Context context,
+            @Provided @ActivityContext Context context,
             @Provided Systems systems,
             @Provided Units units,
         DefaultUnit selected) {
