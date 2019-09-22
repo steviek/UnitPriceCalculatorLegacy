@@ -11,7 +11,7 @@
   <string name="size">Size</string>
   <string name="unit">Unit</string>
 
-  <string name="preferred_system">Unit System Order</string>
+  <string name="preferred_system">Unit Systems</string>
   <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
   <string name="add_row">Add row</string>
   <string name="remove_row">Remove row</string>

@@ -1,11 +1,12 @@
 package com.unitpricecalculator.main;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BaseFragment;
@@ -22,6 +23,7 @@ import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.sometimes.MutableSometimes;
 import com.unitpricecalculator.view.DragLinearLayout;
 import dagger.android.ContributesAndroidInjector;
+import java.util.HashSet;
 import javax.inject.Inject;
 
 public class SettingsFragment extends BaseFragment {
@@ -69,12 +71,35 @@ public class SettingsFragment extends BaseFragment {
 
     DragLinearLayout dragLinearLayout = view.findViewById(R.id.drag_linear_layout);
 
+    HashSet<System> includedSystems = new HashSet<>(systems.getIncludedSystems());
     for (System system : systems.getPreferredOrder()) {
-      View rowView = inflater.inflate(R.layout.list_draggable, null);
-      ((TextView) rowView.findViewById(R.id.text))
-          .setText(getResources().getString(system.getName()));
+      View rowView = inflater.inflate(R.layout.list_draggable, dragLinearLayout, false);
+      TextView text = rowView.findViewById(R.id.text);
+      text.setText(getResources().getString(system.getName()));
       rowView.setTag(system);
       dragLinearLayout.addDragView(rowView, rowView.findViewById(R.id.handler));
+      CheckBox checkBox = rowView.findViewById(R.id.checkbox);
+      checkBox.setChecked(includedSystems.contains(system));
+      text.setOnClickListener(v -> checkBox.toggle());
+      checkBox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+        boolean modificationRequired = isChecked != includedSystems.contains(system);
+        if (!modificationRequired) {
+          return;
+        }
+
+        if (includedSystems.size() == 1 && !isChecked) {
+          // If this is the last unit, don't allow it to be unchecked.
+          compoundButton.toggle();
+          return;
+        }
+
+        if (isChecked) {
+          includedSystems.add(system);
+        } else {
+          includedSystems.remove(system);
+        }
+        systems.setIncludedSystems(includedSystems);
+      });
     }
 
     dragLinearLayout.setOnViewSwapListener(

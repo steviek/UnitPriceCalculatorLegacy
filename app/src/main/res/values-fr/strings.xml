@@ -11,7 +11,7 @@
   <string name="size">Taille</string>
   <string name="unit">Unité</string>
 
-  <string name="preferred_system">Ordre de système d\'unité</string>
+  <string name="preferred_system">Systèmes d\'unité</string>
   <string name="drag_and_drop_prompt">Glisser-poser pour réordonner</string>
   <string name="add_row">Ajouter rangée</string>
   <string name="remove_row">Supprimer rangée</string>

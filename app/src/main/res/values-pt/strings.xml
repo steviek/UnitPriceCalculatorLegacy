@@ -32,7 +32,7 @@
   <string name="ounce_symbol">oz</string>
   <string name="pint_symbol">pt</string>
   <string name="pound_symbol">lb</string>
-  <string name="preferred_system">Ordem de sistemas de medição</string>
+  <string name="preferred_system">Sistemas de medição</string>
   <string name="price">Preço</string>
   <string name="quantity">Quantidade</string>
   <string name="quart_symbol">quarto</string>

@@ -39,6 +39,7 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
     }
     compileOptions {
         targetCompatibility 1.8
