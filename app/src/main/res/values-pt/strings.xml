@@ -97,5 +97,9 @@
   <string name="dark_mode_match_device">Baseado no plano de fundo</string>
   <string name="dark_mode_always_dark">Sempre escuro</string>
   <string name="dark_mode_always_light">Sempre claro</string>
+  <string name="default_unit_quantity">Quantidades de padrão</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_quantity_dialog_header">Quantidade de padrão: %1$s</string>
+  <string name="search">Pesquisar</string>
 
 </resources>

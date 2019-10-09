@@ -1,6 +1,7 @@
 package com.unitpricecalculator.unit;
 
 import android.content.res.Resources;
+import androidx.annotation.StringRes;
 import com.unitpricecalculator.R;
 
 public enum UnitType {
@@ -10,14 +11,15 @@ public enum UnitType {
   AREA(R.string.area, "SQUARE_METRE"),
   QUANTITY(R.string.quantity, "UNIT");
 
-  private final int name;
+  @StringRes private final int name;
   private final String base;
 
-  UnitType(int name, String base) {
+  UnitType(@StringRes int name, String base) {
     this.name = name;
     this.base = base;
   }
 
+  @StringRes
   public int getName() {
     return name;
   }

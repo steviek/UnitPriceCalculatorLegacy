@@ -1,6 +1,7 @@
 package com.unitpricecalculator.unit;
 
 import com.unitpricecalculator.R;
+import java.util.Collection;
 
 public enum System {
     METRIC(R.string.metric),
@@ -28,5 +29,16 @@ public enum System {
         } else {
             return other == IMPERIAL_US || other == IMPERIAL;
         }
+    }
+
+    public boolean isIncluded(Collection<System> includedSystems) {
+        for (System system : includedSystems) {
+            if (this == system) {
+                return true;
+            } else if (this == IMPERIAL && (system == IMPERIAL_UK || system == IMPERIAL_US)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

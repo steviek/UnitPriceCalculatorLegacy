@@ -184,12 +184,13 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   @Subscribe
   public void onUnitTypeChanged(UnitTypeChangedEvent event) {
-    refreshAdapter(unitArrayAdapterFactory.create(event.getUnitType()));
+    refreshAdapter(
+        unitArrayAdapterFactory.create(units.getDefaultQuantity(event.getUnitType()).getUnit()));
   }
 
   @Subscribe
   public void onSystemOrderChanged(SystemChangedEvent event) {
-    refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
+    refreshAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
   }
 
   @Subscribe
@@ -326,7 +327,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     mInflated = true;
 
     if (!this.isInEditMode()) {
-      refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
+      refreshAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
       mUnitSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -420,7 +421,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     withoutTextWatcher(mQuantityEditText, editText -> editText.setText(""));
     withoutTextWatcher(mSizeEditText, editText -> editText.setText(""));
     note = "";
-    refreshAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType().getBase()));
+    refreshAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
     syncViews();
   }
 

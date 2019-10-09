@@ -1,11 +1,14 @@
 package com.unitpricecalculator.util;
 
+import android.icu.text.Normalizer2;
+import android.os.Build;
 import android.text.Editable;
 import android.text.method.KeyListener;
 import android.widget.EditText;
 import com.google.common.base.Optional;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import java.text.DecimalFormatSymbols;
+import java.text.Normalizer;
 
 public final class Localization {
 
@@ -72,5 +75,15 @@ public final class Localization {
     } catch (Exception e) {
       return Optional.absent();
     }
+  }
+
+  public static String stripAccents(String text) {
+    String normalizedForm;
+    if (Build.VERSION.SDK_INT >= 24) {
+      normalizedForm = Normalizer2.getNFDInstance().normalize(text);
+    } else {
+      normalizedForm = Normalizer.normalize(text, Normalizer.Form.NFD);
+    }
+    return normalizedForm.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
   }
 }

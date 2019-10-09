@@ -111,5 +111,9 @@
   <string name="dark_mode_match_device">Match device</string>
   <string name="dark_mode_always_dark">Always dark</string>
   <string name="dark_mode_always_light">Always light</string>
+  <string name="default_unit_quantity">Default unit quantity</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_quantity_dialog_header">Default quantity: %1$s</string>
+  <string name="search">Search</string>
 
 </resources>

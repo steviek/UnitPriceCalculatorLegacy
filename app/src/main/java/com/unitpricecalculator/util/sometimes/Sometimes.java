@@ -12,10 +12,6 @@ public interface Sometimes<T> {
 
   boolean isPresent();
 
-  default void whenPresent(Runnable runnable) {
-    whenPresent(ignored -> runnable.run());
-  }
-
   default <U> Optional<U> map(Function<T,U> function) {
     return toOptional().transform(function);
   }

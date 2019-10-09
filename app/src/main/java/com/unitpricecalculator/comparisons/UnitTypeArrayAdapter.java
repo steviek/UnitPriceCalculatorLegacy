@@ -3,14 +3,11 @@ package com.unitpricecalculator.comparisons;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.widget.ArrayAdapter;
-
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.unit.UnitType;
 import com.unitpricecalculator.unit.Units;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
 
 final class UnitTypeArrayAdapter extends ArrayAdapter<String> {

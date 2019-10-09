@@ -9,6 +9,8 @@ import com.unitpricecalculator.inject.ActivityContext;
 import com.unitpricecalculator.inject.ActivityScoped;
 import com.unitpricecalculator.mode.DarkModeDialogFragmentModule;
 import com.unitpricecalculator.saved.SavedFragment;
+import com.unitpricecalculator.settings.SettingsModule;
+import com.unitpricecalculator.unit.DefaultQuantityDialogModule;
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -21,9 +23,10 @@ public interface MainActivityModule {
           ActivityModule.class,
           ComparisonFragment.Module.class,
           DarkModeDialogFragmentModule.class,
+          DefaultQuantityDialogModule.class,
           MenuFragment.Module.class,
           SavedFragment.Module.class,
-          SettingsFragment.Module.class,
+          SettingsModule.class,
           UnitEntryViewModule.class})
   @ActivityScoped
   MainActivity contributeMainActivityInjector();

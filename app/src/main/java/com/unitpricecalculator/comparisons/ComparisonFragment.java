@@ -51,6 +51,7 @@ import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.AlertDialogs;
 import com.unitpricecalculator.util.Localization;
 import com.unitpricecalculator.util.MenuItems;
+import com.unitpricecalculator.util.MoreLocalization;
 import com.unitpricecalculator.util.NumberUtils;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
@@ -146,8 +147,8 @@ public final class ComparisonFragment extends BaseFragment
   private Optional<SavedComparison> lastKnownSavedState = Optional.absent();
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  public View onCreateView(
+      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     setHasOptionsMenu(true);
     View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -201,7 +202,7 @@ public final class ComparisonFragment extends BaseFragment
 
     mFinalSpinner = view.findViewById(R.id.final_spinner);
     if (mFinalSpinner.getAdapter() == null) {
-      mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
+      mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
       mFinalSpinner.setOnItemSelectedListener(new AbstractOnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -265,7 +266,8 @@ public final class ComparisonFragment extends BaseFragment
     units.setCurrentUnitType(unitType);
     unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get();
     parent.setAdapter(unitTypeArrayAdapter);
-    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(unitType));
+    mFinalSpinner.setAdapter(
+        unitArrayAdapterFactory.create(units.getDefaultQuantity(unitType).getUnit()));
     CompareUnitChangedEvent event = getCompareUnit();
     for (UnitEntryView entryView : mEntryViews) {
       entryView.onCompareUnitChanged(event);
@@ -409,7 +411,7 @@ public final class ComparisonFragment extends BaseFragment
 
     Optional<EditText> fileNameEditTextOptional = fileNameEditText.toOptional();
     if (!fileNameEditTextOptional.isPresent()) {
-      fileNameEditText.whenPresent(() -> restoreState(state));
+      fileNameEditText.whenPresent(ignored -> restoreState(state));
       return;
     }
 
@@ -441,7 +443,7 @@ public final class ComparisonFragment extends BaseFragment
     lastKnownSavedState = Optional.absent();
 
     if (!resumed.toOptional().isPresent()) {
-      resumed.whenPresent(this::clear);
+      resumed.whenPresent(ignored -> clear());
       return;
     }
 
@@ -450,7 +452,7 @@ public final class ComparisonFragment extends BaseFragment
     addRowView();
     addRowView();
     mFinalEditText.setText("");
-    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
     mSummaryText.setText("");
     fileNameEditText.whenPresent(editText -> editText.setText(""));
     draftKey = String.valueOf(System.currentTimeMillis());
@@ -542,13 +544,14 @@ public final class ComparisonFragment extends BaseFragment
 
   @Subscribe
   public void onUnitTypeChanged(UnitTypeChangedEvent event) {
-    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(event.getUnitType()));
+    mFinalSpinner.setAdapter(
+        unitArrayAdapterFactory.create(units.getDefaultQuantity(event.getUnitType()).getUnit()));
     finishActionMode();
   }
 
   @Subscribe
   public void onSystemChanged(SystemChangedEvent event) {
-    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getCurrentUnitType()));
+    mFinalSpinner.setAdapter(unitArrayAdapterFactory.create(units.getDefaultQuantity().getUnit()));
     finishActionMode();
   }
 
@@ -575,7 +578,8 @@ public final class ComparisonFragment extends BaseFragment
     Unit unit = ((UnitArrayAdapter) mFinalSpinner.getAdapter())
         .getUnit(mFinalSpinner.getSelectedItemPosition());
     String size = NumberUtils.firstParsableDouble(
-        mFinalEditText.getText().toString(), String.valueOf(unit.getDefaultQuantity()));
+        mFinalEditText.getText().toString(),
+        MoreLocalization.toLocalizedString(units.getDefaultQuantity().getAmount()));
     return new CompareUnitChangedEvent(size, unit);
   }
 
@@ -609,7 +613,8 @@ public final class ComparisonFragment extends BaseFragment
     Unit unit = compareUnit.getUnit();
 
     if (Strings.isNullOrEmpty(mFinalEditText.getText().toString())) {
-      mFinalEditText.setHint(String.valueOf(unit.getDefaultQuantity()));
+      mFinalEditText.setHint(
+          MoreLocalization.toLocalizedString(units.getDefaultQuantity().getAmount()));
     }
 
     List<UnitEntryWithIndex> unitEntries = new ArrayList<>();
@@ -669,7 +674,7 @@ public final class ComparisonFragment extends BaseFragment
   }
 
   private void appendSingleRowSummary(StringBuilder message, UnitEntry unitEntry,
-      CompareUnitChangedEvent compareUnitChangedEvent) {
+                                      CompareUnitChangedEvent compareUnitChangedEvent) {
     Unit compareUnit = compareUnitChangedEvent.getUnit();
     String compareSize = compareUnitChangedEvent.getSize();
 

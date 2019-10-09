@@ -97,4 +97,8 @@
   <string name="dark_mode_match_device">Según el fondo de pantalla</string>
   <string name="dark_mode_always_dark">Siempre oscuro</string>
   <string name="dark_mode_always_light">Siempre claro</string>
+  <string name="default_unit_quantity">Valores por defecto</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_quantity_dialog_header">Valor por defecto: %1$s</string>
+  <string name="search">Buscar</string>
 </resources>

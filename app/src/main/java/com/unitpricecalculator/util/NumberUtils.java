@@ -22,7 +22,7 @@ public final class NumberUtils {
     }
   }
 
-  private static boolean parsesNicelyDouble(String s) {
+  public static boolean parsesNicelyDouble(String s) {
     return Localization.parseDoubleSafely(s).isPresent();
   }
 

@@ -18,6 +18,16 @@ class Prefs @Inject internal constructor(
   private val prefs: SharedPreferences =
       context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
 
+  fun getDouble(key: String) = if (prefs.contains(key)) getDouble(key, -1.0) else null
+
+  fun getDouble(key: String, fallback: Double): Double {
+    return Double.fromBits(prefs.getLong(key, fallback.toRawBits()))
+  }
+
+  fun putDouble(key: String, value: Double) {
+    prefs.edit().putLong(key, value.toRawBits()).apply()
+  }
+
   @JvmOverloads
   fun getString(key: String, fallback: String? = null): String? {
     return prefs.getString(key, fallback)

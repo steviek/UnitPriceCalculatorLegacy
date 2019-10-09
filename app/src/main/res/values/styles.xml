@@ -28,6 +28,12 @@
         <item name="android:textColor">@color/primaryText</item>
     </style>
 
+    <style name="RowCaption" parent="RowItem">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/secondaryText</item>
+    </style>
+
     <style name="RowEditText" parent="RowTextView">
 
     </style>

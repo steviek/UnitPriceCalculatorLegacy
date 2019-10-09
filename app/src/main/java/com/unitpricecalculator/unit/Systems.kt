@@ -18,7 +18,7 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
     get() {
       val country = Locale.getDefault().country
       return if (
-          country.equals("US", ignoreCase = true) || country.equals("USA", ignoreCase = true)
+        country.equals("US", ignoreCase = true) || country.equals("USA", ignoreCase = true)
       ) {
         IMPERIAL_US.name + "," + METRIC.name + "," + IMPERIAL_UK.name
       } else {
@@ -29,9 +29,9 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
   var preferredOrder: Array<System>
     get() {
       val result = prefs.getNonNullString(Keys.SYSTEM_ORDER, defaultOrder)
-          .split(',')
-          .map(System::valueOf)
-          .toTypedArray()
+        .split(',')
+        .map(System::valueOf)
+        .toTypedArray()
       Logger.d("Get preferred order: %s", Arrays.toString(result))
       return result
     }
@@ -42,19 +42,16 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
       bus.post(SystemChangedEvent(order, includedSystems))
     }
 
+  private var _includedSystems: Set<System> =
+    prefs.getStringSet(Keys.INCLUDED_SYSTEMS, fallback = null)
+      ?.map(System::valueOf)
+      ?.toSet()
+      ?: setOf(METRIC, IMPERIAL_US, IMPERIAL_UK)
   var includedSystems: Set<System>
-    get() {
-      val storedSet = prefs.getStringSet(Keys.INCLUDED_SYSTEMS, fallback = null)
-          ?.map(System::valueOf)
-          ?.toSet()
-      return if (storedSet != null && storedSet.isNotEmpty()) {
-        storedSet
-      } else {
-        setOf(METRIC, IMPERIAL_US, IMPERIAL_UK)
-      }
-    }
+    get() = _includedSystems
     set(value) {
       require(value.isNotEmpty())
+      _includedSystems = value
       prefs.putStringSet(Keys.INCLUDED_SYSTEMS, value.map { it.name }.toSet())
       bus.post(SystemChangedEvent(preferredOrder, includedSystems))
     }
@@ -63,8 +60,8 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
     @JvmStatic
     fun Collection<System>.includes(system: System): Boolean {
       return contains(system) || (
-          system == IMPERIAL && (contains(IMPERIAL_UK) || contains(IMPERIAL_US))
-          )
+        system == IMPERIAL && (contains(IMPERIAL_UK) || contains(IMPERIAL_US))
+        )
     }
   }
 }
