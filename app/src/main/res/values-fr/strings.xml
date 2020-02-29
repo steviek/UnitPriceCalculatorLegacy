@@ -107,7 +107,7 @@
   <string name="edit_note">Éditer note</string>
   <string name="enter_note_hint">Rempli une note</string>
   <string name="dark_mode">Thème foncé</string>
-  <string name="dark_mode_match_device">En fonction du fond d\'écran</string>
+  <string name="dark_mode_match_device">Fondé sur le système</string>
   <string name="dark_mode_always_dark">Toujours foncé</string>
   <string name="dark_mode_always_light">Toujours clair</string>
   <string name="default_unit_quantity">Valeurs par défault</string>

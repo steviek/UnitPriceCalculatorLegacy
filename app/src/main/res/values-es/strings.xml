@@ -94,7 +94,7 @@
   <string name="enter_note_hint">Pone una nota</string>
   <string name="all_changes_saved">Todas las modificaciones son guardadas. Desde ahora, el botón indicará que hay algo a guardar.\n\nEste mensaje va desaparecer en %1$d…</string>
   <string name="dark_mode">Tema oscuro</string>
-  <string name="dark_mode_match_device">Según el fondo de pantalla</string>
+  <string name="dark_mode_match_device">Basado en el sistema</string>
   <string name="dark_mode_always_dark">Siempre oscuro</string>
   <string name="dark_mode_always_light">Siempre claro</string>
   <string name="default_unit_quantity">Valores por defecto</string>

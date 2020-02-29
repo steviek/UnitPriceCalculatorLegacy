@@ -10,7 +10,6 @@ public enum UnitType {
   LENGTH(R.string.length, "METRE"),
   AREA(R.string.area, "SQUARE_METRE"),
   QUANTITY(R.string.quantity, "UNIT");
-
   @StringRes private final int name;
   private final String base;
 

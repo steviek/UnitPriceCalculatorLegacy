@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Calculator de preț unitar</string>
+
+  <string name="unit_type">Fel de unitate:</string>
+  <string name="metric">Metric</string>
+  <string name="imperial">Imperial</string>
+  <string name="imperial_us">Imperial (SUA)</string>
+  <string name="imperial_uk">Imperial (UK)</string>
+
+  <string name="price">Preț</string>
+  <string name="size">Mărime</string>
+  <string name="unit">Unitate</string>
+
+  <string name="preferred_system">Sisteme unitare</string>
+  <string name="drag_and_drop_prompt">Glisați și plasați pentru a reordona</string>
+  <string name="add_row">Adăugați rândul</string>
+  <string name="remove_row">Eliminați rândul</string>
+  <string name="change_currency_symbol">Schimbați simbolul valutei</string>
+
+  <string name="show_price_per">Afișați prețul pe:</string>
+  <string name="main_final_summary">Cea mai economică opțiune este rândul %1$d</string>
+  <string name="m_per_u">%1$s pe %2$s</string>
+  <string name="m_per_s_u">%1$s pe %2$s %3$s</string>
+  <string name="m_per_qxs_u">%1$s pe %2$s x %3$s %4$s</string>
+
+  <string name="save">Salvați</string>
+  <string name="clear">Ștergeți</string>
+  <string name="rename">Redenumiți</string>
+  <string name="delete">Ștergeți</string>
+  <string name="move_up">Măriți poziția</string>
+  <string name="move_down">Diminuează poziția</string>
+  <string name="give_name">Introduceți un nume pentru această comparație</string>
+  <string name="enter_name">Introduceți un nume aici</string>
+  <string name="saved_from_date">La %1$s salvată</string>
+
+  <string name="current_comparison">Comparație curentă</string>
+  <string name="saved_comparisons">Comparații salvate</string>
+  <string name="rate_app">Evaluează aplicația</string>
+  <string name="settings">Setări</string>
+  <string name="share_app">Partajați aplicația</string>
+  <string name="send_feedback">Trimiteți Feedback</string>
+  <string name="no_email_client">Nu s-au instalat clienți de e-mail</string>
+
+  <!-- MASS -->
+  <string name="weight">Masă</string>
+  <string name="gram_symbol">g</string>
+  <string name="kilogram_symbol">kg</string>
+  <string name="milligram_symbol">mg</string>
+  <string name="ounce_symbol">uncie</string>
+  <string name="pound_symbol">livre</string>
+  <string name="stone_symbol">stone</string>
+
+  <!-- VOLUME -->
+  <string name="volume">Volum</string>
+  <string name="millilitre_symbol">mL</string>
+  <string name="litre_symbol">L</string>
+  <string name="cubic_centimetre_symbol">cc</string>
+  <string name="gallon_symbol">gal</string>
+  <string name="quart_symbol">cvarte</string>
+  <string name="pint_symbol">pinte</string>
+  <string name="cup_symbol">căni</string>
+  <string name="fluid_ounce_symbol">oz</string>
+  <string name="tablespoon_symbol">linguri</string>
+  <string name="teaspoon_symbol">lingurițe</string>
+  <string name="us_gallon_symbol">US gal</string>
+  <string name="us_quart_symbol">US cvarte</string>
+  <string name="us_pint_symbol">US pinte</string>
+  <string name="us_cup_symbol">US căni</string>
+  <string name="us_fluid_ounce_symbol">US oz</string>
+  <string name="us_tablespoon_symbol">US linguri</string>
+  <string name="us_teaspoon_symbol">US lingurițe</string>
+
+  <!-- LENGTH -->
+  <string name="length">Lungime</string>
+  <string name="metre_symbol">m</string>
+  <string name="kilometre_symbol">km</string>
+  <string name="centimetre_symbol">cm</string>
+  <string name="millimetre_symbol">mm</string>
+  <string name="inch_symbol">țol</string>
+  <string name="foot_symbol">picior</string>
+  <string name="yard_symbol">yarzi</string>
+  <string name="mile_symbol">mile</string>
+
+  <string name="quantity">Cantitate</string>
+  <string name="unit_symbol">fiecare</string>
+
+  <string name="send_email">Trimiteți email</string>
+  <string name="feedback_subject">Feedback pentru calculator de preț unitar</string>
+  <string name="dozen_symbol">duzină</string>
+
+  <!-- AREA -->
+  <string name="area">Arie</string>
+  <string name="square_metre_symbol">m\u00B2</string>
+  <string name="square_centimetre_symbol">cm\u00B2</string>
+  <string name="square_millimetre_symbol">mm\u00B2</string>
+  <string name="square_kilometre_symbol">km\u00B2</string>
+  <string name="are_symbol">a</string>
+  <string name="hectare_symbol">ha</string>
+  <string name="acre_symbol">ac</string>
+  <string name="square_foot_symbol">țol\u00B2</string>
+  <string name="square_inch_symbol">picior\u00B2</string>
+  <string name="square_yard_symbol">yarzi\u00B2</string>
+  <string name="square_mile_symbol">mile\u00B2</string>
+  <string name="untitled_italics"><i>Fără titlu</i></string>
+  <string name="unsaved_changes">Aveți modificări salvate. Faceți clic pe butonul de salvare pentru a salva.</string>
+  <string name="all_changes_saved">Toate modificările sunt salvate. De acum înainte, butonul de salvare va indica când aveți modificări de salvat.\n\nAcest mesaj va dispărea și nu va reveni în %1$d…</string>
+  <string name="add_note">Adăugați notiță</string>
+  <string name="edit_note">Editați notiță</string>
+  <string name="enter_note_hint">Introduceți o notă</string>
+  <string name="dark_mode">Temă întunecată</string>
+  <string name="dark_mode_match_device">În funcție de sistem</string>
+  <string name="dark_mode_always_dark">Întotdeauna întunecată</string>
+  <string name="dark_mode_always_light">Întotdeauna aprins</string>
+  <string name="default_unit_quantity">Cantitate unitar standard</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_quantity_dialog_header">Cantitate standard: %1$s</string>
+  <string name="search">Căutați</string>
+</resources>

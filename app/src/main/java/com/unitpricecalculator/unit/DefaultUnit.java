@@ -18,7 +18,7 @@ public enum DefaultUnit implements Unit {
   GALLON(R.string.gallon_symbol, 4.54609, System.IMPERIAL_UK, UnitType.VOLUME),
   QUART(R.string.quart_symbol, 1.13652, System.IMPERIAL_UK, UnitType.VOLUME),
   PINT(R.string.pint_symbol, 0.568261, System.IMPERIAL_UK, UnitType.VOLUME),
-  CUP(R.string.cup_symbol, 0.284, System.IMPERIAL_UK, UnitType.VOLUME),
+  CUP(R.string.cup_symbol, 0.284131, System.IMPERIAL_UK, UnitType.VOLUME),
   FLUID_OUNCE(R.string.fluid_ounce_symbol, 0.0284131, System.IMPERIAL_UK, UnitType.VOLUME),
   TABLESPOON(R.string.tablespoon_symbol, 0.0177582, System.IMPERIAL_UK, UnitType.VOLUME),
   TEASPOON(R.string.teaspoon_symbol, 0.00591939, System.IMPERIAL_UK, UnitType.VOLUME),
@@ -50,7 +50,6 @@ public enum DefaultUnit implements Unit {
   SQUARE_MILE(R.string.square_mile_symbol, 2589990, System.IMPERIAL, UnitType.AREA),
   UNIT(R.string.unit_symbol, 1, System.METRIC, UnitType.QUANTITY),
   DOZEN(R.string.dozen_symbol, 12, System.METRIC, UnitType.QUANTITY);
-
   private final int symbol;
   private final double factor;
   private final System system;

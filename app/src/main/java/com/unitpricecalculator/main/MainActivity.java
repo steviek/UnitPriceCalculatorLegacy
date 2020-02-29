@@ -207,6 +207,16 @@ public final class MainActivity extends BaseActivity
     }
   }
 
+  @Override
+  public void onBackPressed() {
+    if (currentState != State.MAIN) {
+      // If the user presses back on a different screen, navigate them back to the main one.
+      changeState(State.MAIN);
+      return;
+    }
+    super.onBackPressed();
+  }
+
   @Subscribe
   public void onSavedComparisonDeleted(SavedComparisonDeletedEvent event) {
     if (comparisonFragmentState == null) {
