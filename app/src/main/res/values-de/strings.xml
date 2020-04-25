@@ -2,7 +2,7 @@
 <resources>
   <string name="app_name">Einheitspreis Rechner</string>
 
-  <string name="unit_type">Art Einheit:</string>
+  <string name="unit_type">Maßeinheit:</string>
   <string name="metric">Metrisch</string>
   <string name="imperial">Imperial</string>
   <string name="imperial_us">Imperial (USA)</string>
@@ -12,14 +12,14 @@
   <string name="size">Größe</string>
   <string name="unit">Einheit</string>
 
-  <string name="preferred_system">Einheitensysteme</string>
-  <string name="drag_and_drop_prompt">Ordnen per Drag &amp; Drop</string>
-  <string name="add_row">Reihe vergrößern</string>
-  <string name="remove_row">Reihe auslassen</string>
-  <string name="change_currency_symbol">Zahlungsmittel wechseln</string>
+  <string name="preferred_system">Maßeinheiten</string>
+  <string name="drag_and_drop_prompt">Reihenfolge per Drag &amp; Drop</string>
+  <string name="add_row">Neue Zeile hinzüfügen</string>
+  <string name="remove_row">Letzte Zeile löschen</string>
+  <string name="change_currency_symbol">Währung anpassen</string>
 
-  <string name="show_price_per">Schau preis pro:</string>
-  <string name="main_final_summary">Die wirtschaftlichste Option ist Reihe %1$d</string>
+  <string name="show_price_per">Zeige Preis pro:</string>
+  <string name="main_final_summary">Die wirtschaftlichste Option ist Zeile %1$d</string>
   <string name="m_per_u">%1$s pro %2$s</string>
   <string name="m_per_s_u">%1$s pro %2$s %3$s</string>
   <string name="m_per_qxs_u">%1$s pro %2$s x %3$s %4$s</string>
@@ -28,8 +28,8 @@
   <string name="clear">Löschen</string>
   <string name="rename">Umbenennen</string>
   <string name="delete">Löschen</string>
-  <string name="move_up">Höher machen</string>
-  <string name="move_down">Heruntersetzen</string>
+  <string name="move_up">Nach oben schieben</string>
+  <string name="move_down">Nach unten schieben</string>
   <string name="give_name">Geben Sie einen Namen für diesen Vergleich ein</string>
   <string name="enter_name">Namen hier eingeben</string>
   <string name="saved_from_date">%1$s gespeichert</string>
@@ -40,7 +40,7 @@
   <string name="settings">Einstellungen</string>
   <string name="share_app">Mitteilen</string>
   <string name="send_feedback">Feedback</string>
-  <string name="no_email_client">Keine E-Mail-Clients installiert</string>
+  <string name="no_email_client">Kein E-Mail-Programm installiert</string>
 
   <!-- MASS -->
   <string name="weight">Gewicht</string>
@@ -105,12 +105,12 @@
   <string name="untitled_italics"><i>Ohne Titel</i></string>
   <string name="unsaved_changes">Du hast nicht gespeicherte Änderungen. Klicken Sie zum Speichern auf die Schaltfläche Speichern.</string>
   <string name="all_changes_saved">Alle Änderungen werden gespeichert. Von nun an zeigt die Schaltfläche Speichern an, wann Sie Änderungen zum Speichern vornehmen müssen.\n\nDiese Meldung verschwindet und taucht nicht mehr auf in %1$d…</string>
-  <string name="add_note">Notiz machen</string>
+  <string name="add_note">Notiz erstellen</string>
   <string name="edit_note">Notiz bearbeiten</string>
-  <string name="enter_note_hint">Betreten Sie eine Notiz</string>
-  <string name="dark_mode">Dunkles Design</string>
-  <string name="dark_mode_match_device">Passen das System</string>
-  <string name="dark_mode_always_dark">Immer dunkle</string>
+  <string name="enter_note_hint">Geben Sie eine Notiz ein</string>
+  <string name="dark_mode">Nachtmodus</string>
+  <string name="dark_mode_match_device">Geräteeinstellung</string>
+  <string name="dark_mode_always_dark">Immer dunkel</string>
   <string name="dark_mode_always_light">Immer hell</string>
   <string name="default_unit_quantity">Standardeinheitsmenge</string>
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>

@@ -1,44 +1,85 @@
 <resources>
+  <!-- Name of the application -->
   <string name="app_name">Unit Price Calculator</string>
 
+  <!-- Prompt for a drop-down menu that lets the user pick the unit type e.g. weight, volume -->
   <string name="unit_type">Unit Type:</string>
+  <!-- Metric unit system -->
   <string name="metric">Metric</string>
+  <!-- General name for imperial unit system. -->
   <string name="imperial">Imperial</string>
+  <!-- Imperial system with US units -->
   <string name="imperial_us">Imperial (US)</string>
+  <!-- Imperial system with UK units -->
   <string name="imperial_uk">Imperial (UK)</string>
 
+  <!-- Header for the price column -->
   <string name="price">Price</string>
+  <!-- Header for the size column, e.g. if a 6 pack is 6 x 330 mL, 330 is the size -->
   <string name="size">Size</string>
+  <!-- Header for the unit column, e.g. mL, L -->
   <string name="unit">Unit</string>
 
+  <!-- Header for a section that lets the user choose which unit systems (e.g. metric vs imperial
+       they wish to use. -->
   <string name="preferred_system">Unit Systems</string>
+
+  <!-- Prompt that lets the user know they can drag units to reorder how they appear in the drop
+       downs. -->
   <string name="drag_and_drop_prompt">Drag and drop to reorder</string>
+  <!-- Label for a button that adds a row to the comparison -->
   <string name="add_row">Add row</string>
+  <!-- Label for a button that removes the [last] row from the comparison -->
   <string name="remove_row">Remove row</string>
+  <!-- Title for a dialog that lets the user change the currency symbol -->
   <string name="change_currency_symbol">Change Currency</string>
 
+  <!-- Prompt for a input fields that let the user set the base size and unit for comparison -->
   <string name="show_price_per">Show price per:</string>
   <string name="main_final_summary">The most economical option is row %1$d</string>
+  <!-- Used when the size is 1, e.g. $1.00 per g -->
   <string name="m_per_u">%1$s per %2$s</string>
+  <!-- Used when the size is not 1, e.g. $1.00 per 100 g -->
   <string name="m_per_s_u">%1$s per %2$s %3$s</string>
+  <!-- Used when the quantity and size are not 1, e.g. $1.00 per 6 x 330 mL -->
   <string name="m_per_qxs_u">%1$s per %2$s x %3$s %4$s</string>
 
+  <!-- Label for a button that saves the current comparison -->
   <string name="save">Save</string>
+  <!-- Label for a button that clears all the fields in the current comparison -->
   <string name="clear">Clear</string>
+  <!-- Label for a button that lets the user rename a saved comparison -->
   <string name="rename">Rename</string>
+  <!-- Label for a button that lets the user delete a saved comparison -->
   <string name="delete">Delete</string>
+  <!-- Label for a button that lets the user move a row one rank higher in the current comparison
+       -->
   <string name="move_up">Move up</string>
+  <!-- Label for a button that lets the user move a row one rank lower in the current comparison
+       -->
   <string name="move_down">Move down</string>
+  <!-- Prompt for the user to give a name to a comparison if they click save without having
+       typed one in -->
   <string name="give_name">Please enter a name for this comparison</string>
+  <!-- Hint text for input field for comparison name -->
   <string name="enter_name">Enter name here</string>
+  <!-- Label that lets the user know the date when a comparison was created. -->
   <string name="saved_from_date">Saved on %1$s</string>
 
+  <!-- Menu item label for the current comparison -->
   <string name="current_comparison">Current Comparison</string>
+  <!-- Menu item label for the list of saved comparisons -->
   <string name="saved_comparisons">Saved Comparisons</string>
+  <!-- Label for a menu item that takes the user to the Play Store to rate the app -->
   <string name="rate_app">Rate App</string>
+  <!-- Label for a menu item that takes the user to the settings screen -->
   <string name="settings">Settings</string>
+  <!-- Label for a menu item that launches an intent with a link to the app that the user can
+       share to another app on the device -->
   <string name="share_app">Share App</string>
+  <!-- Label for a menu item that starts writing a feedback email -->
   <string name="send_feedback">Send Feedback</string>
+  <!-- Error text that shows if there aren't any email clients installed -->
   <string name="no_email_client">No email clients installed</string>
 
   <!-- MASS -->
@@ -81,6 +122,7 @@
   <string name="yard_symbol">yd</string>
   <string name="mile_symbol">mi</string>
 
+  <!-- Quantity of units, e.g. per item, per dozen. -->
   <string name="quantity">Quantity</string>
   <string name="unit_symbol">unit</string>
 
@@ -101,19 +143,36 @@
   <string name="square_inch_symbol">in\u00B2</string>
   <string name="square_yard_symbol">yd\u00B2</string>
   <string name="square_mile_symbol">mi\u00B2</string>
+  <!-- Text that shows in the comparison name field if no name has been given -->
   <string name="untitled_italics"><i>Untitled</i></string>
+  <!-- Prompt that lets the user know about the save feature -->
   <string name="unsaved_changes">You have unsaved changes. Click on the save button to save.</string>
+  <!-- Onboarding text that lets the user know how the save feature works after they try it for the
+       first time -->
   <string name="all_changes_saved">All changes are saved. From now on, the save button will indicate when you have changes to save.\n\nThis message will disappear and not return in %1$d…</string>
+  <!-- Label for a button that creates a new note for a row in the comparison -->
   <string name="add_note">Add note</string>
+  <!-- Label for a button the edits an existing note for a row in the comparison -->
   <string name="edit_note">Edit note</string>
+  <!-- Hint text for the input field where the user enters the note -->
   <string name="enter_note_hint">Enter a note</string>
+  <!-- Header for a setting item controlling dark mode in the app -->
   <string name="dark_mode">Dark mode</string>
+  <!-- Option that means the app matches the device-wide setting for dark mode -->
   <string name="dark_mode_match_device">Match device</string>
+  <!-- Option that means the app will always be in dark mode -->
   <string name="dark_mode_always_dark">Always dark</string>
+  <!-- Option that means the app will always be in light mode -->
   <string name="dark_mode_always_light">Always light</string>
+  <!-- Header for a section that lets the user change the default comparison quantity for a unit
+       type. For example, the default for weight is preset to 100 g, but the user can change this.
+       -->
   <string name="default_unit_quantity">Default unit quantity</string>
+  <!-- e.g. Weight: 100 g -->
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <!-- Title for a dialog that lets the user change the default comparison quantity for a unit type
+       -->
   <string name="default_quantity_dialog_header">Default quantity: %1$s</string>
+  <!-- Label for a button that lets the user search their saved comparisons -->
   <string name="search">Search</string>
-
 </resources>

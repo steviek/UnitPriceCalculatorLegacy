@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="size">Grösse</string>
-  <string name="add_row">Reihe vergrössern</string>
+  <string name="unit_type">Masseinheit:</string>
+  <string name="preferred_system">Masseinheiten</string>
 </resources>
