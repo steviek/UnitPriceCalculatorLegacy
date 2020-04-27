@@ -133,6 +133,7 @@ public class SavedFragment extends BaseFragment {
         case R.id.action_delete:
           SavedComparison comparison = adapter.getItem(selectedPosition);
           savedComparisons.remove(comparison);
+          filteredComparisons.remove(comparison);
           savedComparisonManager.removeSavedComparison(comparison);
           bus.post(new SavedComparisonDeletedEvent(comparison.getKey()));
           adapter.notifyDataSetChanged();

@@ -17,6 +17,7 @@
   <string name="add_row">Adăugați rândul</string>
   <string name="remove_row">Eliminați rândul</string>
   <string name="change_currency_symbol">Schimbați simbolul valutei</string>
+  <string name="currency_header">Simbolul valutei</string>
 
   <string name="show_price_per">Afișați prețul pe:</string>
   <string name="main_final_summary">Cea mai economică opțiune este rândul %1$d</string>
@@ -39,7 +40,7 @@
   <string name="rate_app">Evaluează aplicația</string>
   <string name="settings">Setări</string>
   <string name="share_app">Partajați aplicația</string>
-  <string name="send_feedback">Trimiteți Feedback</string>
+  <string name="send_feedback">Trimiteți feedback</string>
   <string name="no_email_client">Nu s-au instalat clienți de e-mail</string>
 
   <!-- MASS -->

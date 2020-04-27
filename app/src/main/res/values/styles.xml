@@ -67,4 +67,8 @@
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
+    <style name="SettingsItem">
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
 </resources>

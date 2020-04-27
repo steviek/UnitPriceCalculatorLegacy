@@ -2,25 +2,32 @@ package com.unitpricecalculator.util.sometimes;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.unitpricecalculator.util.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Sometimes<T> {
-
-  void whenPresent(Consumer<T> consumer);
-
-  Optional<T> toOptional();
-
   boolean isPresent();
 
-  default <U> Optional<U> map(Function<T,U> function) {
+  @Nullable
+  T orNull();
+
+  void whenPresent(@NotNull Consumer<? super T> consumer);
+
+  default Optional<T> toOptional() {
+    return Optional.fromNullable(orNull());
+  }
+
+  default <R> Optional<R> map(@NotNull Function<? super T,  R> function) {
     return toOptional().transform(function);
   }
 
+  @NotNull
   default T or(T fallback) {
-    return toOptional().or(fallback);
+    T value = orNull();
+    return value == null ? fallback : value;
   }
 
-  default CompositeSometimes<T> or(Sometimes<T> other) {
-    return new CompositeSometimes<>(this, other);
+  interface Consumer<T> {
+    void consume(@NotNull T value);
   }
 }

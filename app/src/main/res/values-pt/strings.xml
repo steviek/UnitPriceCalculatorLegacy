@@ -45,7 +45,7 @@
   <string name="send_email">Enviar por e-mail</string>
   <string name="send_feedback">Enviar feedback</string>
   <string name="settings">Configurações</string>
-  <string name="share_app">Partilhar Aplicativo</string>
+  <string name="share_app">Partilhar aplicativo</string>
   <string name="show_price_per">Mostre preço por:</string>
   <string name="size">Tamanho</string>
   <string name="tablespoon_symbol">cs</string>
@@ -64,6 +64,7 @@
   <string name="weight">Peso</string>
   <string name="yard_symbol">jarda</string>
   <string name="change_currency_symbol">Alterar o símbolo monetário</string>
+  <string name="currency_header">Símbolo monetário</string>
   <string name="dozen_symbol">dúzia</string>
 
   <string name="main_final_summary">A opção mais econômica é fila %1$d</string>

@@ -23,7 +23,7 @@ public enum System {
         if (this == METRIC) {
             return other == METRIC;
         } else if (this == IMPERIAL) {
-            return this != METRIC;
+            return other != METRIC;
         } else if (this == IMPERIAL_UK) {
             return other == IMPERIAL_UK || other == IMPERIAL;
         } else {

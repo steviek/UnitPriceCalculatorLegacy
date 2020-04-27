@@ -15,6 +15,7 @@ import dagger.Reusable
 import java.text.NumberFormat
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.math.pow
 
 /** Collection of utility functions for [Unit]. */
 @Reusable
@@ -84,11 +85,6 @@ class Units @Inject internal constructor(
     }
 
   private fun createFormatter(): Function<Double, String> {
-    val lotsOfDigits = NumberFormat.getCurrencyInstance()
-    lotsOfDigits.currency = currency
-    lotsOfDigits.minimumFractionDigits = 2
-    lotsOfDigits.maximumFractionDigits = 8
-
     val noFractionFormat = NumberFormat.getCurrencyInstance()
     noFractionFormat.currency = currency
     noFractionFormat.minimumFractionDigits = 0
@@ -102,39 +98,29 @@ class Units @Inject internal constructor(
         return@Function noFractionFormat.format(input)
       }
 
-      var formattedPricePer = lotsOfDigits.format(input)
+      val lotsOfDigits = NumberFormat.getCurrencyInstance()
+      lotsOfDigits.currency = currency
+      lotsOfDigits.minimumFractionDigits = maxOf(lotsOfDigits.minimumFractionDigits, 2)
 
-      val parts =
-        formattedPricePer.split("[.,]".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-      if (parts.size != 2) {
-        return@Function formattedPricePer
+      val firstSignificantFractionIndex = input.firstSignificantFractionIndex
+      if (firstSignificantFractionIndex >= 0) {
+        lotsOfDigits.maximumFractionDigits =
+          minOf(
+            8, maxOf(
+            lotsOfDigits.maximumFractionDigits,
+            input.firstSignificantFractionIndex + 4
+          )
+          )
+      } else {
+        lotsOfDigits.maximumFractionDigits = lotsOfDigits.minimumFractionDigits
       }
 
-      // Attempt to account for rounding errors and excessive digits by checking for repeating
-      // digits after the decimal.
-      val decimalPortion = parts[1]
-      var longestRunLength = 1
-      var currentRunLength = 1
-      var lastDigit = decimalPortion[0]
-      for (i in 1 until decimalPortion.length) {
-        if (decimalPortion[i] == lastDigit) {
-          currentRunLength += 1
-          if (currentRunLength > longestRunLength) {
-            longestRunLength = currentRunLength
-          }
-        } else {
-          currentRunLength = 1
-          lastDigit = decimalPortion[i]
-        }
-      }
-
-      if (longestRunLength >= 4) {
-        formattedPricePer = defaultForCurrency.format(input)
-      }
-
-      formattedPricePer
+      lotsOfDigits.format(input)
     }
   }
+
+  private val Double.firstSignificantFractionIndex: Int
+    get() = ((0 until 9).firstOrNull { this >= 10.0.pow(-it.toDouble()) } ?: 9) - 1
 
   fun getDefaultQuantity(): Quantity {
     return getDefaultQuantity(currentUnitType)

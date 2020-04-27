@@ -79,6 +79,31 @@ public class UnitsTest {
     assertThat(units.getDefaultQuantity()).isEqualTo(new Quantity(2.5, LITRE));
   }
 
+  @Test
+  public void formatter_integer_shouldFormatWithoutDecimals() {
+    assertThat(units.getFormatter().apply(12.00)).isEqualTo("$12");
+  }
+
+  @Test
+  public void formatter_hasLeadingZeros_shouldTakeToFourDigits() {
+    assertThat(units.getFormatter().apply(0.00001234)).isEqualTo("$0.00001234");
+  }
+
+  @Test
+  public void formatter_hasLeadingZeros_shouldNotGoBeyondFourExtraDigits() {
+    assertThat(units.getFormatter().apply(0.00123456)).isEqualTo("$0.001235");
+  }
+
+  @Test
+  public void formatter_hasOneDecimal_shouldUseTwoDecimalPlaces() {
+    assertThat(units.getFormatter().apply(10.1)).isEqualTo("$10.10");
+  }
+
+  @Test
+  public void formatter_hasLotsOfDecimals_isWhole_shouldOnlyUseTwoDecimalPlaces() {
+    assertThat(units.getFormatter().apply(123.45678)).isEqualTo("$123.46");
+  }
+
   @Singleton
   @Component(modules = {
       SerializersModule.class,

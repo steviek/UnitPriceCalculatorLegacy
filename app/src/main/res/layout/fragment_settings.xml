@@ -8,35 +8,45 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <com.unitpricecalculator.settings.SettingsItemView
+      android:id="@+id/change_currency"
+      style="@style/SettingsItem"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:title="@string/currency_header"/>
+
+    <com.unitpricecalculator.settings.SettingsItemView
+      android:id="@+id/dark_mode"
+      style="@style/SettingsItem"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:title="@string/dark_mode"/>
+
+    <com.unitpricecalculator.settings.SettingsItemView
+      android:id="@+id/initial_screen"
+      style="@style/SettingsItem"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:title="@string/initial_screen"/>
+
     <LinearLayout
-      android:id="@+id/change_currency_parent"
+      android:id="@+id/default_unit_quantity_parent"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/selectableItemBackground"
       android:orientation="vertical">
 
       <TextView
-        android:id="@+id/change_currency"
+        android:id="@+id/default_unit_quantity_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:text="@string/change_currency_symbol"
+        android:text="@string/default_unit_quantity"
         android:textColor="@color/primaryText"
         android:textSize="18sp"/>
-
-      <TextView
-        android:id="@+id/change_currency_subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="4dp"
-        android:textColor="@color/secondaryText"
-        android:textSize="14sp"/>
 
     </LinearLayout>
 
@@ -67,59 +77,6 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"/>
-
-    <LinearLayout
-      android:id="@+id/dark_mode_parent"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:orientation="vertical">
-
-      <TextView
-        android:id="@+id/dark_mode_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:text="@string/dark_mode"
-        android:textColor="@color/primaryText"
-        android:textSize="18sp"/>
-
-      <TextView
-        android:id="@+id/dark_mode_subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="4dp"
-        android:textColor="@color/secondaryText"
-        android:textSize="14sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-      android:id="@+id/default_unit_quantity_parent"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:orientation="vertical">
-
-      <TextView
-        android:id="@+id/default_unit_quantity_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:text="@string/default_unit_quantity"
-        android:textColor="@color/primaryText"
-        android:textSize="18sp"/>
-
-    </LinearLayout>
 
   </LinearLayout>
 

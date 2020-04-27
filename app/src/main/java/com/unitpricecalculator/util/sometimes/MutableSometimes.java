@@ -1,12 +1,14 @@
 package com.unitpricecalculator.util.sometimes;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface MutableSometimes<T> extends Sometimes<T> {
 
+  void set(@Nullable T value);
+
+  @NotNull
   static <T> MutableSometimes<T> create() {
     return new DirectReferenceSometimes<>();
   }
-
-  void set(@Nullable T reference);
 }

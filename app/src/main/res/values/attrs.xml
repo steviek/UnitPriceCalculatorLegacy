@@ -4,4 +4,8 @@
         <attr name="scrollSensitiveHeight" format="dimension"/>
         <attr name="placeholderView" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="SettingsItemView">
+        <attr name="android:title"/>
+        <attr name="android:subtitle"/>
+    </declare-styleable>
 </resources>

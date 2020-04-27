@@ -18,6 +18,29 @@ class Prefs @Inject internal constructor(
   private val prefs: SharedPreferences =
       context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
 
+  fun getInt(key: String): Int? {
+    if (prefs.contains(key)) {
+      return prefs.getInt(key, -1)
+    } else {
+      return null
+    }
+  }
+
+  fun getInt(key: String, fallback: Int): Int {
+    return prefs.getInt(key, fallback)
+  }
+
+  fun putInt(key: String, value: Int?) {
+    prefs.edit()
+      .also {
+        if (value == null) {
+          it.remove(key)
+        } else {
+          it.putInt(key, value)
+        }
+      }.apply()
+  }
+
   fun getDouble(key: String) = if (prefs.contains(key)) getDouble(key, -1.0) else null
 
   fun getDouble(key: String, fallback: Double): Double {

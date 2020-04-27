@@ -36,16 +36,16 @@
   <string name="price">Precio</string>
   <string name="quantity">Cantidad</string>
   <string name="quart_symbol">cuarto</string>
-  <string name="rate_app">Calificar Aplicación</string>
+  <string name="rate_app">Calificar aplicación</string>
   <string name="remove_row">Borrar fila</string>
   <string name="rename">Renombrar</string>
   <string name="save">Guardar</string>
   <string name="saved_comparisons">Comparaciones guardadas</string>
   <string name="saved_from_date">Guardada %1$s</string>
-  <string name="send_email">Enviar Correo</string>
-  <string name="send_feedback">Enviar Feedback</string>
+  <string name="send_email">Enviar correo</string>
+  <string name="send_feedback">Enviar feedback</string>
   <string name="settings">Configuración</string>
-  <string name="share_app">Compartir Aplicación</string>
+  <string name="share_app">Compartir aplicación</string>
   <string name="show_price_per">Muestra precio por:</string>
   <string name="size">Tamaño</string>
   <string name="tablespoon_symbol">tbsp</string>
@@ -64,6 +64,7 @@
   <string name="weight">Peso</string>
   <string name="yard_symbol">yarda</string>
   <string name="change_currency_symbol">Cambiar el símbolo monetario</string>
+  <string name="currency_header">Símbolo monetario</string>
   <string name="dozen_symbol">docena</string>
 
   <string name="main_final_summary">La opción más économica es fila %1$d</string>

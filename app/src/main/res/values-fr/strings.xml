@@ -32,10 +32,10 @@
 
   <string name="current_comparison">Comparaison actuelle</string>
   <string name="saved_comparisons">Comparaisons sauvegardées</string>
-  <string name="rate_app">Évaluer Appli</string>
+  <string name="rate_app">Évaluer appli</string>
   <string name="settings">Préférences</string>
-  <string name="share_app">Partager Apppli</string>
-  <string name="send_feedback">Donner Feedback</string>
+  <string name="share_app">Partager apppli</string>
+  <string name="send_feedback">Donner feedback</string>
   <string name="no_email_client">Aucun client de courriel est installé</string>
 
 
@@ -82,6 +82,7 @@
   <string name="quart_symbol">qt</string>
   <string name="yard_symbol">yd</string>
   <string name="change_currency_symbol">Changer la devise</string>
+  <string name="currency_header">Devise</string>
   <string name="dozen_symbol">douzaine</string>
   <string name="move_up">Déplacer en haut</string>
   <string name="move_down">Déplacer en bas</string>

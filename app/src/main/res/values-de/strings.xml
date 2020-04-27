@@ -17,6 +17,7 @@
   <string name="add_row">Neue Zeile hinzüfügen</string>
   <string name="remove_row">Letzte Zeile löschen</string>
   <string name="change_currency_symbol">Währung anpassen</string>
+  <string name="currency_header">Währung</string>
 
   <string name="show_price_per">Zeige Preis pro:</string>
   <string name="main_final_summary">Die wirtschaftlichste Option ist Zeile %1$d</string>

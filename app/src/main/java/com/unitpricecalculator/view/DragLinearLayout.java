@@ -14,9 +14,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -28,7 +25,9 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MotionEventCompat;
 import com.unitpricecalculator.R;
 
 /**
@@ -526,7 +525,6 @@ public class DragLinearLayout extends LinearLayout {
                     // (and not right after the #addView() swaps above)
                     // we may need to update an ongoing settle animation
                     if (draggedItem.settling()) {
-                        Log.d(LOG_TAG, "Updating settle animation");
                         draggedItem.settleAnimation.removeAllListeners();
                         draggedItem.settleAnimation.cancel();
                         onDragStop();

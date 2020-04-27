@@ -13,6 +13,8 @@ import com.unitpricecalculator.R
 import com.unitpricecalculator.currency.Currencies
 import com.unitpricecalculator.events.CurrencyChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
+import com.unitpricecalculator.initialscreen.InitialScreenChangedEvent
+import com.unitpricecalculator.initialscreen.InitialScreenManager
 import com.unitpricecalculator.mode.DarkModeDialogFragment
 import com.unitpricecalculator.mode.DarkModeManager
 import com.unitpricecalculator.mode.DarkModeStateChangedEvent
@@ -33,10 +35,13 @@ class SettingsFragment : BaseFragment() {
   @Inject internal lateinit var currencies: Currencies
   @Inject internal lateinit var bus: Bus
   @Inject internal lateinit var darkModeManager: DarkModeManager
+  @Inject internal lateinit var initialScreenManager: InitialScreenManager
 
-  private val changeCurrencySubtitle = MutableSometimes.create<TextView>()
-  private val darkModeSubtitle = MutableSometimes.create<TextView>()
-  private lateinit var defaultQuantityViews: Map<UnitType, DefaultQuantityRowView>
+  private val changeCurrency = MutableSometimes.create<SettingsItemView>()
+  private val darkMode = MutableSometimes.create<SettingsItemView>()
+  private val initialScreen = MutableSometimes.create<SettingsItemView>()
+  private val defaultQuantityViews =
+    MutableSometimes.create<Map<UnitType, DefaultQuantityRowView>>()
 
   override fun onStart() {
     super.onStart()
@@ -55,11 +60,17 @@ class SettingsFragment : BaseFragment() {
   ): View {
     val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
-    val changeCurrencySubtitleTextView = view.findViewById<TextView>(R.id.change_currency_subtitle)
-    changeCurrencySubtitle.set(changeCurrencySubtitleTextView)
-    changeCurrencySubtitleTextView.text = units.currency.symbol
-    view.findViewById<View>(R.id.change_currency_parent)
-      .setOnClickListener { currencies.showChangeCurrencyDialog() }
+    view.findViewById<SettingsItemView>(R.id.change_currency)?.let {
+      it.setOnClickListener { currencies.showChangeCurrencyDialog() }
+      it.subtitle = units.currency.symbol
+      changeCurrency.set(it)
+    }
+
+    view.findViewById<SettingsItemView>(R.id.initial_screen)?.let {
+      it.setOnClickListener { initialScreenManager.showDialog(childFragmentManager) }
+      it.setSubtitle(initialScreenManager.initialScreen.labelResId)
+      initialScreen.set(it)
+    }
 
     val dragLinearLayout = view.findViewById<DragLinearLayout>(R.id.drag_linear_layout)
 
@@ -102,11 +113,11 @@ class SettingsFragment : BaseFragment() {
       systems.preferredOrder = order
     }
 
-    val darkModeSubtitleTextView = view.findViewById<TextView>(R.id.dark_mode_subtitle)
-    darkModeSubtitle.set(darkModeSubtitleTextView)
-    darkModeSubtitleTextView.setText(darkModeManager.currentDarkModeState.labelResId)
-    view.findViewById<View>(R.id.dark_mode_parent)
-      .setOnClickListener { DarkModeDialogFragment.show(childFragmentManager) }
+    view.findViewById<SettingsItemView>(R.id.dark_mode).let {
+      it.setOnClickListener { DarkModeDialogFragment.show(childFragmentManager) }
+      it.setSubtitle(darkModeManager.currentDarkModeState.labelResId)
+      darkMode.set(it)
+    }
 
     val defaultUnitQuantityContainer =
       view.findViewById<ViewGroup>(R.id.default_unit_quantity_parent)
@@ -125,28 +136,45 @@ class SettingsFragment : BaseFragment() {
       defaultUnitQuantityContainer.addView(rowView)
       defaultQuantityRowViews[unitType] = rowView
     }
-    this.defaultQuantityViews = defaultQuantityRowViews
+    defaultQuantityViews.set(defaultQuantityRowViews)
 
     return view
   }
 
+  override fun onDestroyView() {
+    super.onDestroyView()
+    changeCurrency.set(null)
+    darkMode.set(null)
+    initialScreen.set(null)
+    defaultQuantityViews.set(null)
+  }
+
   @Subscribe
   fun onCurrencyChangedEvent(event: CurrencyChangedEvent) {
-    changeCurrencySubtitle.whenPresent { it.text = event.currency.symbol }
+    changeCurrency.whenPresent { it.subtitle = event.currency.symbol }
   }
 
   @Subscribe
   fun onDarkModeStateChanged(event: DarkModeStateChangedEvent) {
-    darkModeSubtitle.whenPresent { it.setText(event.newState.labelResId) }
+    darkMode.whenPresent { it.setSubtitle(event.newState.labelResId) }
+  }
+
+  @Subscribe
+  fun onInitialScreenChanged(event: InitialScreenChangedEvent) {
+    initialScreen.whenPresent { it.setSubtitle(event.newInitialScreen.labelResId) }
   }
 
   @Subscribe
   fun onSystemsChanged(event: SystemChangedEvent) {
-    defaultQuantityViews.entries.forEach { it.value.setData(units.getDefaultQuantity(it.key)) }
+    defaultQuantityViews.whenPresent {
+      it.entries.forEach { (unit, row) -> row.setData(units.getDefaultQuantity(unit)) }
+    }
   }
 
   @Subscribe
   fun onDefaultQuantityChanged(event: DefaultQuantityChangedEvent) {
-    defaultQuantityViews.entries.forEach { it.value.setData(units.getDefaultQuantity(it.key)) }
+    defaultQuantityViews.whenPresent {
+      it.entries.forEach { (unit, row) -> row.setData(units.getDefaultQuantity(unit)) }
+    }
   }
 }

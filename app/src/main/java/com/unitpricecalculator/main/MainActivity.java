@@ -1,5 +1,7 @@
 package com.unitpricecalculator.main;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,11 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -24,7 +26,10 @@ import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
+import com.unitpricecalculator.initialscreen.InitialScreen;
+import com.unitpricecalculator.initialscreen.InitialScreenManager;
 import com.unitpricecalculator.json.ObjectMapper;
+import com.unitpricecalculator.saved.SavedComparisonManager;
 import com.unitpricecalculator.saved.SavedFragment;
 import com.unitpricecalculator.settings.SettingsFragment;
 import com.unitpricecalculator.unit.Units;
@@ -42,6 +47,12 @@ public final class MainActivity extends BaseActivity
 
   @Inject
   ObjectMapper objectMapper;
+
+  @Inject
+  InitialScreenManager initialScreenManager;
+
+  @Inject
+  SavedComparisonManager savedComparisonManager;
 
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
@@ -63,17 +74,18 @@ public final class MainActivity extends BaseActivity
   protected final void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    setTitle("");
 
-    Preconditions.checkNotNull(getSupportActionBar());
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setHomeButtonEnabled(true);
+    ActionBar actionBar = checkNotNull(getSupportActionBar());
+    actionBar.setDisplayHomeAsUpEnabled(true);
+    actionBar.setHomeButtonEnabled(true);
 
     mDrawerLayout = findViewById(R.id.drawer_layout);
     mDrawerToggle = new ActionBarDrawerToggle(
         this, mDrawerLayout, R.string.app_name, R.string.app_name);
 
     mDrawerToggle.setDrawerIndicatorEnabled(true);
-    mDrawerLayout.setDrawerListener(mDrawerToggle);
+    mDrawerLayout.addDrawerListener(mDrawerToggle);
 
     mComparisonFragment = new ComparisonFragment();
     mSettingsFragment = new SettingsFragment();
@@ -85,7 +97,12 @@ public final class MainActivity extends BaseActivity
           objectMapper.fromJson(ComparisonFragmentState.class,
               savedInstanceState.getString("mainFragment")));
     } else {
-      currentState = State.MAIN;
+      if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
+          !savedComparisonManager.getSavedComparisons().isEmpty()) {
+        currentState = State.SAVED;
+      } else {
+        currentState = State.MAIN;
+      }
     }
 
     getSupportFragmentManager()

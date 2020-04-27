@@ -32,7 +32,9 @@
   <!-- Label for a button that removes the [last] row from the comparison -->
   <string name="remove_row">Remove row</string>
   <!-- Title for a dialog that lets the user change the currency symbol -->
-  <string name="change_currency_symbol">Change Currency</string>
+  <string name="change_currency_symbol">Change currency</string>
+  <!-- Header for a section to change the currency symbol -->
+  <string name="currency_header">Currency</string>
 
   <!-- Prompt for a input fields that let the user set the base size and unit for comparison -->
   <string name="show_price_per">Show price per:</string>
@@ -67,18 +69,18 @@
   <string name="saved_from_date">Saved on %1$s</string>
 
   <!-- Menu item label for the current comparison -->
-  <string name="current_comparison">Current Comparison</string>
+  <string name="current_comparison">Current comparison</string>
   <!-- Menu item label for the list of saved comparisons -->
-  <string name="saved_comparisons">Saved Comparisons</string>
+  <string name="saved_comparisons">Saved comparisons</string>
   <!-- Label for a menu item that takes the user to the Play Store to rate the app -->
-  <string name="rate_app">Rate App</string>
+  <string name="rate_app">Rate app</string>
   <!-- Label for a menu item that takes the user to the settings screen -->
   <string name="settings">Settings</string>
   <!-- Label for a menu item that launches an intent with a link to the app that the user can
        share to another app on the device -->
-  <string name="share_app">Share App</string>
+  <string name="share_app">Share app</string>
   <!-- Label for a menu item that starts writing a feedback email -->
-  <string name="send_feedback">Send Feedback</string>
+  <string name="send_feedback">Send feedback</string>
   <!-- Error text that shows if there aren't any email clients installed -->
   <string name="no_email_client">No email clients installed</string>
 
@@ -126,7 +128,7 @@
   <string name="quantity">Quantity</string>
   <string name="unit_symbol">unit</string>
 
-  <string name="send_email">Send Email</string>
+  <string name="send_email">Send email</string>
   <string name="feedback_subject">Feedback for Unit Price Calculator</string>
   <string name="dozen_symbol">dozen</string>
 
@@ -175,4 +177,7 @@
   <string name="default_quantity_dialog_header">Default quantity: %1$s</string>
   <!-- Label for a button that lets the user search their saved comparisons -->
   <string name="search">Search</string>
+
+  <!-- Header for a settings item that lets the user change which screen the app first load to. -->
+  <string name="initial_screen">Initial screen</string>
 </resources>

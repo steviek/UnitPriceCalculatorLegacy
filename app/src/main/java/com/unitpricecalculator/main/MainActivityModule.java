@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
 import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.UnitEntryViewModule;
+import com.unitpricecalculator.dialog.DelegatingDialogFragmentModule;
 import com.unitpricecalculator.inject.ActivityContext;
 import com.unitpricecalculator.inject.ActivityScoped;
 import com.unitpricecalculator.mode.DarkModeDialogFragmentModule;
@@ -23,6 +24,7 @@ public interface MainActivityModule {
           ActivityModule.class,
           ComparisonFragment.Module.class,
           DarkModeDialogFragmentModule.class,
+          DelegatingDialogFragmentModule.class,
           DefaultQuantityDialogModule.class,
           MenuFragment.Module.class,
           SavedFragment.Module.class,
