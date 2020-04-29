@@ -122,14 +122,14 @@ public interface SerializersModule {
       @Override
       public JsonObject toJson(ObjectMapper objectMapper, ComparisonFragmentState instance) {
         return new JsonObject(objectMapper)
-            .put(CURRENT_COMPARISON, instance.getCurrentComparison())
+            .putNullable(CURRENT_COMPARISON, instance.getCurrentComparison())
             .putNullable(LAST_KNOWN_COMPARISON, instance.getLastKnownSavedComparison());
       }
 
       @Override
       public ComparisonFragmentState fromJson(ObjectMapper objectMapper, JsonObject json) {
         return new ComparisonFragmentState(
-            json.getOrThrow(SavedComparison.class, CURRENT_COMPARISON),
+            json.getOrNull(SavedComparison.class, CURRENT_COMPARISON),
             json.getOrNull(SavedComparison.class, LAST_KNOWN_COMPARISON));
       }
     };

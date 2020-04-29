@@ -376,7 +376,12 @@ public final class ComparisonFragment extends BaseFragment
     return new ComparisonFragmentState(getCurrentState(context), lastKnownSavedState.orNull());
   }
 
+  @Nullable
   private SavedComparison getCurrentState(Context context) {
+    if (mUnitTypeSpinner == null) {
+      return null;
+    }
+
     if (pendingSavedStateToRestore != null) {
       return pendingSavedStateToRestore.getCurrentComparison();
     }
@@ -418,6 +423,9 @@ public final class ComparisonFragment extends BaseFragment
     lastKnownSavedState = Optional.fromNullable(state.getLastKnownSavedComparison());
     mRowContainer.removeAllViewsInLayout();
     SavedComparison comparison = state.getCurrentComparison();
+    if (comparison == null) {
+      return;
+    }
     setUnitType(mUnitTypeSpinner, comparison.getUnitType());
     mEntryViews.clear();
     for (SavedUnitEntryRow entryRow : comparison.getSavedUnitEntryRows()) {

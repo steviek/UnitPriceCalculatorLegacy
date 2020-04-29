@@ -5,17 +5,19 @@ import java.util.Objects;
 
 public final class ComparisonFragmentState {
 
+  @Nullable
   private final SavedComparison currentComparison;
   @Nullable
   private final SavedComparison lastKnownSavedComparison;
 
   public ComparisonFragmentState(
-      SavedComparison currentComparison,
+      @Nullable SavedComparison currentComparison,
       @Nullable SavedComparison lastKnownSavedComparison) {
     this.currentComparison = currentComparison;
     this.lastKnownSavedComparison = lastKnownSavedComparison;
   }
 
+  @Nullable
   public SavedComparison getCurrentComparison() {
     return currentComparison;
   }

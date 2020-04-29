@@ -226,9 +226,14 @@ public final class MainActivity extends BaseActivity
 
   @Override
   public void onBackPressed() {
-    if (currentState != State.MAIN) {
-      // If the user presses back on a different screen, navigate them back to the main one.
+    InitialScreen initialScreen = initialScreenManager.getInitialScreen();
+    // If the user presses back on a different screen, navigate them back to their initial one.
+    if (currentState != State.MAIN && initialScreen == InitialScreen.NEW_COMPARISON) {
       changeState(State.MAIN);
+      return;
+    } else if (currentState != State.SAVED && initialScreen == InitialScreen.SAVED_COMPARISONS) {
+      // If the user presses back on a different screen, navigate them back to the main one.
+      changeState(State.SAVED);
       return;
     }
     super.onBackPressed();
