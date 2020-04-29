@@ -12,5 +12,5 @@ inline fun <T : Fragment> T.withArguments(modifier: Bundle.() -> Unit): T {
   return this
 }
 
-val <T> Optional<T>.isNotPresent: Boolean
-get() = !isPresent
+val Optional<*>.isNotPresent: Boolean
+  get() = !isPresent

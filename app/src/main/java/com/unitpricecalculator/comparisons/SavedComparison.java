@@ -19,6 +19,8 @@ public final class SavedComparison implements Comparable<SavedComparison> {
   private final DefaultUnit finalUnit;
   @Nullable
   private final String currencyCode;
+  @Nullable
+  private final Long timestampMillis;
 
   public SavedComparison(
       @Nullable String key,
@@ -27,10 +29,10 @@ public final class SavedComparison implements Comparable<SavedComparison> {
       List<SavedUnitEntryRow> savedUnitEntryRows,
       String finalQuantity,
       DefaultUnit finalUnit,
-      @Nullable String currencyCode) {
-
+      @Nullable String currencyCode,
+      @Nullable Long timestampMillis) {
     if (key == null) {
-      long newKey = System.currentTimeMillis();
+      long newKey =  System.currentTimeMillis();
       if (newKey == lastKeyGenerated) {
         newKey++;
       }
@@ -44,6 +46,8 @@ public final class SavedComparison implements Comparable<SavedComparison> {
     this.finalQuantity = finalQuantity;
     this.finalUnit = finalUnit;
     this.currencyCode = currencyCode;
+
+    this.timestampMillis = timestampMillis;
   }
 
   public List<SavedUnitEntryRow> getSavedUnitEntryRows() {
@@ -73,6 +77,11 @@ public final class SavedComparison implements Comparable<SavedComparison> {
   @Nullable
   public String getCurrencyCode() {
     return currencyCode;
+  }
+
+  @Nullable
+  public Long getTimestampMillis() {
+    return timestampMillis;
   }
 
   @Override
@@ -142,7 +151,7 @@ public final class SavedComparison implements Comparable<SavedComparison> {
    */
   public SavedComparison rename(String newName) {
     return new SavedComparison(key, newName, unitType, savedUnitEntryRows, finalQuantity, finalUnit,
-        currencyCode);
+        currencyCode, timestampMillis);
   }
 
   /**
@@ -150,7 +159,16 @@ public final class SavedComparison implements Comparable<SavedComparison> {
    */
   public SavedComparison addCurrency(String currencyCode) {
     return new SavedComparison(key, name, unitType, savedUnitEntryRows, finalQuantity, finalUnit,
-        currencyCode);
+        currencyCode, timestampMillis);
+  }
+
+  /**
+   * Generates a copy of this comparison with the provided timestamp.  The original object is
+   * unaffected.
+   */
+  public SavedComparison withTimestamp(long timestamp) {
+    return new SavedComparison(key, name, unitType, savedUnitEntryRows, finalQuantity, finalUnit,
+        currencyCode, timestamp);
   }
 
   @Override

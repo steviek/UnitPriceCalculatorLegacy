@@ -121,4 +121,11 @@
   <string name="initial_screen">Initial screen</string>
   <string name="initial_screen_new_comparison">New comparison</string>
 
+  <plurals name="saved_comparison_items">
+    <item quantity="one">%1$s (%2$d item)</item>
+    <item quantity="other">%1$s (%2$d items)</item>
+  </plurals>
+
+  <string name="saved_comparison_subtitle">Best item: %1$s</string>
+
 </resources>

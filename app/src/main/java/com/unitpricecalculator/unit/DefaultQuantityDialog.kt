@@ -33,7 +33,7 @@ class DefaultQuantityDialogFragment : BaseDialogFragment() {
 
     val amountEditText = view.findViewById<EditText>(R.id.amount_edit_text)
     amountEditText.setText(amount.toLocalizedString())
-    Localization.addLocalizedKeyListener(amountEditText)
+    amountEditText.addLocalizedKeyListener()
 
     val unitSpinner = view.findViewById<Spinner>(R.id.unit_spinner)
     val unitsInSpinner =
@@ -57,7 +57,7 @@ class DefaultQuantityDialogFragment : BaseDialogFragment() {
       )
       .setView(view)
       .setPositiveButton(android.R.string.ok) { _, _ ->
-        val newAmount = Localization.parseDoubleSafely(amountEditText.text.toString())
+        val newAmount = amountEditText.text.toString().parseDoubleSafely()
         if (newAmount.isNotPresent) return@setPositiveButton
         val newUnit = unitsInSpinner[unitSpinner.selectedItemPosition]
         units.setDefaultQuantity(newUnit.unitType, Quantity(newAmount.get(), newUnit))

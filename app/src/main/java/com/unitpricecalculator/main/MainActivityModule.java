@@ -10,6 +10,7 @@ import com.unitpricecalculator.inject.ActivityContext;
 import com.unitpricecalculator.inject.ActivityScoped;
 import com.unitpricecalculator.mode.DarkModeDialogFragmentModule;
 import com.unitpricecalculator.saved.SavedFragment;
+import com.unitpricecalculator.saved.SavedFragmentModule;
 import com.unitpricecalculator.settings.SettingsModule;
 import com.unitpricecalculator.unit.DefaultQuantityDialogModule;
 import dagger.Binds;
@@ -27,7 +28,7 @@ public interface MainActivityModule {
           DelegatingDialogFragmentModule.class,
           DefaultQuantityDialogModule.class,
           MenuFragment.Module.class,
-          SavedFragment.Module.class,
+          SavedFragmentModule.class,
           SettingsModule.class,
           UnitEntryViewModule.class})
   @ActivityScoped

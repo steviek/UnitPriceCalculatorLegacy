@@ -398,7 +398,7 @@ public final class ComparisonFragment extends BaseFragment
         .or(draftKey);
 
     return new SavedComparison(key, savedName, unitType, list.build(), finalSize, finalUnit,
-        units.getCurrency().getCurrencyCode());
+        units.getCurrency().getCurrencyCode(), /* timestampMillis= */ null);
   }
 
   @Override
@@ -462,7 +462,7 @@ public final class ComparisonFragment extends BaseFragment
   public void save() {
     if (!Strings
         .isNullOrEmpty(fileNameEditText.map(editText -> editText.getText().toString()).orNull())) {
-      save(getCurrentState(getContext()));
+      save(getCurrentState(getContext()).withTimestamp(System.currentTimeMillis()));
       return;
     }
 
@@ -481,7 +481,7 @@ public final class ComparisonFragment extends BaseFragment
         Preconditions.checkState(!Strings.isNullOrEmpty(newName));
         fileNameEditText.whenPresent(editText -> {
           editText.setText(newName);
-          save(getCurrentState(getContext()));
+          save(getCurrentState(getContext()).withTimestamp(System.currentTimeMillis()));
         });
       });
 

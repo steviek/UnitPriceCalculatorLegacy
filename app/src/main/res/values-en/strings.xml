@@ -180,4 +180,13 @@
 
   <!-- Header for a settings item that lets the user change which screen the app first load to. -->
   <string name="initial_screen">Initial screen</string>
+
+  <!-- Title for a saved comparison. Name and number of items. -->
+  <plurals name="saved_comparison_items">
+    <item quantity="one">%1$s (%2$d item)</item>
+    <item quantity="other">%1$s (%2$d items)</item>
+  </plurals>
+
+  <!-- Subtitle for a saved comparison, describing the best item. -->
+  <string name="saved_comparison_subtitle">Best item: %1$s</string>
 </resources>

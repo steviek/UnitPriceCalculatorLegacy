@@ -68,7 +68,8 @@ public final class SavedComparisonManager {
           unitEntryRowBuilder.add(new SavedUnitEntryRow(cost, quantity, size, unit, ""));
         }
         putSavedComparison(new SavedComparison(String.valueOf(key++), name, decodedUnitType,
-            unitEntryRowBuilder.build(), finalQuantity, decodedUnit, /* currencyCode= */ null));
+            unitEntryRowBuilder.build(), finalQuantity, decodedUnit, /* currencyCode= */ null,
+            null));
       } catch (JSONException e) {
         // We failed, just skip it and destroy the old saved files.
       }

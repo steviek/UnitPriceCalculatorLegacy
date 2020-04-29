@@ -11,7 +11,7 @@ fun AlertDialog.materialize() {
     return
   }
 
-  getButton(DialogInterface.BUTTON_POSITIVE)?.setAllCaps(false)
-  getButton(DialogInterface.BUTTON_NEUTRAL)?.setAllCaps(false)
-  getButton(DialogInterface.BUTTON_NEGATIVE)?.setAllCaps(false)
+  getButton(DialogInterface.BUTTON_POSITIVE)?.isAllCaps = false
+  getButton(DialogInterface.BUTTON_NEUTRAL)?.isAllCaps = false
+  getButton(DialogInterface.BUTTON_NEGATIVE)?.isAllCaps = false
 }

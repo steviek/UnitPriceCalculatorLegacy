@@ -33,7 +33,19 @@ final class JsonObject {
     return this;
   }
 
+  JsonObject put(String key, @Nonnull Number value) {
+    wrappingJsonExceptions(() -> object.put(key, value));
+    return this;
+  }
+
   JsonObject putNullable(String key, @Nullable String value) {
+    if (value == null) {
+      return this;
+    }
+    return put(key, value);
+  }
+
+  JsonObject putNullable(String key, @Nullable Number value) {
     if (value == null) {
       return this;
     }
@@ -74,6 +86,19 @@ final class JsonObject {
   String getStringOrNull(String key) {
     if (object.has(key)) {
       return getStringOrThrow(key);
+    } else {
+      return null;
+    }
+  }
+
+  Long getLongOrThrow(String key) {
+    return wrappingJsonExceptions(() -> object.getLong(key));
+  }
+
+  @Nullable
+  Long getLongOrNull(String key) {
+    if (object.has(key)) {
+      return getLongOrThrow(key);
     } else {
       return null;
     }

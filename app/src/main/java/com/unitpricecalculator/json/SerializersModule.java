@@ -43,6 +43,7 @@ public interface SerializersModule {
       private static final String FINAL_QUANTITY = "finalQuantity";
       private static final String FINAL_UNIT = "finalUnit";
       private static final String CURRENCY_CODE = "currencyCode";
+      private static final String TIMESTAMP_MILLIS = "timestamp_millis";
 
       @Override
       public JsonObject toJson(ObjectMapper objectMapper, SavedComparison comparison) {
@@ -54,7 +55,8 @@ public interface SerializersModule {
                 objectMapper.toJsonArray(comparison.getSavedUnitEntryRows()))
             .put(FINAL_QUANTITY, comparison.getFinalQuantity())
             .put(FINAL_UNIT, comparison.getFinalUnit())
-            .putNullable(CURRENCY_CODE, comparison.getCurrencyCode());
+            .putNullable(CURRENCY_CODE, comparison.getCurrencyCode())
+            .putNullable(TIMESTAMP_MILLIS, comparison.getTimestampMillis());
       }
 
       @Override
@@ -67,8 +69,9 @@ public interface SerializersModule {
         String finalQuantity = json.getStringOrThrow(FINAL_QUANTITY);
         DefaultUnit finalUnit = json.getOrThrow(DefaultUnit.class, FINAL_UNIT);
         @Nullable String currencyCode = json.getStringOrNull(CURRENCY_CODE);
+        @Nullable Long timestampMillis = json.getLongOrNull(TIMESTAMP_MILLIS);
         return new SavedComparison(
-            key, name, unitType, savedUnitEntryRowList, finalQuantity, finalUnit, currencyCode);
+            key, name, unitType, savedUnitEntryRowList, finalQuantity, finalUnit, currencyCode, timestampMillis);
       }
     };
   }
@@ -166,7 +169,7 @@ public interface SerializersModule {
       }
 
       return new SavedComparison(key, name, unitType, savedUnitEntryRows, finalQuantity, finalUnit,
-          currencyCode);
+          currencyCode, null);
     };
   }
 
