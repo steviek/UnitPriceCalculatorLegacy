@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -64,10 +65,11 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private Spinner mUnitSpinner;
   private View mInputFieldsContainer;
 
-  private TextView inlineSummaryTextView;
-  private TextView belowSummaryTextView;
-  private TextView noteTextView;
-  private Button noteButton;
+  private TextView summaryTextView;
+  private TextView belowNoteTextView;
+  private TextView inlineNoteTextView;
+  private Button addNoteButton;
+  private ImageButton editNoteButton;
   private CompareUnitChangedEvent mLastCompareUnit;
 
   private OnUnitEntryChangedListener mListener;
@@ -84,6 +86,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   private boolean mInflated = false;
   private boolean mInActionMode = false;
+  private boolean mExpanded = false;
   private int mRowNumber;
   private String note;
 
@@ -314,13 +317,22 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     mUnitSpinner = findViewById(R.id.unit_spinner);
 
-    inlineSummaryTextView = findViewById(R.id.text_summary_inline);
-    belowSummaryTextView = findViewById(R.id.text_summary_below);
-    noteTextView = findViewById(R.id.text_note);
-    noteTextView.setOnClickListener(noteOnClickListener);
+    summaryTextView = findViewById(R.id.text_summary_inline);
+    belowNoteTextView = findViewById(R.id.text_note_below);
+    belowNoteTextView.setOnClickListener(v -> {
+      mExpanded = !mExpanded;
+      syncViews();
+    });
+    inlineNoteTextView = findViewById(R.id.text_note_inline);
+    inlineNoteTextView.setOnClickListener(v -> {
+      mExpanded = !mExpanded;
+      syncViews();
+    });
 
-    noteButton = findViewById(R.id.note_button);
-    noteButton.setOnClickListener(noteOnClickListener);
+    addNoteButton = findViewById(R.id.note_button);
+    addNoteButton.setOnClickListener(noteOnClickListener);
+    editNoteButton = findViewById(R.id.edit_note_button);
+    editNoteButton.setOnClickListener(noteOnClickListener);
 
     mInputFieldsContainer = findViewById(R.id.input_fields_container);
 
@@ -374,18 +386,26 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     int unfocusedColor = Color.TRANSPARENT;
 
-    TextView summaryTextView;
     if (Strings.isNullOrEmpty(note)) {
-      noteTextView.setVisibility(View.GONE);
-      summaryTextView = inlineSummaryTextView;
-      belowSummaryTextView.setVisibility(View.GONE);
-      noteButton.setText(R.string.add_note);
+      belowNoteTextView.setVisibility(View.GONE);
+      inlineNoteTextView.setVisibility(View.INVISIBLE);
+
+      belowNoteTextView.setVisibility(View.GONE);
+      addNoteButton.setVisibility(View.VISIBLE);
+      editNoteButton.setVisibility(View.GONE);
     } else {
-      noteTextView.setVisibility(View.VISIBLE);
-      noteTextView.setText(note);
-      summaryTextView = belowSummaryTextView;
-      inlineSummaryTextView.setVisibility(View.GONE);
-      noteButton.setText(R.string.edit_note);
+      belowNoteTextView.setText(note);
+      inlineNoteTextView.setText(note);
+      addNoteButton.setVisibility(View.GONE);
+      editNoteButton.setVisibility(View.VISIBLE);
+
+      if (mExpanded) {
+        belowNoteTextView.setVisibility(View.VISIBLE);
+        inlineNoteTextView.setVisibility(View.INVISIBLE);
+      } else {
+        belowNoteTextView.setVisibility(View.GONE);
+        inlineNoteTextView.setVisibility(View.VISIBLE);
+      }
     }
 
     Optional<UnitEntry> unitEntry = getEntry();
@@ -394,19 +414,19 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       if (unitEntry.get().getUnit().getUnitType() != baseUnit.getUnitType()) {
         return;
       }
-      summaryTextView.setText(getSummaryText(unitEntry.get(), baseUnit));
-      summaryTextView.setVisibility(View.VISIBLE);
+      this.summaryTextView.setText(getSummaryText(unitEntry.get(), baseUnit));
+      this.summaryTextView.setVisibility(View.VISIBLE);
 
       mRowNumberTextView.setTextColor(
           ContextCompat.getColor(getContext(), mEvaluation.getPrimaryColor()));
-      summaryTextView.setTextColor(
+      this.summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), mEvaluation.getSecondaryColor()));
 
     } else {
-      summaryTextView.setVisibility(View.INVISIBLE);
+      this.summaryTextView.setVisibility(View.INVISIBLE);
       mRowNumberTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getPrimaryColor()));
-      summaryTextView.setTextColor(
+      this.summaryTextView.setTextColor(
           ContextCompat.getColor(getContext(), Evaluation.NEUTRAL.getSecondaryColor()));
     }
     setBackgroundColor(

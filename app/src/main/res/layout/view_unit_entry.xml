@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:parentTag="android.widget.LinearLayout"
+  tools:orientation="vertical">
 
   <LinearLayout
     android:id="@+id/input_fields_container"
@@ -52,7 +55,8 @@
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
     <Button
       style="@style/FlatButton"
@@ -61,44 +65,57 @@
       android:layout_height="wrap_content"
       android:text="@string/add_note"/>
 
+    <ImageButton
+      android:id="@+id/edit_note_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/ic_edit"
+      android:background="?attr/selectableItemBackground"
+      android:padding="8dp"
+      android:tint="?attr/colorAccent"
+      android:layout_gravity="center_vertical"
+      android:contentDescription="@string/edit_note"/>
+
+    <TextView
+      android:id="@+id/text_note_inline"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:padding="8dp"
+      android:maxLines="1"
+      android:singleLine="true"
+      android:gravity="center_vertical"
+      android:ellipsize="end"
+      android:textIsSelectable="true"
+      android:focusableInTouchMode="false"
+      android:focusable="false"
+      tools:text="My note is going here and is long"/>
+
     <TextView
       android:id="@+id/text_summary_inline"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:paddingLeft="@dimen/horizontal_margin"
       android:paddingRight="@dimen/horizontal_margin"
       android:gravity="end|center_vertical"
-      android:text="$12 per 10 g"
-      android:textIsSelectable="true"/>
-
-    <TextView
-      android:id="@+id/text_note"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="2dp"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin"
-      android:paddingBottom="2dp"
-      android:gravity="start|center_vertical"
-      android:maxLines="4"
-      android:ellipsize="end"
+      tools:text="$12 per 10 g"
       android:textIsSelectable="true"/>
 
   </LinearLayout>
 
   <TextView
-    android:id="@+id/text_summary_below"
+    android:id="@+id/text_note_below"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="4dp"
+    android:paddingVertical="12dp"
     android:paddingLeft="@dimen/horizontal_margin"
     android:paddingRight="@dimen/horizontal_margin"
-    android:gravity="end|center_vertical"
+    android:focusableInTouchMode="false"
+    android:focusable="false"
     android:textIsSelectable="true"/>
 
-  <View
+  <Space
     android:layout_width="match_parent"
     android:layout_height="4dp"/>
-
 
 </merge>
