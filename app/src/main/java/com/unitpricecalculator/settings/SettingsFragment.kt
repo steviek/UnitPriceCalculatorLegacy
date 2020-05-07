@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.TextView
 import com.squareup.otto.Bus
 import com.squareup.otto.Subscribe
@@ -23,6 +24,8 @@ import com.unitpricecalculator.unit.Systems
 import com.unitpricecalculator.unit.UnitType
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.unit.Units.DefaultQuantityChangedEvent
+import com.unitpricecalculator.util.prefs.Keys
+import com.unitpricecalculator.util.prefs.Prefs
 import com.unitpricecalculator.util.sometimes.MutableSometimes
 import com.unitpricecalculator.view.DragLinearLayout
 import java.util.HashSet
@@ -36,12 +39,14 @@ class SettingsFragment : BaseFragment() {
   @Inject internal lateinit var bus: Bus
   @Inject internal lateinit var darkModeManager: DarkModeManager
   @Inject internal lateinit var initialScreenManager: InitialScreenManager
+  @Inject internal lateinit var prefs: Prefs
 
   private val changeCurrency = MutableSometimes.create<SettingsItemView>()
   private val darkMode = MutableSometimes.create<SettingsItemView>()
   private val initialScreen = MutableSometimes.create<SettingsItemView>()
   private val defaultQuantityViews =
     MutableSometimes.create<Map<UnitType, DefaultQuantityRowView>>()
+  private val percentageToggle = MutableSometimes.create<CompoundButton>()
 
   override fun onStart() {
     super.onStart()
@@ -137,6 +142,14 @@ class SettingsFragment : BaseFragment() {
       defaultQuantityRowViews[unitType] = rowView
     }
     defaultQuantityViews.set(defaultQuantityRowViews)
+
+    view.findViewById<CompoundButton>(R.id.percentages).let {
+      it.isChecked = prefs.getBoolean(Keys.SHOW_PERCENTAGE)
+      it.setOnCheckedChangeListener { _, isChecked ->
+        prefs.putBoolean(Keys.SHOW_PERCENTAGE, isChecked)
+      }
+      percentageToggle.set(it)
+    }
 
     return view
   }

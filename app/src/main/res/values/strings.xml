@@ -128,4 +128,7 @@
 
   <string name="saved_comparison_subtitle">Best item: %1$s</string>
 
+  <string name="change_order_title">Change order?</string>
+  <string name="change_order_message">Long-pressing a column header re-orders the rows to be sorted by that column</string>
+  <string name="show_percentages">Show comparison percentages</string>
 </resources>

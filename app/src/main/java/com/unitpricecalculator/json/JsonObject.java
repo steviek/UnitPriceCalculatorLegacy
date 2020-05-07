@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import androidx.annotation.Nullable;
 import com.unitpricecalculator.json.JsonUtils.JsonThrowingSupplier;
 import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,6 +87,20 @@ final class JsonObject {
   String getStringOrNull(String key) {
     if (object.has(key)) {
       return getStringOrThrow(key);
+    } else {
+      return null;
+    }
+  }
+
+  @NotNull
+  Integer getIntOrThrow(String key) {
+    return wrappingJsonExceptions(() -> object.getInt(key));
+  }
+
+  @Nullable
+  Integer getIntOrNull(String key) {
+    if (object.has(key)) {
+      return getIntOrThrow(key);
     } else {
       return null;
     }

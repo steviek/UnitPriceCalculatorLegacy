@@ -1,9 +1,11 @@
 package com.unitpricecalculator.util;
 
 import android.content.Context;
+import org.jetbrains.annotations.NotNull;
 
 public interface SavesState<T> {
-    T saveState(Context context);
+    @NotNull
+    T saveState(@NotNull Context context);
 
-    void restoreState(T object);
+    void restoreState(@NotNull T object);
 }

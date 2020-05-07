@@ -39,7 +39,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
     this(context, getSymbolsAndUnits(context, systems, units, selected.getUnitType(), selected));
   }
 
-  private static Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> getSymbolsAndUnits(
+  static Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> getSymbolsAndUnits(
       Context context, Systems systems, Units units, UnitType unitType, DefaultUnit selected) {
     ImmutableList.Builder<DefaultUnit> unitslist = ImmutableList.builder();
     ImmutableList.Builder<String> symbols = ImmutableList.builder();
@@ -70,7 +70,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
     return Pair.create(symbols.build(), unitslist.build());
   }
 
-  private UnitArrayAdapter(
+  UnitArrayAdapter(
       Context context, Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> symbolsAndUnits) {
     super(context, R.layout.unit_type_spinner_dropdown_item, symbolsAndUnits.first);
     this.units = Preconditions.checkNotNull(symbolsAndUnits.second);

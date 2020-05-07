@@ -71,7 +71,14 @@ public interface SerializersModule {
         @Nullable String currencyCode = json.getStringOrNull(CURRENCY_CODE);
         @Nullable Long timestampMillis = json.getLongOrNull(TIMESTAMP_MILLIS);
         return new SavedComparison(
-            key, name, unitType, savedUnitEntryRowList, finalQuantity, finalUnit, currencyCode, timestampMillis);
+            key,
+            name,
+            unitType,
+            savedUnitEntryRowList,
+            finalQuantity,
+            finalUnit,
+            currencyCode,
+            timestampMillis);
       }
     };
   }

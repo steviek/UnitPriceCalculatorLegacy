@@ -90,13 +90,17 @@
         android:text="@string/price"/>
 
       <TextView
+        android:id="@+id/number_header"
         style="@style/HeaderTextView"
         android:layout_width="@dimen/header_column_3"
+        android:background="?attr/selectableItemBackground"
         android:text="#"/>
 
       <TextView
+        android:id="@+id/size_header"
         style="@style/HeaderTextView"
         android:layout_width="@dimen/header_column_4"
+        android:background="?attr/selectableItemBackground"
         android:text="@string/size"/>
 
       <TextView

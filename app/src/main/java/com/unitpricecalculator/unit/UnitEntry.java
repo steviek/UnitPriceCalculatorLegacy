@@ -64,6 +64,10 @@ public final class UnitEntry {
         return cost / (quantity * size);
     }
 
+    public double getPricePerBaseUnit() {
+        return pricePer(1, unit.getUnitType().getBase());
+    }
+
     public double pricePer(double size, Unit unit) {
         Preconditions.checkArgument(unit.getUnitType() == this.unit.getUnitType(),
                 "Expected " + this.unit.getUnitType() + ", was " + unit.getUnitType());

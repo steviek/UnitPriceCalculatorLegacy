@@ -3,7 +3,7 @@ package com.unitpricecalculator.main;
 import android.app.Activity;
 import android.content.Context;
 import androidx.appcompat.app.AppCompatActivity;
-import com.unitpricecalculator.comparisons.ComparisonFragment;
+import com.unitpricecalculator.comparisons.ComparisonFragmentModule;
 import com.unitpricecalculator.comparisons.UnitEntryViewModule;
 import com.unitpricecalculator.dialog.DelegatingDialogFragmentModule;
 import com.unitpricecalculator.inject.ActivityContext;
@@ -23,7 +23,7 @@ public interface MainActivityModule {
   @ContributesAndroidInjector(
       modules = {
           ActivityModule.class,
-          ComparisonFragment.Module.class,
+          ComparisonFragmentModule.class,
           DarkModeDialogFragmentModule.class,
           DelegatingDialogFragmentModule.class,
           DefaultQuantityDialogModule.class,

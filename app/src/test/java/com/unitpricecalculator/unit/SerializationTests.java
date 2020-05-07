@@ -6,7 +6,6 @@ import static org.junit.Assert.assertFalse;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
-import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
 import com.unitpricecalculator.json.JsonMapperModule;
 import com.unitpricecalculator.json.ObjectMapper;

@@ -78,6 +78,17 @@
       android:layout_height="wrap_content"
       android:orientation="vertical"/>
 
+    <androidx.appcompat.widget.SwitchCompat
+      android:id="@+id/percentages"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:minHeight="56dp"
+      android:padding="16dp"
+      android:text="@string/show_percentages"
+      android:textColor="@color/primaryText"
+      android:textSize="18sp"
+      android:gravity="center_vertical"/>
+
   </LinearLayout>
 
 </ScrollView>

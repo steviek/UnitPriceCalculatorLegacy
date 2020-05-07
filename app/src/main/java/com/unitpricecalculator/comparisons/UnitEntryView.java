@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import com.google.auto.factory.AutoFactory;
@@ -43,7 +44,6 @@ import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
-import java.util.Locale;
 import javax.inject.Inject;
 
 @AutoFactory
@@ -168,7 +168,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public void setRowNumber(int rowNumber) {
     mRowNumber = rowNumber;
-    mRowNumberTextView.setText(String.format(Locale.getDefault(), "%d", rowNumber + 1));
+    mRowNumberTextView.setText(String.format("%d", rowNumber + 1));
   }
 
   public int getRowNumber() {
@@ -496,10 +496,12 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       this.secondaryColor = secondaryColor;
     }
 
+    @ColorRes
     public int getPrimaryColor() {
       return primaryColor;
     }
 
+    @ColorRes
     public int getSecondaryColor() {
       return secondaryColor;
     }

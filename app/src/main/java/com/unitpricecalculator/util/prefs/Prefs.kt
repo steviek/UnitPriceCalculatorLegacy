@@ -11,12 +11,12 @@ import javax.inject.Inject
 
 @Reusable
 class Prefs @Inject internal constructor(
-    @ApplicationContext context: Context,
-    private val objectMapper: ObjectMapper
+  @ApplicationContext context: Context,
+  private val objectMapper: ObjectMapper
 ) {
 
   private val prefs: SharedPreferences =
-      context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
+    context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
 
   fun getInt(key: String): Int? {
     if (prefs.contains(key)) {

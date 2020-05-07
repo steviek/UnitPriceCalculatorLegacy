@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.common.collect.ImmutableList;
+import com.unitpricecalculator.comparisons.Order;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
 import com.unitpricecalculator.json.ObjectMapper;
