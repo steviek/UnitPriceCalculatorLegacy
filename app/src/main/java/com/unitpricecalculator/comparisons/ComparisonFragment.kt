@@ -640,18 +640,16 @@ class ComparisonFragment :
       }
 
       val best = sortedUnitEntries[0]
-      finalSummary.append(getString(string.main_final_summary, best.index + 1)).append('\n')
+      finalSummary.append(getString(string.main_final_summary, best.index + 1)).append("\n\n")
       val startBestSpan = finalSummary.length
-      appendSingleRowSummary(finalSummary, best.unitEntry, compareUnit, best.unitEntry)
+      appendSingleRowSummary(finalSummary, best, compareUnit, best.unitEntry)
       val endBestSpan = finalSummary.length
       setColor(GOOD, startBestSpan, endBestSpan)
 
-      finalSummary.append("\n\n")
       for (entryWithIndex in sortedUnitEntries) {
         if (entryWithIndex.index == best.index) continue
         val spanStart = finalSummary.length
-        finalSummary.append(String.format(Locale.getDefault(), "%d: ", entryWithIndex.index + 1))
-        appendSingleRowSummary(finalSummary, entryWithIndex.unitEntry, compareUnit, best.unitEntry)
+        appendSingleRowSummary(finalSummary, entryWithIndex, compareUnit, best.unitEntry)
         val spanEnd = finalSummary.length
         val evaluation =
           if (entryWithIndex.unitEntry.pricePerBaseUnit == best.unitEntry.pricePerBaseUnit) {
@@ -679,10 +677,20 @@ class ComparisonFragment :
 
   private fun appendSingleRowSummary(
     message: SpannableStringBuilder,
-    unitEntry: UnitEntry,
+    unitEntryWithIndexAndNote: UnitEntryWithIndexAndNote,
     compareUnitChangedEvent: CompareUnitChangedEvent,
     best: UnitEntry
   ) {
+    val context = context ?: return
+    val (index, unitEntry, note) = unitEntryWithIndexAndNote
+
+    if (note.isNullOrBlank()) {
+      message.append(context.getString(R.string.row_x, index + 1))
+    } else {
+      message.append(context.getString(R.string.note_row_x, note, index + 1))
+    }
+    message.append("\n")
+
     val compareUnit = compareUnitChangedEvent.unit
     val compareSize = compareUnitChangedEvent.size
     val formatter = units.formatter
@@ -735,8 +743,10 @@ class ComparisonFragment :
         }
         roundedPercent.toLocalizedString() + "%"
       }
-      message.append("(+").append(formattedPercentage).append(")").append("\n").append("\n")
+      message.append("(+").append(formattedPercentage).append(")").append("\n")
     }
+
+    message.append("\n")
   }
 
   private fun finishActionMode() {
@@ -831,10 +841,10 @@ class ComparisonFragment :
   private val entryViews: List<UnitEntryView>
     get() = rowContainer.children.filterIsInstance<UnitEntryView>()
 
-  private val unitEntries: List<UnitEntryWithIndex>
+  private val unitEntries: List<UnitEntryWithIndexAndNote>
     get() {
       return entryViews.mapIndexedNotNull { index, entryView ->
-        entryView.entry.orNull()?.let { UnitEntryWithIndex(index, it) }
+        entryView.entry.orNull()?.let { UnitEntryWithIndexAndNote(index, it, entryView.note) }
       }
     }
 
@@ -853,5 +863,9 @@ class ComparisonFragment :
     }
   }
 
-  private data class UnitEntryWithIndex(val index: Int, val unitEntry: UnitEntry)
+  private data class UnitEntryWithIndexAndNote(
+    val index: Int,
+    val unitEntry: UnitEntry,
+    val note: String?
+  )
 }

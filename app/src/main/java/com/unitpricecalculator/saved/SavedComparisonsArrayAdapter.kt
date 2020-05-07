@@ -83,22 +83,33 @@ class SavedComparisonsArrayAdapter(
   private fun SavedUnitEntryRow.getSummaryText(): String {
     val cost = this.cost.parseDoubleOrNull() ?: 1.0
     val quantity = this.quantity.parseDoubleOrNull() ?: 1.0
+    val size = this.quantity.parseDoubleOrNull() ?: 1.0
     val formattedPrice = units.formatter.apply(cost)
-    val rawSummary = if (quantity == 1.0) {
-      context.getString(
-        R.string.m_per_s_u,
-        formattedPrice,
-        this.size,
-        unit.getSymbol(context.resources)
-      )
-    } else {
-      context.getString(
-        R.string.m_per_qxs_u,
-        formattedPrice,
-        this.quantity,
-        this.size,
-        unit.getSymbol(context.resources)
-      )
+    val rawSummary = when{
+      quantity == 1.0 && size == 1.0 -> {
+        context.getString(
+          R.string.m_per_u,
+          formattedPrice,
+          unit.getSymbol(context.resources)
+        )
+      }
+      quantity == 1.0 -> {
+        context.getString(
+          R.string.m_per_s_u,
+          formattedPrice,
+          this.size,
+          unit.getSymbol(context.resources)
+        )
+      }
+      else -> {
+        context.getString(
+          R.string.m_per_qxs_u,
+          formattedPrice,
+          this.quantity,
+          this.size,
+          unit.getSymbol(context.resources)
+        )
+      }
     }
     return if (note.isNullOrBlank()) {
       rawSummary

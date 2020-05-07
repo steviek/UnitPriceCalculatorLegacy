@@ -131,4 +131,6 @@
   <string name="change_order_title">Change order?</string>
   <string name="change_order_message">Long-pressing a column header re-orders the rows to be sorted by that column</string>
   <string name="show_percentages">Show comparison percentages</string>
+  <string name="row_x">Row %1$d</string>
+  <string name="note_row_x">Row %2$d: %1$s</string>
 </resources>

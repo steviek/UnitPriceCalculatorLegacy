@@ -155,7 +155,6 @@ class SavedFragment : BaseFragment() {
     super.onViewCreated(view, savedInstanceState)
     savedComparisons.clear()
     savedComparisons.addAll(savedComparisonManager.savedComparisons)
-    filteredComparisons = ArrayList(savedComparisons)
     val listView = view.findViewById<ListView>(R.id.list_view)
     adapter = SavedComparisonsArrayAdapter(context!!, filteredComparisons, units)
     listView.adapter = adapter
@@ -171,6 +170,7 @@ class SavedFragment : BaseFragment() {
         actionMode = activity!!.startActionMode(createCallback(position, longPressedView))
         true
       }
+    refreshFilteredComparisons()
   }
 
   override fun onPrepareOptionsMenu(menu: Menu) {
@@ -214,7 +214,7 @@ class SavedFragment : BaseFragment() {
 
   private fun refreshFilteredComparisons() {
     filteredComparisons.clear()
-    filteredComparisons.addAll(savedComparisons.filter(filter))
+    filteredComparisons.addAll(savedComparisons.filter(filter).sortedDescending())
     adapter?.notifyDataSetChanged()
   }
 

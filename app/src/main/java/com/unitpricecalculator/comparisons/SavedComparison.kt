@@ -43,8 +43,8 @@ data class SavedComparison(
     timestampMillis != null && other.timestampMillis != null -> {
       timestampMillis.compareTo(other.timestampMillis)
     }
-    timestampMillis != null -> -1
-    other.timestampMillis != null -> 1
+    timestampMillis != null -> 1
+    other.timestampMillis != null -> -1
     else -> key.compareTo(other.key)
   }
 

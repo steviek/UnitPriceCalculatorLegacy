@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import com.google.auto.factory.AutoFactory;
@@ -44,6 +45,7 @@ import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
 import com.unitpricecalculator.util.logger.Logger;
+import java.util.Locale;
 import javax.inject.Inject;
 
 @AutoFactory
@@ -88,7 +90,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private boolean mInActionMode = false;
   private boolean mExpanded = false;
   private int mRowNumber;
-  private String note;
+  @Nullable private String note;
 
   private final OnClickListener noteOnClickListener = v -> {
     EditText editText =
@@ -168,11 +170,16 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public void setRowNumber(int rowNumber) {
     mRowNumber = rowNumber;
-    mRowNumberTextView.setText(String.format("%d", rowNumber + 1));
+    mRowNumberTextView.setText(String.format(Locale.getDefault(), "%d", rowNumber + 1));
   }
 
   public int getRowNumber() {
     return mRowNumber;
+  }
+
+  @Nullable
+  public String getNote() {
+    return note;
   }
 
   public void onEnterActionMode() {
