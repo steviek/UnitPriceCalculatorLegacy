@@ -115,5 +115,15 @@
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
   <string name="default_quantity_dialog_header">Valeur par défault: %1$s</string>
   <string name="search">Rechercher</string>
+  <string name="initial_screen">Accueil</string>
+  <string name="saved_comparison_subtitle">Le meilleur: $1%s</string>
+  <string name="dozen_name">douzaine</string>
+  <string name="initial_screen_new_comparison">Nouvelle comparaison</string>
+  <string name="change_order_title">Changer l\'ordre?</string>
+  <string name="change_order_message">Faire un appui long à un titre pour réordonner</string>
+  <string name="show_percentages">Montrer les pourcentages</string>
+  <string name="row_x">Rangée %1$d</string>
+  <string name="note_row_x">Rangée %2$d: %1$s</string>
+  <string name="m_per_qxu">%1$s par %2$s x %3$s</string>
 
 </resources>

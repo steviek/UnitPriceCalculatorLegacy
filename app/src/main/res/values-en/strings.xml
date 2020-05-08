@@ -189,4 +189,12 @@
 
   <!-- Subtitle for a saved comparison, describing the best item. -->
   <string name="saved_comparison_subtitle">Best item: %1$s</string>
+  <string name="dozen_name">dozen</string>
+  <string name="initial_screen_new_comparison">New comparison</string>
+  <string name="change_order_title">Change order?</string>
+  <string name="change_order_message">Long-pressing a column header re-orders the rows to be sorted by that column</string>
+  <string name="show_percentages">Show comparison percentages</string>
+  <string name="row_x">Row %1$d</string>
+  <string name="note_row_x">Row %2$d: %1$s</string>
+  <string name="m_per_qxu">%1$s per %2$s x %3$s</string>
 </resources>

@@ -117,4 +117,14 @@
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
   <string name="default_quantity_dialog_header">Standardmenge: %1$s</string>
   <string name="search">Suchen</string>
+  <string name="initial_screen">Start</string>
+  <string name="saved_comparison_subtitle">Bester Artikel: %1$s</string>
+  <string name="dozen_name">Dutzend</string>
+  <string name="initial_screen_new_comparison">Neuer Vergleich</string>
+  <string name="change_order_title">Sortieren?</string>
+  <string name="change_order_message">Die Zeilen werden nach dieser Spalte sortiert</string>
+  <string name="show_percentages">Zeige Prozentsätze</string>
+  <string name="row_x">Zeile %1$d</string>
+  <string name="note_row_x">Zeile %2$d: %1$s</string>
+  <string name="m_per_qxu">%1$s pro %2$s x %3$s</string>
 </resources>

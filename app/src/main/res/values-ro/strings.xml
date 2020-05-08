@@ -117,4 +117,14 @@
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
   <string name="default_quantity_dialog_header">Cantitate standard: %1$s</string>
   <string name="search">Căutați</string>
+  <string name="initial_screen">Pagina principala</string>
+  <string name="saved_comparison_subtitle">Cel mai bun articol: %1$s</string>
+  <string name="dozen_name">duzină</string>
+  <string name="initial_screen_new_comparison">Nouă comparație</string>
+  <string name="change_order_title">Sorteți?</string>
+  <string name="change_order_message" translatable="false">Rândurile vor fi sortate după coloană</string>
+  <string name="show_percentages" translatable="false">Afișați procente</string>
+  <string name="row_x">Rând %1$d</string>
+  <string name="note_row_x" translatable="false">Rând %2$d: %1$s</string>
+  <string name="m_per_qxu">%1$s pe %2$s x %3$s</string>
 </resources>

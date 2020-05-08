@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Calculadora preço unitário</string>
-  <string name="add_row">Adicionar fila</string>
+  <string name="add_row">Adicionar fileira</string>
   <string name="clear">Apagar</string>
   <string name="current_comparison">Comparação atual</string>
   <string name="delete">Apagar</string>
@@ -37,7 +37,7 @@
   <string name="quantity">Quantidade</string>
   <string name="quart_symbol">quarto</string>
   <string name="rate_app">Classificar Aplicativo</string>
-  <string name="remove_row">Apagar fila</string>
+  <string name="remove_row">Apagar fileira</string>
   <string name="rename">Renomear</string>
   <string name="save">Salvar</string>
   <string name="saved_comparisons">Comparações salvadas</string>
@@ -67,7 +67,7 @@
   <string name="currency_header">Símbolo monetário</string>
   <string name="dozen_symbol">dúzia</string>
 
-  <string name="main_final_summary">A opção mais econômica é fila %1$d</string>
+  <string name="main_final_summary">A opção mais econômica é fileira %1$d</string>
   <string name="m_per_u">%1$s por %2$s</string>
   <string name="m_per_s_u">%1$s por %2$s %3$s</string>
   <string name="m_per_qxs_u">%1$s por %2$s x %3$s %4$s</string>
@@ -102,5 +102,15 @@
   <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
   <string name="default_quantity_dialog_header">Quantidade de padrão: %1$s</string>
   <string name="search">Pesquisar</string>
+  <string name="initial_screen">Página inicial</string>
+  <string name="saved_comparison_subtitle">Melhor artigo: %1$s</string>
+  <string name="dozen_name">dúzia</string>
+  <string name="initial_screen_new_comparison">Nova comparação</string>
+  <string name="change_order_title">Ordenar?</string>
+  <string name="change_order_message" translatable="false">Las fileiras serão ordenadas por essa coluna</string>
+  <string name="show_percentages">Mostre percentagens</string>
+  <string name="row_x">Fileira %1$d</string>
+  <string name="note_row_x">Fileira %2$d: %1$s</string>
+  <string name="m_per_qxu">%1$s por %2$s x %3$s</string>
 
 </resources>
