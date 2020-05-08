@@ -125,5 +125,13 @@
   <string name="row_x">Rangée %1$d</string>
   <string name="note_row_x">Rangée %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s par %2$s x %3$s</string>
+  <plurals name="are_name">
+    <item quantity="one">are</item>
+    <item quantity="other">are</item>
+  </plurals>
+  <plurals name="saved_comparison_items">
+    <item quantity="one">%1$s (%2$d article)</item>
+    <item quantity="other">%1$s (%2$d articles)</item>
+  </plurals>
 
 </resources>

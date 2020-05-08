@@ -3,4 +3,8 @@
   <string name="size">Grösse</string>
   <string name="unit_type">Masseinheit:</string>
   <string name="preferred_system">Masseinheiten</string>
+  <plurals name="are_name">
+    <item quantity="one">Are</item>
+    <item quantity="other">Are</item>
+  </plurals>
 </resources>

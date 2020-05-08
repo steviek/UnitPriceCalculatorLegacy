@@ -127,4 +127,12 @@
   <string name="row_x">Zeile %1$d</string>
   <string name="note_row_x">Zeile %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s pro %2$s x %3$s</string>
+  <plurals name="are_name">
+    <item quantity="one">Ar</item>
+    <item quantity="other">Ar</item>
+  </plurals>
+  <plurals name="saved_comparison_items">
+    <item quantity="one">%1$s (%2$d Artikel)</item>
+    <item quantity="other">%1$s (%2$d Artikel)</item>
+  </plurals>
 </resources>

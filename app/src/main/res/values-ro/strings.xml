@@ -127,4 +127,14 @@
   <string name="row_x">Rând %1$d</string>
   <string name="note_row_x" translatable="false">Rând %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s pe %2$s x %3$s</string>
+  <plurals name="are_name">
+    <item quantity="one">ar</item>
+    <item quantity="few">ari</item>
+    <item quantity="other">de ari</item>
+  </plurals>
+  <plurals name="saved_comparison_items">
+    <item quantity="one">%1$s (%2$d articol)</item>
+    <item quantity="few">%1$s (%2$d articole)</item>
+    <item quantity="other">%1$s (%2$d de articole)</item>
+  </plurals>
 </resources>
