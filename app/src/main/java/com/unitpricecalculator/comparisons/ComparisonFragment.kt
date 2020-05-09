@@ -784,7 +784,7 @@ class ComparisonFragment :
   }
 
   private fun removeRow(index: Int) {
-    Preconditions.checkState(entryViews.size > 1)
+    if (entryViews.size <= index) return
     val entryView = entryViews[index]
     if (entryView.focusedViewId.isPresent) {
       entryView.clearFocus()
