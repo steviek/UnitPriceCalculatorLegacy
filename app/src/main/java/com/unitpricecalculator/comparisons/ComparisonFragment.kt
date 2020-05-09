@@ -131,7 +131,7 @@ class ComparisonFragment :
   private val saveMenuItem = MutableSometimes.create<MenuItem>()
   private val resumed = MutableSometimes.create<Any>()
 
-  private var unitTypeArrayAdapter: UnitTypeArrayAdapter? = null
+  private lateinit var unitTypeArrayAdapter: UnitTypeArrayAdapter
   private var alertDialog: AlertDialog? = null
   private var actionMode: ActionMode? = null
   private val handler = Handler()
@@ -303,10 +303,10 @@ class ComparisonFragment :
     saveMenuItem.set(menu.findItem(R.id.action_save))
   }
 
-  private fun setUnitType(parent: Spinner?, unitType: UnitType) {
+  private fun setUnitType(parent: Spinner, unitType: UnitType) {
     units.currentUnitType = unitType
     unitTypeArrayAdapter = unitTypeArrayAdapterProvider.get()
-    parent!!.adapter = unitTypeArrayAdapter
+    parent.adapter = unitTypeArrayAdapter
     finalSpinner.adapter =
       unitArrayAdapterFactory.create(units.getDefaultQuantity(unitType).unit)
     val event = compareUnit
@@ -407,12 +407,10 @@ class ComparisonFragment :
     if (!isViewCreated || context == null) {
       return null
     }
-    if (pendingSavedStateToRestore != null) {
-      return pendingSavedStateToRestore!!.currentComparison
-    }
+    pendingSavedStateToRestore?.let { return it.currentComparison }
     val list = entryViews.map { it.saveState(context) }
     val unitType = UnitType.fromName(
-      unitTypeArrayAdapter!!.getItem(unitTypeSpinner.selectedItemPosition),
+      unitTypeArrayAdapter.getItem(unitTypeSpinner.selectedItemPosition),
       context.resources
     )
     val finalSize = finalEditText.text.toString()
@@ -480,8 +478,10 @@ class ComparisonFragment :
   }
 
   fun save() {
+    val context = context ?: return
+    val currentState = getCurrentState(context) ?: return
     if (!fileNameEditText.orNull()?.text?.toString().isNullOrBlank()) {
-      getCurrentState(context)?.let { save(it.withTimestamp(System.currentTimeMillis())) }
+      save(currentState.withTimestamp(System.currentTimeMillis()))
       return
     }
     val dialog = alertDialog ?: run {
@@ -495,26 +495,28 @@ class ComparisonFragment :
           alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = s.isNotBlank()
         }
       })
-      AlertDialog.Builder(context!!)
+      AlertDialog.Builder(context)
         .setMessage(string.give_name)
         .setView(view)
         .setPositiveButton(android.R.string.ok) { _, _ ->
           val newName = name.text.toString()
-          Preconditions.checkState(
-            !Strings.isNullOrEmpty(
-              newName
-            )
-          )
-          fileNameEditText.whenPresent { editText: EditText ->
-            editText.setText(newName)
-            save(getCurrentState(context)!!.withTimestamp(System.currentTimeMillis()))
+          if (newName.isNotBlank()) {
+            fileNameEditText.whenPresent { editText: EditText ->
+              editText.setText(newName)
+              save(currentState.copy(timestampMillis = System.currentTimeMillis(), name = newName))
+            }
           }
         }
 
         .setNegativeButton(android.R.string.cancel, null)
         .setOnDismissListener { alertDialog = null }
         .create()
-        .also { alertDialog = it }
+        .also { dialog ->
+          dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = name.text.isNotBlank()
+          }
+          alertDialog = dialog
+        }
     }
     if (dialog.isShowing) {
       dialog.dismiss()
