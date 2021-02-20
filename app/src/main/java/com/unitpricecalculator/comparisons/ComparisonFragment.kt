@@ -80,14 +80,12 @@ import com.unitpricecalculator.util.isIntegral
 import com.unitpricecalculator.util.isSortedBy
 import com.unitpricecalculator.util.logger.Logger
 import com.unitpricecalculator.util.materialize
-import com.unitpricecalculator.util.parseDoubleOrThrow
+import com.unitpricecalculator.util. parseDoubleOrThrow
 import com.unitpricecalculator.util.prefs.Keys
 import com.unitpricecalculator.util.prefs.Prefs
 import com.unitpricecalculator.util.sometimes.MutableSometimes
 import com.unitpricecalculator.util.toLocalizedString
 import java.lang.ref.WeakReference
-import java.util.ArrayList
-import java.util.Locale
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 import javax.inject.Provider
@@ -325,9 +323,8 @@ class ComparisonFragment :
         LayoutParams.WRAP_CONTENT
       )
     )
-    val dp16 = TypedValue
-      .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics)
-    entryView.setPadding(dp16.toInt(), 0, dp16.toInt(), 0)
+    val horizontalMargin = resources.getDimensionPixelSize(R.dimen.horizontal_margin)
+    entryView.setPadding(horizontalMargin, 0, horizontalMargin, 0)
     entryView.rowNumber = entryViews.size - 1
     entryView.setOnUnitEntryChangedListener(this)
     entryView.onCompareUnitChanged(compareUnit)

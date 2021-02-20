@@ -21,10 +21,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.content.ContextCompat
 import com.squareup.otto.Bus
+import com.squareup.otto.Subscribe
 import com.unitpricecalculator.BaseFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.comparisons.SavedComparison
+import com.unitpricecalculator.events.DataImportedEvent
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent
+import com.unitpricecalculator.export.ExportManager
+import com.unitpricecalculator.export.ImportManager
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import com.unitpricecalculator.util.materialize
@@ -41,6 +45,10 @@ class SavedFragment : BaseFragment() {
   @Inject lateinit var bus: Bus
 
   @Inject lateinit var units: Units
+
+  @Inject lateinit var exportManager: ExportManager
+
+  @Inject lateinit var importManager: ImportManager
 
   private var savedComparisons = ArrayList<SavedComparison>()
   private var filteredComparisons = ArrayList<SavedComparison>()
@@ -171,6 +179,22 @@ class SavedFragment : BaseFragment() {
         true
       }
     refreshFilteredComparisons()
+    activity?.invalidateOptionsMenu()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    savedComparisons.clear()
+    savedComparisons.addAll(savedComparisonManager.savedComparisons)
+    refreshFilteredComparisons()
+    activity?.invalidateOptionsMenu()
+
+    bus.register(this)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    bus.unregister(this)
   }
 
   override fun onPrepareOptionsMenu(menu: Menu) {
@@ -210,12 +234,36 @@ class SavedFragment : BaseFragment() {
         return true
       }
     })
+
+    menu.findItem(R.id.action_export).isEnabled = savedComparisons.isNotEmpty()
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      R.id.action_export -> {
+        exportManager.startExport(savedComparisons)
+        true
+      }
+      R.id.action_import -> {
+        importManager.startImport()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 
   private fun refreshFilteredComparisons() {
     filteredComparisons.clear()
     filteredComparisons.addAll(savedComparisons.filter(filter).sortedDescending())
     adapter?.notifyDataSetChanged()
+  }
+
+  @Subscribe
+  fun onDataImported(event: DataImportedEvent) {
+    savedComparisons.clear()
+    savedComparisons.addAll(savedComparisonManager.savedComparisons)
+    refreshFilteredComparisons()
+    activity?.invalidateOptionsMenu()
   }
 
   interface Callback {

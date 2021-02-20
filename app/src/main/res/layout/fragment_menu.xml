@@ -33,12 +33,6 @@
       android:text="@string/settings"/>
 
     <TextView
-      android:id="@+id/btn_rate"
-      style="@style/Menu.Button"
-      android:drawableLeft="@drawable/ic_star"
-      android:text="@string/rate_app"/>
-
-    <TextView
       android:id="@+id/btn_share"
       style="@style/Menu.Button"
       android:drawableLeft="@drawable/ic_social_share"
@@ -49,6 +43,18 @@
       style="@style/Menu.Button"
       android:drawableLeft="@drawable/ic_feedback"
       android:text="@string/send_feedback"/>
+
+    <TextView
+        android:id="@+id/btn_rate"
+        style="@style/Menu.Button"
+        android:drawableLeft="@drawable/ic_star"
+        android:text="@string/rate_app"/>
+
+    <TextView
+        android:id="@+id/btn_coffee"
+        style="@style/Menu.Button"
+        android:drawableLeft="@drawable/ic_coffee"
+        android:text="@string/buy_me_a_coffee"/>
 
   </LinearLayout>
 </ScrollView>

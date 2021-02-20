@@ -33,6 +33,7 @@ public final class MenuFragment extends BaseFragment {
         bindView(view, R.id.btn_rate, MenuEvent.RATE);
         bindView(view, R.id.btn_share, MenuEvent.SHARE);
         bindView(view, R.id.btn_settings, MenuEvent.SETTINGS);
+        bindView(view, R.id.btn_coffee, MenuEvent.BUY_COFFEE);
 
         view.findViewById(R.id.btn_share).setVisibility(View.GONE);
 
@@ -49,7 +50,8 @@ public final class MenuFragment extends BaseFragment {
         RATE,
         SAVED,
         SETTINGS,
-        SHARE
+        SHARE,
+        BUY_COFFEE
     }
 
     public interface Callback {

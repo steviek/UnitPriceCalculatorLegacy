@@ -148,4 +148,10 @@
   <string name="initial_screen_new_comparison">New comparison</string>
   <string name="row_x">Row %1$d</string>
   <string name="change_order_message">Long-pressing a column header re-orders the rows to be sorted by that column</string>
+
+  <string name="export_data">Export data</string>
+  <string name="import_data">Import data</string>
+  <string name="error_opening_file">Error reading/writing file</string>
+  <string name="saved_successfully">Saved successfully</string>
+  <string name="buy_me_a_coffee">Buy me a coffee</string>
 </resources>

@@ -135,4 +135,10 @@
     <item quantity="one">%1$s (%2$d Artikel)</item>
     <item quantity="other">%1$s (%2$d Artikel)</item>
   </plurals>
+
+  <string name="export_data">Daten exportieren</string>
+  <string name="import_data">Daten importieren</string>
+  <string name="error_opening_file">Ein Fehler ist aufgetreten</string>
+  <string name="saved_successfully">Erfolgreich gespeichert</string>
+  <string name="buy_me_a_coffee">Kauf mir einen Kaffee</string>
 </resources>

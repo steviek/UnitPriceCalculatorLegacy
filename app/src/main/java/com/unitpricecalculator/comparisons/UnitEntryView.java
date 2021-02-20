@@ -273,7 +273,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
       return Optional.of(unitEntry.build());
     } catch (NullPointerException | IllegalArgumentException e) {
-      Logger.e(e);
+      // This is lazy, but we'll just return absent if anything fails.
     }
     return Optional.absent();
   }

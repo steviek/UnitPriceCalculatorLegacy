@@ -197,4 +197,9 @@
   <string name="row_x">Row %1$d</string>
   <string name="note_row_x">Row %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s per %2$s x %3$s</string>
+  <string name="export_data">Export data</string>
+  <string name="import_data">Import data</string>
+  <string name="error_opening_file">Error reading/writing file</string>
+  <string name="saved_successfully">Saved successfully</string>
+  <string name="buy_me_a_coffee">Buy me a coffee</string>
 </resources>

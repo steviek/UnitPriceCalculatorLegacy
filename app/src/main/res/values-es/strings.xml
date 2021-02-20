@@ -4,7 +4,7 @@
   <string name="add_row">Añadir fila</string>
   <string name="clear">Borrar</string>
   <string name="current_comparison">Comparación actual</string>
-  <string name="delete">Borrar</string>
+  <string name="delete">Eliminar</string>
   <string name="drag_and_drop_prompt">Arrastrar y soltar para reordenar</string>
   <string name="enter_name">Nombre aquí</string>
   <string name="feedback_subject">Feedback para Calculadora precio unitario</string>
@@ -120,4 +120,9 @@
     <item quantity="one">%1$s (%2$d artículo)</item>
     <item quantity="other">%1$s (%2$d artículos)</item>
   </plurals>
+  <string name="export_data">Exportar datos</string>
+  <string name="import_data">Importar datos</string>
+  <string name="error_opening_file">Ocurrió un error</string>
+  <string name="saved_successfully">Guardado exitosamente</string>
+  <string name="buy_me_a_coffee">Compráme un café</string>
 </resources>

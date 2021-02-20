@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
+import com.unitpricecalculator.export.SavedData;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.UnitType;
 import dagger.Module;
@@ -79,6 +80,25 @@ public interface SerializersModule {
             finalUnit,
             currencyCode,
             timestampMillis);
+      }
+    };
+  }
+
+  @Provides
+  @ClassKey(SavedData.class)
+  @IntoMap
+  static JsonSerializer provideSavedDataJsonSerializer() {
+    return new JsonSerializer<SavedData>() {
+      @Override
+      public JsonObject toJson(ObjectMapper objectMapper, SavedData instance) {
+        return new JsonObject(objectMapper)
+                .put("data", objectMapper.toJsonArray(instance.getSavedComparisons()));
+      }
+
+      @Override
+      public SavedData fromJson(ObjectMapper objectMapper, JsonObject json) {
+        List<SavedComparison> data = json.getJsonArrayOrThrow("data").toList(SavedComparison.class);
+        return new SavedData(data);
       }
     };
   }

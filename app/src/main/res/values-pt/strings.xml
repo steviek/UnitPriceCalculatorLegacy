@@ -41,7 +41,7 @@
   <string name="rename">Renomear</string>
   <string name="save">Salvar</string>
   <string name="saved_comparisons">Comparações salvadas</string>
-  <string name="saved_from_date">Guardada %1$s</string>
+  <string name="saved_from_date">Salvada %1$s</string>
   <string name="send_email">Enviar por e-mail</string>
   <string name="send_feedback">Enviar feedback</string>
   <string name="settings">Configurações</string>
@@ -63,7 +63,7 @@
   <string name="volume">Volume</string>
   <string name="weight">Peso</string>
   <string name="yard_symbol">jarda</string>
-  <string name="change_currency_symbol">Alterar o símbolo monetário</string>
+  <string name="change_currency_symbol">Mudar o símbolo monetário</string>
   <string name="currency_header">Símbolo monetário</string>
   <string name="dozen_symbol">dúzia</string>
 
@@ -91,7 +91,7 @@
   <string name="untitled_italics"><i>Sem título</i></string>
   <string name="add_note">Agregar nota</string>
   <string name="edit_note">Editar nota</string>
-  <string name="enter_note_hint">Insera una nota</string>
+  <string name="enter_note_hint">Insera uma nota</string>
   <string name="unsaved_changes">Tem modificações não salvas. Clique no botão para salvar.</string>
   <string name="all_changes_saved">Todas as modificações são salvas. De agora em diante, o botão indicará que há algo para salvar.\n\nEsta mensagem irá desaparecer em %1$d…</string>
   <string name="dark_mode">Tema escuro</string>
@@ -120,5 +120,10 @@
     <item quantity="one">%1$s (%2$d item)</item>
     <item quantity="other">%1$s (%2$d itens)</item>
   </plurals>
+  <string name="export_data">Exportar dados</string>
+  <string name="import_data">Importar dados</string>
+  <string name="error_opening_file">Um erro ocorreu</string>
+  <string name="saved_successfully">Salvado com sucesso</string>
+  <string name="buy_me_a_coffee">Compre-me um café</string>
 
 </resources>

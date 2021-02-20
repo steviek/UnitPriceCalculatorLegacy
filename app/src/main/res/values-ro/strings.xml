@@ -137,4 +137,9 @@
     <item quantity="few">%1$s (%2$d articole)</item>
     <item quantity="other">%1$s (%2$d de articole)</item>
   </plurals>
+  <string name="export_data">Exportați-vă datele</string>
+  <string name="import_data">Importați-vă datele</string>
+  <string name="error_opening_file">A aparut o eroare</string>
+  <string name="saved_successfully">Datele au fost salvate cu succes</string>
+  <string name="buy_me_a_coffee">Cumpără-mi o cafea</string>
 </resources>

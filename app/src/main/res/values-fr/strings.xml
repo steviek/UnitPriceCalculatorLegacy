@@ -133,5 +133,9 @@
     <item quantity="one">%1$s (%2$d article)</item>
     <item quantity="other">%1$s (%2$d articles)</item>
   </plurals>
-
+  <string name="export_data">Exporter des données</string>
+  <string name="import_data">Importer des données</string>
+  <string name="error_opening_file">Une erreur est survenue</string>
+  <string name="saved_successfully">Enregistré avec succès</string>
+  <string name="buy_me_a_coffee">Achetez-moi un café</string>
 </resources>
