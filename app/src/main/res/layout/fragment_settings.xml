@@ -89,6 +89,13 @@
       android:textSize="18sp"
       android:gravity="center_vertical"/>
 
+    <com.unitpricecalculator.settings.SettingsItemView
+        android:id="@+id/language"
+        style="@style/SettingsItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="@string/language_title"/>
+
   </LinearLayout>
 
 </ScrollView>

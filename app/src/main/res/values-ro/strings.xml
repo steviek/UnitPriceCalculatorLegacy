@@ -110,7 +110,7 @@
   <string name="edit_note">Editați notiță</string>
   <string name="enter_note_hint">Introduceți o notă</string>
   <string name="dark_mode">Temă întunecată</string>
-  <string name="dark_mode_match_device">În funcție de sistem</string>
+  <string name="match_device">În funcție de sistem</string>
   <string name="dark_mode_always_dark">Întotdeauna întunecată</string>
   <string name="dark_mode_always_light">Întotdeauna aprins</string>
   <string name="default_unit_quantity">Cantitate unitar standard</string>
@@ -142,4 +142,5 @@
   <string name="error_opening_file">A aparut o eroare</string>
   <string name="saved_successfully">Datele au fost salvate cu succes</string>
   <string name="buy_me_a_coffee">Cumpără-mi o cafea</string>
+  <string name="language_title">Limbă</string>
 </resources>

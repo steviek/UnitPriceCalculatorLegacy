@@ -95,7 +95,7 @@
   <string name="unsaved_changes">Tem modificações não salvas. Clique no botão para salvar.</string>
   <string name="all_changes_saved">Todas as modificações são salvas. De agora em diante, o botão indicará que há algo para salvar.\n\nEsta mensagem irá desaparecer em %1$d…</string>
   <string name="dark_mode">Tema escuro</string>
-  <string name="dark_mode_match_device">Baseado no sistema</string>
+  <string name="match_device">Baseado no sistema</string>
   <string name="dark_mode_always_dark">Sempre escuro</string>
   <string name="dark_mode_always_light">Sempre claro</string>
   <string name="default_unit_quantity">Quantidades de padrão</string>
@@ -125,5 +125,5 @@
   <string name="error_opening_file">Um erro ocorreu</string>
   <string name="saved_successfully">Salvado com sucesso</string>
   <string name="buy_me_a_coffee">Compre-me um café</string>
-
+  <string name="language_title">Idioma</string>
 </resources>

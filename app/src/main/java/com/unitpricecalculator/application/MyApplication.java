@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.mode.DarkModeManager;
 import com.unitpricecalculator.mode.DarkModeStateChangedEvent;
 import dagger.android.AndroidInjector;
@@ -16,6 +17,7 @@ public final class MyApplication extends MultiDexApplication implements HasAndro
   @Inject DispatchingAndroidInjector<Object> dispatchingAndroidInjector;
   @Inject DarkModeManager darkModeManager;
   @Inject Bus bus;
+  @Inject AppLocaleManager appLocaleManager;
 
   @Override
   public void onCreate() {

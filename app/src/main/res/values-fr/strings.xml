@@ -108,7 +108,7 @@
   <string name="edit_note">Éditer note</string>
   <string name="enter_note_hint">Rempli une note</string>
   <string name="dark_mode">Thème foncé</string>
-  <string name="dark_mode_match_device">Fondé sur le système</string>
+  <string name="match_device">Fondé sur le système</string>
   <string name="dark_mode_always_dark">Toujours foncé</string>
   <string name="dark_mode_always_light">Toujours clair</string>
   <string name="default_unit_quantity">Valeurs par défault</string>
@@ -138,4 +138,5 @@
   <string name="error_opening_file">Une erreur est survenue</string>
   <string name="saved_successfully">Enregistré avec succès</string>
   <string name="buy_me_a_coffee">Achetez-moi un café</string>
+  <string name="language_title">Langue</string>
 </resources>

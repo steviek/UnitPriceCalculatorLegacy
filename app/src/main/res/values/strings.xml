@@ -126,7 +126,7 @@
   <string name="edit_note">Edit note</string>
   <string name="enter_note_hint">Enter a note</string>
   <string name="dark_mode">Dark mode</string>
-  <string name="dark_mode_match_device">Match device</string>
+  <string name="match_device">Match device</string>
   <string name="dark_mode_always_dark">Always dark</string>
   <string name="dark_mode_always_light">Always light</string>
   <string name="default_unit_quantity">Default unit quantity</string>
@@ -154,4 +154,5 @@
   <string name="error_opening_file">Error reading/writing file</string>
   <string name="saved_successfully">Saved successfully</string>
   <string name="buy_me_a_coffee">Buy me a coffee</string>
+  <string name="language_title">Language</string>
 </resources>

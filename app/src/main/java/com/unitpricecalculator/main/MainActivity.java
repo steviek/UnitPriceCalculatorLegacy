@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -28,12 +29,15 @@ import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.currency.Currencies;
+import com.unitpricecalculator.events.AppLocaleChangedEvent;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.export.ExportManager;
 import com.unitpricecalculator.export.ImportManager;
 import com.unitpricecalculator.initialscreen.InitialScreen;
 import com.unitpricecalculator.initialscreen.InitialScreenManager;
 import com.unitpricecalculator.json.ObjectMapper;
+import com.unitpricecalculator.locale.AppLocale;
+import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.saved.SavedComparisonManager;
 import com.unitpricecalculator.saved.SavedFragment;
 import com.unitpricecalculator.settings.SettingsFragment;
@@ -41,6 +45,7 @@ import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.RequestCodes;
 
 import java.util.Currency;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -68,6 +73,9 @@ public final class MainActivity extends BaseActivity
   @Inject
   ImportManager importManager;
 
+  @Inject
+  AppLocaleManager localeManager;
+
   private ActionBarDrawerToggle mDrawerToggle;
   private DrawerLayout mDrawerLayout;
 
@@ -86,6 +94,11 @@ public final class MainActivity extends BaseActivity
 
   @Override
   protected final void onCreate(Bundle savedInstanceState) {
+   /* if (true) {
+      Configuration configuration = new Configuration();
+      configuration.setLocale(Locale.GERMANY);
+      applyOverrideConfiguration(configuration);
+    }*/
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     setTitle("");
@@ -105,18 +118,20 @@ public final class MainActivity extends BaseActivity
     mSettingsFragment = new SettingsFragment();
     mSavedFragment = new SavedFragment();
 
-    if (savedInstanceState != null) {
-      currentState = State.valueOf(savedInstanceState.getString("state"));
-      mComparisonFragment.restoreState(
-          objectMapper.fromJson(ComparisonFragmentState.class,
-              savedInstanceState.getString("mainFragment")));
-    } else {
+    if (savedInstanceState == null && getIntent().getStringExtra("state") == null) {
       if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
           !savedComparisonManager.getSavedComparisons().isEmpty()) {
         currentState = State.SAVED;
       } else {
         currentState = State.MAIN;
       }
+    } else if (savedInstanceState == null) {
+      currentState = State.valueOf(getIntent().getStringExtra("state"));
+    } else {
+      currentState = State.valueOf(savedInstanceState.getString("state"));
+      mComparisonFragment.restoreState(
+          objectMapper.fromJson(ComparisonFragmentState.class,
+              savedInstanceState.getString("mainFragment")));
     }
 
     getSupportFragmentManager()
@@ -270,6 +285,11 @@ public final class MainActivity extends BaseActivity
     }
   }
 
+  @Subscribe
+  public void onAppLocaleChanged(AppLocaleChangedEvent event) {
+    recreate();
+  }
+
   private Fragment getFragment(State state) {
     switch (state) {
       case SETTINGS:
@@ -344,5 +364,9 @@ public final class MainActivity extends BaseActivity
         importManager.handleActivityResult(data);
         break;
     }
+  }
+
+  private Context getDisplayContext() {
+    return localeManager.getCurrent().apply(this);
   }
 }

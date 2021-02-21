@@ -161,7 +161,7 @@
   <!-- Header for a setting item controlling dark mode in the app -->
   <string name="dark_mode">Dark mode</string>
   <!-- Option that means the app matches the device-wide setting for dark mode -->
-  <string name="dark_mode_match_device">Match device</string>
+  <string name="match_device">Match device</string>
   <!-- Option that means the app will always be in dark mode -->
   <string name="dark_mode_always_dark">Always dark</string>
   <!-- Option that means the app will always be in light mode -->
@@ -202,4 +202,5 @@
   <string name="error_opening_file">Error reading/writing file</string>
   <string name="saved_successfully">Saved successfully</string>
   <string name="buy_me_a_coffee">Buy me a coffee</string>
+  <string name="language_title">Language</string>
 </resources>

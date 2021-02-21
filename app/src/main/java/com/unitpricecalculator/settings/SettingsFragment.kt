@@ -16,6 +16,7 @@ import com.unitpricecalculator.events.CurrencyChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.initialscreen.InitialScreenChangedEvent
 import com.unitpricecalculator.initialscreen.InitialScreenManager
+import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.mode.DarkModeDialogFragment
 import com.unitpricecalculator.mode.DarkModeManager
 import com.unitpricecalculator.mode.DarkModeStateChangedEvent
@@ -40,6 +41,7 @@ class SettingsFragment : BaseFragment() {
   @Inject internal lateinit var darkModeManager: DarkModeManager
   @Inject internal lateinit var initialScreenManager: InitialScreenManager
   @Inject internal lateinit var prefs: Prefs
+  @Inject internal lateinit var localeManager: AppLocaleManager
 
   private val changeCurrency = MutableSometimes.create<SettingsItemView>()
   private val darkMode = MutableSometimes.create<SettingsItemView>()
@@ -47,6 +49,7 @@ class SettingsFragment : BaseFragment() {
   private val defaultQuantityViews =
     MutableSometimes.create<Map<UnitType, DefaultQuantityRowView>>()
   private val percentageToggle = MutableSometimes.create<CompoundButton>()
+  private val language = MutableSometimes.create<SettingsItemView>()
 
   override fun onStart() {
     super.onStart()
@@ -75,6 +78,12 @@ class SettingsFragment : BaseFragment() {
       it.setOnClickListener { initialScreenManager.showDialog(childFragmentManager) }
       it.setSubtitle(initialScreenManager.initialScreen.labelResId)
       initialScreen.set(it)
+    }
+
+    view.findViewById<SettingsItemView>(R.id.language)?.let {
+      it.setOnClickListener { localeManager.showSelectionDialog(childFragmentManager) }
+      it.subtitle = localeManager.current.getDisplayName(requireContext())
+      language.set(it)
     }
 
     val dragLinearLayout = view.findViewById<DragLinearLayout>(R.id.drag_linear_layout)

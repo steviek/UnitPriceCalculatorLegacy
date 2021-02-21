@@ -5,7 +5,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>s
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert" />
 
     <style name="HeaderTextView">
         <item name="android:layout_height">match_parent</item>

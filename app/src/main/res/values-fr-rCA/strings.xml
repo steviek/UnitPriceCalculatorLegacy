@@ -13,7 +13,7 @@
     <string name="square_foot_symbol">pi\u00B2</string>
 
     <string name="dark_mode">Thème sombre</string>
-    <string name="dark_mode_match_device">Selon l\'image de fond d\'écran</string>
+    <string name="match_device">Fondé sur le système</string>
     <string name="dark_mode_always_dark">Toujours sombre</string>
 
 </resources>

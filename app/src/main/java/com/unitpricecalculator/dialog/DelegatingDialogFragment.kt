@@ -7,7 +7,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.dialog.DialogId.INITIAL_SCREEN_DIALOG
+import com.unitpricecalculator.dialog.DialogId.LOCALE_DIALOG
 import com.unitpricecalculator.initialscreen.InitialScreenDialog
+import com.unitpricecalculator.locale.AppLocaleDialog
 import com.unitpricecalculator.util.materialize
 import javax.inject.Inject
 import javax.inject.Provider
@@ -15,12 +17,14 @@ import javax.inject.Provider
 class DelegatingDialogFragment : BaseDialogFragment() {
 
   @Inject lateinit var initialScreenDialog: Provider<InitialScreenDialog>
+  @Inject lateinit var localeDialog: Provider<AppLocaleDialog>
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = checkNotNull(context)
+    val context = requireActivity()
     val args = arguments!!
     val delegate = when (DialogId.valueOf(args.getString(KEY_DIALOG_ID)!!)) {
       INITIAL_SCREEN_DIALOG -> initialScreenDialog.get()
+      LOCALE_DIALOG -> localeDialog.get()
     }
     val extras = args.getBundle(KEY_EXTRAS)
     return delegate.createDialog(context, extras)
@@ -51,5 +55,5 @@ interface DialogDelegate {
 }
 
 enum class DialogId {
-  INITIAL_SCREEN_DIALOG
+  INITIAL_SCREEN_DIALOG, LOCALE_DIALOG
 }

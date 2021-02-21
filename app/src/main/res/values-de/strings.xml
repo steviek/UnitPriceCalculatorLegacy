@@ -110,7 +110,7 @@
   <string name="edit_note">Notiz bearbeiten</string>
   <string name="enter_note_hint">Geben Sie eine Notiz ein</string>
   <string name="dark_mode">Nachtmodus</string>
-  <string name="dark_mode_match_device">Geräteeinstellung</string>
+  <string name="match_device">Geräteeinstellung</string>
   <string name="dark_mode_always_dark">Immer dunkel</string>
   <string name="dark_mode_always_light">Immer hell</string>
   <string name="default_unit_quantity">Standardeinheitsmenge</string>
@@ -141,4 +141,5 @@
   <string name="error_opening_file">Ein Fehler ist aufgetreten</string>
   <string name="saved_successfully">Erfolgreich gespeichert</string>
   <string name="buy_me_a_coffee">Kauf mir einen Kaffee</string>
+  <string name="language_title">Sprache</string>
 </resources>
