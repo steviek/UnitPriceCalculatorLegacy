@@ -40,8 +40,8 @@
   <string name="remove_row">Apagar fileira</string>
   <string name="rename">Renomear</string>
   <string name="save">Salvar</string>
-  <string name="saved_comparisons">Comparações salvadas</string>
-  <string name="saved_from_date">Salvada %1$s</string>
+  <string name="saved_comparisons">Comparações salvas</string>
+  <string name="saved_from_date">Salva %1$s</string>
   <string name="send_email">Enviar por e-mail</string>
   <string name="send_feedback">Enviar feedback</string>
   <string name="settings">Configurações</string>
@@ -123,7 +123,7 @@
   <string name="export_data">Exportar dados</string>
   <string name="import_data">Importar dados</string>
   <string name="error_opening_file">Um erro ocorreu</string>
-  <string name="saved_successfully">Salvado com sucesso</string>
+  <string name="saved_successfully">Salvo com sucesso</string>
   <string name="buy_me_a_coffee">Compre-me um café</string>
   <string name="language_title">Idioma</string>
 </resources>

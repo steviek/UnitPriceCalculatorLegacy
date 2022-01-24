@@ -94,11 +94,6 @@ public final class MainActivity extends BaseActivity
 
   @Override
   protected final void onCreate(Bundle savedInstanceState) {
-   /* if (true) {
-      Configuration configuration = new Configuration();
-      configuration.setLocale(Locale.GERMANY);
-      applyOverrideConfiguration(configuration);
-    }*/
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     setTitle("");
@@ -287,7 +282,8 @@ public final class MainActivity extends BaseActivity
 
   @Subscribe
   public void onAppLocaleChanged(AppLocaleChangedEvent event) {
-    recreate();
+    startActivity(new Intent(this, MainActivity.class).putExtra("state", currentState.name()));
+    finish();
   }
 
   private Fragment getFragment(State state) {
