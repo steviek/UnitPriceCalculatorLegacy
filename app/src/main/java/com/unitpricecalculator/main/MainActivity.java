@@ -358,7 +358,6 @@ public final class MainActivity extends BaseActivity
     switch (requestCode) {
       case RequestCodes.RC_CREATE_FILE:
         exportManager.handleActivityResult(data);
-        break;
       case RequestCodes.RC_OPEN_FILE:
         importManager.handleActivityResult(data);
         break;
@@ -367,10 +366,5 @@ public final class MainActivity extends BaseActivity
 
   private Context getDisplayContext() {
     return localeManager.getCurrent().apply(this);
-  }
-
-  @Nullable
-  public ComparisonFragmentState getComparisonFragmentState() {
-    return comparisonFragmentState;
   }
 }
