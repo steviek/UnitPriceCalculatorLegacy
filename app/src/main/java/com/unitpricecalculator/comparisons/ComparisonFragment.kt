@@ -1,7 +1,6 @@
 package com.unitpricecalculator.comparisons
 
 import android.content.Context
-import android.icu.text.DecimalFormat
 import android.icu.text.NumberFormat
 import android.os.Build
 import android.os.Bundle
@@ -11,8 +10,6 @@ import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.util.Log
-import android.util.TypedValue
 import android.view.ActionMode
 import android.view.ActionMode.Callback
 import android.view.ContextThemeWrapper
@@ -36,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.common.base.Optional
 import com.google.common.base.Preconditions
-import com.google.common.base.Strings
 import com.squareup.otto.Bus
 import com.squareup.otto.Subscribe
 import com.unitpricecalculator.BaseFragment
@@ -63,7 +59,6 @@ import com.unitpricecalculator.events.NoteChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.events.UnitTypeChangedEvent
 import com.unitpricecalculator.saved.SavedComparisonManager
-import com.unitpricecalculator.unit.DefaultUnit
 import com.unitpricecalculator.unit.Systems
 import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
@@ -164,7 +159,7 @@ class ComparisonFragment :
     savedInstanceState: Bundle?
   ): View {
     setHasOptionsMenu(true)
-    val view = inflater.inflate(layout.fragment_main, container, false)
+    val view = inflater.inflate(layout.comparison_fragment, container, false)
     savedChangesStatus = view.findViewById(R.id.saved_changes_status)
     savedChangesDivider = view.findViewById(R.id.saved_changes_divider)
 
