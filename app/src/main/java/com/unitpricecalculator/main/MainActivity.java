@@ -19,6 +19,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.squareup.otto.Bus;
@@ -234,11 +238,18 @@ public final class MainActivity extends BaseActivity
         changeState(State.MAIN);
         break;
       case RATE:
-        Intent i = new Intent(Intent.ACTION_VIEW,
-            Uri.parse(
-                "https://play.google.com/store/apps/details?id=" +
-                    "com.unitpricecalculator"));
-        startActivity(i);
+        ReviewManager manager = ReviewManagerFactory.create(this);
+        Task<ReviewInfo> request = manager.requestReviewFlow();
+        request.addOnCompleteListener(task -> {
+          if (task.isSuccessful()) {
+            ReviewInfo reviewInfo = task.getResult();
+            manager.launchReviewFlow(this, reviewInfo);
+          } else {
+            // Failed, just launch play store
+            launchPlayStore();
+          }
+        });
+
         break;
       case SETTINGS:
         changeState(State.SETTINGS);
@@ -366,5 +377,16 @@ public final class MainActivity extends BaseActivity
 
   private Context getDisplayContext() {
     return localeManager.getCurrent().apply(this);
+  }
+
+  private void launchPlayStore() {
+    if (isDestroyed()) {
+      return;
+    }
+    Intent i = new Intent(Intent.ACTION_VIEW,
+        Uri.parse(
+            "https://play.google.com/store/apps/details?id=" +
+                "com.unitpricecalculator"));
+    startActivity(i);
   }
 }
