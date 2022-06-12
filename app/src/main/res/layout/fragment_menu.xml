@@ -1,60 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:background="@color/background_color">
-
-  <LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_color"
-    android:orientation="vertical"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp">
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
 
-    <TextView
-      android:id="@+id/btn_new"
-      style="@style/Menu.Button"
-      android:drawableStart="@drawable/ic_list"
-      android:text="@string/current_comparison"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_color"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
-    <TextView
-      android:id="@+id/btn_saved"
-      style="@style/Menu.Button"
-      android:drawableStart="@drawable/ic_open"
-      android:text="@string/saved_comparisons"/>
+        <TextView
+            android:id="@+id/btn_new"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_list"
+            android:text="@string/current_comparison" />
 
-    <View style="@style/Menu.Divider"/>
+        <TextView
+            android:id="@+id/btn_saved"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_open"
+            android:text="@string/saved_comparisons" />
 
-    <TextView
-      android:id="@+id/btn_settings"
-      style="@style/Menu.Button"
-      android:drawableLeft="@drawable/ic_action_settings"
-      android:text="@string/settings"/>
+        <View style="@style/Menu.Divider" />
 
-    <TextView
-      android:id="@+id/btn_share"
-      style="@style/Menu.Button"
-      android:drawableLeft="@drawable/ic_social_share"
-      android:text="@string/share_app"/>
+        <TextView
+            android:id="@+id/btn_settings"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_action_settings"
+            android:text="@string/settings" />
 
-    <TextView
-      android:id="@+id/btn_feedback"
-      style="@style/Menu.Button"
-      android:drawableLeft="@drawable/ic_feedback"
-      android:text="@string/send_feedback"/>
+        <TextView
+            android:id="@+id/btn_share"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_social_share"
+            android:text="@string/share_app" />
 
-    <TextView
-        android:id="@+id/btn_rate"
-        style="@style/Menu.Button"
-        android:drawableLeft="@drawable/ic_star"
-        android:text="@string/rate_app"/>
+        <TextView
+            android:id="@+id/btn_feedback"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_feedback"
+            android:text="@string/send_feedback" />
 
-    <TextView
-        android:id="@+id/btn_coffee"
-        style="@style/Menu.Button"
-        android:drawableLeft="@drawable/ic_coffee"
-        android:text="@string/buy_me_a_coffee"/>
+        <TextView
+            android:id="@+id/btn_rate"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_star"
+            android:text="@string/rate_app" />
 
-  </LinearLayout>
+        <TextView
+            android:id="@+id/btn_coffee"
+            style="@style/Menu.Button"
+            app:drawableStartCompat="@drawable/ic_coffee"
+            android:text="@string/buy_me_a_coffee" />
+
+    </LinearLayout>
 </ScrollView>

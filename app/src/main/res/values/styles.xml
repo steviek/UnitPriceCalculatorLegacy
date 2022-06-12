@@ -54,8 +54,8 @@
         <item name="android:textColor">@color/primaryText</item>
         <item name="android:drawablePadding">24dp</item>
         <item name="android:drawableTint">@color/primaryText</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
         <item name="android:clickable">true</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>

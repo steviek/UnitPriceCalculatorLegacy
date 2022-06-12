@@ -15,7 +15,7 @@
       style="@style/RowTextView"
       android:layout_width="@dimen/header_column_1"
       android:layout_height="wrap_content"
-      android:text="1"/>
+      tools:text="1"/>
 
     <EditText
       android:id="@+id/price_edit_text"
@@ -95,8 +95,8 @@
       android:id="@+id/text_summary_inline"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin"
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin"
       android:gravity="end|center_vertical"
       tools:text="$12 per 10 g"
       android:textIsSelectable="true"/>
@@ -108,8 +108,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="12dp"
-    android:paddingLeft="@dimen/horizontal_margin"
-    android:paddingRight="@dimen/horizontal_margin"
+    android:paddingStart="@dimen/horizontal_margin"
+    android:paddingEnd="@dimen/horizontal_margin"
     android:focusableInTouchMode="false"
     android:focusable="false"
     android:textIsSelectable="true"/>

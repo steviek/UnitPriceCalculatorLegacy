@@ -16,8 +16,8 @@
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true"
       android:layout_alignParentEnd="true"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin"
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin"
       android:paddingBottom="8dp"/>
 
     <View
@@ -34,8 +34,8 @@
       android:layout_below="@+id/saved_changes_divider"
       android:layout_alignEnd="@+id/row_container"
       android:layout_alignWithParentIfMissing="true"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin">
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin">
 
       <TextView
         android:id="@+id/unit_type_prompt"
@@ -64,8 +64,8 @@
       android:layout_height="2dp"
       android:background="@color/dividerColor"
       android:layout_below="@+id/unit_type_prompt_container"
-      android:layout_marginLeft="32dp"
-      android:layout_marginRight="32dp"/>
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="32dp"/>
 
     <LinearLayout
       android:id="@+id/container_header"
@@ -74,8 +74,8 @@
       android:layout_alignStart="@+id/row_container"
       android:layout_below="@+id/divider"
       android:layout_marginTop="8dp"
-      android:paddingLeft="16dp"
-      android:paddingRight="16dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
       android:orientation="horizontal">
 
       <TextView
@@ -125,8 +125,8 @@
       android:layout_height="wrap_content"
       android:layout_alignEnd="@+id/row_container"
       android:layout_below="@+id/row_container"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin">
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin">
 
       <Button
         android:id="@+id/add_row_btn"
@@ -152,8 +152,8 @@
       android:layout_height="wrap_content"
       android:layout_alignEnd="@+id/row_container"
       android:layout_below="@+id/button_container"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin">
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin">
 
       <Spinner
         android:id="@+id/final_spinner"
@@ -194,8 +194,8 @@
       android:layout_below="@+id/final_container"
       android:paddingTop="8dp"
       android:paddingBottom="8dp"
-      android:paddingLeft="@dimen/horizontal_margin"
-      android:paddingRight="@dimen/horizontal_margin"
+      android:paddingStart="@dimen/horizontal_margin"
+      android:paddingEnd="@dimen/horizontal_margin"
       android:gravity="center"
       android:textColor="@color/primaryText"
       android:textIsSelectable="true"
