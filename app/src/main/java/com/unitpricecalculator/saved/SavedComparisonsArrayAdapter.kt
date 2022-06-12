@@ -77,7 +77,7 @@ class SavedComparisonsArrayAdapter(
       val unit = it.unit
       val pricePerUnit = cost / (quantity * size)
       it to  pricePerUnit / (unit.factor / comparisonUnit.factor)
-    }.minBy { it.second }?.first
+    }.minByOrNull { it.second }?.first
   }
 
   private fun SavedUnitEntryRow.getSummaryText(): String {

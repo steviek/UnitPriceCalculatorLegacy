@@ -2,9 +2,9 @@ package com.unitpricecalculator.util.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.unitpricecalculator.inject.ApplicationContext
 import com.unitpricecalculator.json.ObjectMapper
 import dagger.Reusable
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.ArrayList
 import java.util.HashSet
 import javax.inject.Inject

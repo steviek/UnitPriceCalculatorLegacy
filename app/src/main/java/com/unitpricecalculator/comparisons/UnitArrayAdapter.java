@@ -3,12 +3,9 @@ package com.unitpricecalculator.comparisons;
 import android.content.Context;
 import android.util.Pair;
 import android.widget.ArrayAdapter;
-import com.google.auto.factory.AutoFactory;
-import com.google.auto.factory.Provided;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.inject.ActivityContext;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.System;
 import com.unitpricecalculator.unit.Systems;
@@ -17,24 +14,22 @@ import com.unitpricecalculator.unit.Units;
 import java.util.HashSet;
 import java.util.Set;
 
-final class UnitArrayAdapter extends ArrayAdapter<String> {
+public final class UnitArrayAdapter extends ArrayAdapter<String> {
 
   private final ImmutableList<DefaultUnit> units;
 
-  @AutoFactory
-  UnitArrayAdapter(
-      @Provided @ActivityContext Context context,
-      @Provided Systems systems,
-      @Provided Units units,
+  public UnitArrayAdapter(
+      Context context,
+      Systems systems,
+      Units units,
       UnitType unitType) {
     this(context, getSymbolsAndUnits(context, systems, units, unitType, /* selected= */ null));
   }
 
-  @AutoFactory
-  UnitArrayAdapter(
-      @Provided @ActivityContext Context context,
-      @Provided Systems systems,
-      @Provided Units units,
+  public UnitArrayAdapter(
+      Context context,
+      Systems systems,
+      Units units,
       DefaultUnit selected) {
     this(context, getSymbolsAndUnits(context, systems, units, selected.getUnitType(), selected));
   }
@@ -70,7 +65,7 @@ final class UnitArrayAdapter extends ArrayAdapter<String> {
     return Pair.create(symbols.build(), unitslist.build());
   }
 
-  UnitArrayAdapter(
+  private UnitArrayAdapter(
       Context context, Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> symbolsAndUnits) {
     super(context, R.layout.unit_type_spinner_dropdown_item, symbolsAndUnits.first);
     this.units = Preconditions.checkNotNull(symbolsAndUnits.second);

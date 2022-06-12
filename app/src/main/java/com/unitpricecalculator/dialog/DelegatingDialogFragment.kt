@@ -11,9 +11,11 @@ import com.unitpricecalculator.dialog.DialogId.LOCALE_DIALOG
 import com.unitpricecalculator.initialscreen.InitialScreenDialog
 import com.unitpricecalculator.locale.AppLocaleDialog
 import com.unitpricecalculator.util.materialize
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Provider
 
+@AndroidEntryPoint
 class DelegatingDialogFragment : BaseDialogFragment() {
 
   @Inject lateinit var initialScreenDialog: Provider<InitialScreenDialog>
@@ -21,7 +23,7 @@ class DelegatingDialogFragment : BaseDialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = requireActivity()
-    val args = arguments!!
+    val args = requireArguments()
     val delegate = when (DialogId.valueOf(args.getString(KEY_DIALOG_ID)!!)) {
       INITIAL_SCREEN_DIALOG -> initialScreenDialog.get()
       LOCALE_DIALOG -> localeDialog.get()

@@ -17,16 +17,18 @@ import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.util.*
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DefaultQuantityDialogFragment : BaseDialogFragment() {
 
   @Inject lateinit var units: Units
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context = context!!
-    val arguments = arguments!!
+    val context = requireContext()
+    val arguments = requireArguments()
     val unit = DefaultUnit.valueOf(arguments.getString(KEY_QUANTITY_UNIT)!!)
     val amount = arguments.getDouble(KEY_QUANTITY_AMOUNT)
     val view = LayoutInflater.from(context).inflate(R.layout.default_quantity_dialog_view, null)

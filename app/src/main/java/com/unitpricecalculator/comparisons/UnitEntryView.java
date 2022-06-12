@@ -22,7 +22,6 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import com.google.auto.factory.AutoFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.squareup.otto.Bus;
@@ -33,7 +32,6 @@ import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.NoteChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
-import com.unitpricecalculator.inject.ViewInjection;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
@@ -44,11 +42,12 @@ import com.unitpricecalculator.util.Localization;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
-import com.unitpricecalculator.util.logger.Logger;
 import java.util.Locale;
 import javax.inject.Inject;
 
-@AutoFactory
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public final class UnitEntryView extends LinearLayout implements SavesState<SavedUnitEntryRow> {
 
   private static final int COST = 0;
@@ -142,7 +141,6 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public UnitEntryView(Context context) {
     super(context);
-    ViewInjection.inject(this);
     LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
     onFinishInflate();
   }

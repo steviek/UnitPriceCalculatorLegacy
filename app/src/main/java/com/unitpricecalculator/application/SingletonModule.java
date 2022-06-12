@@ -1,14 +1,14 @@
 package com.unitpricecalculator.application;
 
-import android.app.Application;
-import android.content.Context;
 import com.squareup.otto.Bus;
-import com.unitpricecalculator.inject.ApplicationContext;
-import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+
 import javax.inject.Singleton;
 
+@InstallIn(SingletonComponent.class)
 @Module
 public interface SingletonModule {
 
@@ -17,8 +17,4 @@ public interface SingletonModule {
   static Bus provideBus() {
     return new Bus();
   }
-
-  @Binds
-  @ApplicationContext
-  Context bindContext(Application application);
 }

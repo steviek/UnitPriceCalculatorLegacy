@@ -29,9 +29,11 @@ import com.unitpricecalculator.util.prefs.Keys
 import com.unitpricecalculator.util.prefs.Prefs
 import com.unitpricecalculator.util.sometimes.MutableSometimes
 import com.unitpricecalculator.view.DragLinearLayout
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.HashSet
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : BaseFragment() {
 
   @Inject internal lateinit var units: Units

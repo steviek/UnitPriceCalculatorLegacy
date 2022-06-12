@@ -2,18 +2,13 @@ package com.unitpricecalculator.export
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
-import android.util.Base64
-import android.util.Log
 import android.widget.Toast
-import com.google.common.io.Files
 import com.unitpricecalculator.R
 import com.unitpricecalculator.comparisons.SavedComparison
-import com.unitpricecalculator.inject.ActivityScoped
 import com.unitpricecalculator.json.ObjectMapper
 import com.unitpricecalculator.util.RequestCodes
 import com.unitpricecalculator.util.logger.Logger
-import java.io.File
+import dagger.hilt.android.scopes.ActivityScoped
 import java.io.FileOutputStream
 import javax.inject.Inject
 

@@ -49,6 +49,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public final class MainActivity extends BaseActivity
     implements MenuFragment.Callback, SavedFragment.Callback {
 
@@ -364,5 +367,10 @@ public final class MainActivity extends BaseActivity
 
   private Context getDisplayContext() {
     return localeManager.getCurrent().apply(this);
+  }
+
+  @Nullable
+  public ComparisonFragmentState getComparisonFragmentState() {
+    return comparisonFragmentState;
   }
 }

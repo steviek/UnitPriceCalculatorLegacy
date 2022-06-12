@@ -7,15 +7,17 @@ import androidx.fragment.app.FragmentManager
 import com.squareup.otto.Bus
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DarkModeDialogFragment : BaseDialogFragment() {
 
   @Inject lateinit var bus: Bus
   @Inject lateinit var manager: DarkModeManager
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val context  = this.context!!
+    val context  = requireContext()
     val states = DarkModeState.values().sortedBy { it.index }
     val stateLabels = states.map { context.getString(it.labelResId) }.toTypedArray()
     val selectedState = states.indexOf(manager.currentDarkModeState)

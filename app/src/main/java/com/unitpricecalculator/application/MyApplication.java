@@ -7,14 +7,13 @@ import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.mode.DarkModeManager;
 import com.unitpricecalculator.mode.DarkModeStateChangedEvent;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasAndroidInjector;
+import dagger.hilt.android.HiltAndroidApp;
+
 import javax.inject.Inject;
 
-public final class MyApplication extends MultiDexApplication implements HasAndroidInjector {
+@HiltAndroidApp
+public final class MyApplication extends MultiDexApplication {
 
-  @Inject DispatchingAndroidInjector<Object> dispatchingAndroidInjector;
   @Inject DarkModeManager darkModeManager;
   @Inject Bus bus;
   @Inject AppLocaleManager appLocaleManager;
@@ -22,18 +21,8 @@ public final class MyApplication extends MultiDexApplication implements HasAndro
   @Override
   public void onCreate() {
     super.onCreate();
-    DaggerApplicationComponent
-        .builder()
-        .applicationModule(new ApplicationModule(this))
-        .build()
-        .inject(this);
     bus.register(this);
     AppCompatDelegate.setDefaultNightMode(darkModeManager.getCurrentDarkModeState().getNightMode());
-  }
-
-  @Override
-  public AndroidInjector<Object> androidInjector() {
-    return dispatchingAndroidInjector;
   }
 
   @Subscribe

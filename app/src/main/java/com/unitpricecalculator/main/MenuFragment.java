@@ -7,25 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.unitpricecalculator.BaseFragment;
 import com.unitpricecalculator.R;
-import com.unitpricecalculator.inject.FragmentScoped;
-import dagger.android.ContributesAndroidInjector;
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public final class MenuFragment extends BaseFragment {
 
-    @dagger.Module
-    public interface Module {
-        @ContributesAndroidInjector
-        @FragmentScoped
-        MenuFragment contributeAndroidInjector();
-    }
-
-    @Inject Callback callback;
+    private Callback callback;
 
     @Override
     public View onCreateView(
         LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        callback = (Callback) getActivity();
         View view = inflater.inflate(R.layout.fragment_menu, container, /* attachToRoot= */ false);
         bindView(view, R.id.btn_new, MenuEvent.NEW);
         bindView(view, R.id.btn_saved, MenuEvent.SAVED);

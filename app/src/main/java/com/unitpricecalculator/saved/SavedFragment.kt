@@ -33,14 +33,16 @@ import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import com.unitpricecalculator.util.materialize
 import com.unitpricecalculator.util.stripAccents
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SavedFragment : BaseFragment() {
 
   @Inject lateinit var savedComparisonManager: SavedComparisonManager
 
-  @Inject lateinit var callback: Callback
+  private lateinit var callback: Callback
 
   @Inject lateinit var bus: Bus
 
@@ -150,6 +152,11 @@ class SavedFragment : BaseFragment() {
     }
   }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    callback = requireActivity() as Callback
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -164,7 +171,7 @@ class SavedFragment : BaseFragment() {
     savedComparisons.clear()
     savedComparisons.addAll(savedComparisonManager.savedComparisons)
     val listView = view.findViewById<ListView>(R.id.list_view)
-    adapter = SavedComparisonsArrayAdapter(context!!, filteredComparisons, units)
+    adapter = SavedComparisonsArrayAdapter(requireContext(), filteredComparisons, units)
     listView.adapter = adapter
     listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
       adapter?.getItem(position)?.let { callback.onLoadSavedComparison(it) }
@@ -175,7 +182,7 @@ class SavedFragment : BaseFragment() {
 
         // Start the CAB using the ActionMode.Callback defined above
         view.isSelected = true
-        actionMode = activity!!.startActionMode(createCallback(position, longPressedView))
+        actionMode = requireActivity().startActionMode(createCallback(position, longPressedView))
         true
       }
     refreshFilteredComparisons()

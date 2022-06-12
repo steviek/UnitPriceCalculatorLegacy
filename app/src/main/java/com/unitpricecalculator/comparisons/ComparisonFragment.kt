@@ -85,6 +85,7 @@ import com.unitpricecalculator.util.prefs.Keys
 import com.unitpricecalculator.util.prefs.Prefs
 import com.unitpricecalculator.util.sometimes.MutableSometimes
 import com.unitpricecalculator.util.toLocalizedString
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -93,6 +94,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+@AndroidEntryPoint
 class ComparisonFragment :
   BaseFragment(), OnUnitEntryChangedListener, SavesState<ComparisonFragmentState?> {
 
@@ -106,7 +108,7 @@ class ComparisonFragment :
 
   @Inject internal lateinit var currencies: Currencies
 
-  private val unitArrayAdapterFactory = MyUnitArrayAdapterFactory()
+  @Inject internal lateinit var unitArrayAdapterFactory: UnitArrayAdapterFactory
 
   @Inject internal lateinit var bus: Bus
 
@@ -268,6 +270,10 @@ class ComparisonFragment :
     return view
   }
 
+  override fun onDestroyView() {
+    super.onDestroyView()
+  }
+
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
     super.onCreateOptionsMenu(menu, inflater)
     val layoutInflater =
@@ -277,7 +283,7 @@ class ComparisonFragment :
     editText.setOnKeyListener { v: View, keyCode: Int, event: KeyEvent ->
       if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
         val imm =
-          getActivity()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+          requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(v.windowToken, 0)
         return@setOnKeyListener true
       }
@@ -846,21 +852,6 @@ class ComparisonFragment :
         entryView.entry.orNull()?.let { UnitEntryWithIndexAndNote(index, it, entryView.note) }
       }
     }
-
-  private inner class MyUnitArrayAdapterFactory {
-    fun create(selected: DefaultUnit): UnitArrayAdapter {
-      return UnitArrayAdapter(
-        context,
-        UnitArrayAdapter.getSymbolsAndUnits(
-          context,
-          systems,
-          units,
-          selected.unitType,
-          selected
-        )
-      )
-    }
-  }
 
   private data class UnitEntryWithIndexAndNote(
     val index: Int,

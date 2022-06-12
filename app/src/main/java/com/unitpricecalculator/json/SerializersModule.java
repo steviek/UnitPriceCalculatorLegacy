@@ -9,11 +9,14 @@ import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.UnitType;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import java.util.ArrayList;
 import java.util.List;
 
+@InstallIn(SingletonComponent.class)
 @Module
 public interface SerializersModule {
 
