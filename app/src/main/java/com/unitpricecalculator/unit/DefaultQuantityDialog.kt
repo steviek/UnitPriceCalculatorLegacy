@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.util.*
@@ -43,18 +44,18 @@ class DefaultQuantityDialogFragment : BaseDialogFragment() {
     unitSpinner.adapter =
       ArrayAdapter<String>(
         context,
-        R.layout.unit_type_spinner_dropdown_item,
+        R.layout.unit_spinner_dropdown_item,
         unitsInSpinner.map { it.getSymbol(context.resources) }
       )
     unitSpinner.setSelection(unitsInSpinner.indexOf(unit))
 
     val inputMethodManager =
       context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    return AlertDialog.Builder(context)
+    return MaterialAlertDialogBuilder(context)
       .setTitle(
         resources.getString(
           R.string.default_quantity_dialog_header,
-          resources.getString(unit.unitType.getName()).toLowerCase(Locale.getDefault())
+          resources.getString(unit.unitType.getLabelResId()).toLowerCase(Locale.getDefault())
         )
       )
       .setView(view)

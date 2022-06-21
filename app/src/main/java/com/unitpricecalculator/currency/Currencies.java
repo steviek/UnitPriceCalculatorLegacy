@@ -2,6 +2,8 @@ package com.unitpricecalculator.currency;
 
 import android.app.Activity;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.squareup.otto.Bus;
@@ -47,7 +49,7 @@ public final class Currencies {
       }
     }
 
-    new AlertDialog.Builder(activity)
+    new MaterialAlertDialogBuilder(activity)
         .setTitle(R.string.change_currency_symbol)
         .setSingleChoiceItems(
             labels,

@@ -1,6 +1,8 @@
 package com.unitpricecalculator.json;
 
 import androidx.annotation.Nullable;
+
+import com.google.common.base.Strings;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
@@ -125,7 +127,7 @@ public interface SerializersModule {
             .put(QUANTITY, instance.getQuantity())
             .put(SIZE, instance.getSize())
             .put(UNIT, instance.getUnit())
-            .put(NOTE, instance.getNote());
+            .put(NOTE, Strings.nullToEmpty(instance.getNote()));
       }
 
       @Override

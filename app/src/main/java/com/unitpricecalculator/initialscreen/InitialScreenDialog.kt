@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.unitpricecalculator.R
 import com.unitpricecalculator.dialog.DialogDelegate
 import javax.inject.Inject
@@ -15,7 +16,7 @@ class InitialScreenDialog @Inject internal constructor(
     val initialScreens = InitialScreen.values()
     val initialScreenLabels = initialScreens.map { context.getString(it.labelResId) }
     val currentInitialScreenIndex = initialScreens.indexOf(manager.initialScreen)
-    return AlertDialog.Builder(context)
+    return MaterialAlertDialogBuilder(context)
       .setTitle(R.string.initial_screen)
       .setSingleChoiceItems(
         initialScreenLabels.toTypedArray(),

@@ -28,12 +28,10 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
 
   var preferredOrder: Array<System>
     get() {
-      val result = prefs.getNonNullString(Keys.SYSTEM_ORDER, defaultOrder)
+      return prefs.getNonNullString(Keys.SYSTEM_ORDER, defaultOrder)
         .split(',')
         .map(System::valueOf)
         .toTypedArray()
-      Logger.d("Get preferred order: %s", Arrays.toString(result))
-      return result
     }
     set(order) {
       require(order.size == 3)

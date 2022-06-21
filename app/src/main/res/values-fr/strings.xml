@@ -1,7 +1,7 @@
 <resources>
   <string name="app_name">Calculatrice prix unitaire</string>
 
-  <string name="unit_type">Type d\'unité:</string>
+  <string name="unit_type">Type d\'unité</string>
   <string name="metric">Métrique</string>
   <string name="imperial">Impérial</string>
   <string name="imperial_us">Impérial (ÉU)</string>
@@ -139,4 +139,6 @@
   <string name="saved_successfully">Enregistré avec succès</string>
   <string name="buy_me_a_coffee">Achetez-moi un café</string>
   <string name="language_title">Langue</string>
+  <string name="saved">Sauvegardées</string>
+  <string name="current">Actuelle</string>
 </resources>

@@ -5,6 +5,7 @@ package com.unitpricecalculator.util
 import android.icu.text.Normalizer2
 import android.os.Build.VERSION
 import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import com.google.common.base.Optional
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
@@ -12,12 +13,12 @@ import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.Normalizer.Form.NFD
 
-fun EditText.addLocalizedKeyListener() {
+fun EditText.addLocalizedKeyListener(): TextWatcher?  {
   val localeSeparator = DecimalFormatSymbols.getInstance().monetaryDecimalSeparator
-  if (localeSeparator == '.') return
+  if (localeSeparator == '.') return null
 
   this.keyListener = LocalizedDigitsKeyListener.create()
-  addTextChangedListener(object : AbstractTextWatcher() {
+  val textWatcher = object : AbstractTextWatcher() {
     override fun afterTextChanged(s: Editable) {
       var alreadyContainsSeparator = false
       for (i in s.indices) {
@@ -32,7 +33,9 @@ fun EditText.addLocalizedKeyListener() {
         }
       }
     }
-  })
+  }
+  addTextChangedListener(textWatcher)
+  return textWatcher
 }
 
 fun String.parseDoubleOrThrow(): Double {

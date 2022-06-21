@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.otto.Bus
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
@@ -21,7 +22,7 @@ class DarkModeDialogFragment : BaseDialogFragment() {
     val states = DarkModeState.values().sortedBy { it.index }
     val stateLabels = states.map { context.getString(it.labelResId) }.toTypedArray()
     val selectedState = states.indexOf(manager.currentDarkModeState)
-    return AlertDialog.Builder(context)
+    return MaterialAlertDialogBuilder(context)
         .setTitle(R.string.dark_mode)
         .setSingleChoiceItems(stateLabels, selectedState) { dialog, which ->
           manager.currentDarkModeState = states[which]

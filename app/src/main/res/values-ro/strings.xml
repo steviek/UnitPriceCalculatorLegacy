@@ -2,7 +2,7 @@
 <resources>
   <string name="app_name">Calculator de preț unitar</string>
 
-  <string name="unit_type">Fel de unitate:</string>
+  <string name="unit_type">Fel de unitate</string>
   <string name="metric">Metric</string>
   <string name="imperial">Imperial</string>
   <string name="imperial_us">Imperial (SUA)</string>
@@ -143,4 +143,6 @@
   <string name="saved_successfully">Datele au fost salvate cu succes</string>
   <string name="buy_me_a_coffee">Cumpără-mi o cafea</string>
   <string name="language_title">Limbă</string>
+  <string name="saved">Salvate</string>
+  <string name="current">Curentă</string>
 </resources>

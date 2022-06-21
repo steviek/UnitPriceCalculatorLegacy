@@ -1,11 +1,10 @@
 package com.unitpricecalculator.saved
 
 import android.content.DialogInterface
-import android.graphics.Color
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
+import android.util.Size
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,265 +14,365 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.EditText
-import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.otto.Bus
 import com.squareup.otto.Subscribe
 import com.unitpricecalculator.BaseFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.comparisons.SavedComparison
+import com.unitpricecalculator.comparisons.SavedSortOrder
+import com.unitpricecalculator.comparisons.SavedSortOrder.LastModifiedAscending
+import com.unitpricecalculator.comparisons.SavedSortOrder.LastModifiedDescending
+import com.unitpricecalculator.comparisons.SavedSortOrder.TitleAscending
+import com.unitpricecalculator.comparisons.SavedSortOrder.TitleDescending
+import com.unitpricecalculator.comparisons.savedSortOrder
+import com.unitpricecalculator.databinding.SavedFragmentBinding
 import com.unitpricecalculator.events.DataImportedEvent
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent
 import com.unitpricecalculator.export.ExportManager
 import com.unitpricecalculator.export.ImportManager
+import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.unit.Units
+import com.unitpricecalculator.util.CachingCollator
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
-import com.unitpricecalculator.util.materialize
+import com.unitpricecalculator.util.prefs.Prefs
+import com.unitpricecalculator.util.setDrawableEnd
+import com.unitpricecalculator.util.setDrawableStart
 import com.unitpricecalculator.util.stripAccents
+import com.unitpricecalculator.view.OnSearchQueryChangedListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class SavedFragment : BaseFragment() {
 
-  @Inject lateinit var savedComparisonManager: SavedComparisonManager
+    @Inject
+    lateinit var savedComparisonManager: SavedComparisonManager
 
-  private lateinit var callback: Callback
+    private lateinit var callback: Callback
 
-  @Inject lateinit var bus: Bus
+    @Inject
+    lateinit var prefs: Prefs
 
-  @Inject lateinit var units: Units
+    @Inject
+    lateinit var bus: Bus
 
-  @Inject lateinit var exportManager: ExportManager
+    @Inject
+    lateinit var units: Units
 
-  @Inject lateinit var importManager: ImportManager
+    @Inject
+    lateinit var exportManager: ExportManager
 
-  private var savedComparisons = ArrayList<SavedComparison>()
-  private var filteredComparisons = ArrayList<SavedComparison>()
-  private var adapter: SavedComparisonsArrayAdapter? = null
-  private var filter: (SavedComparison) -> Boolean = { true }
+    @Inject
+    lateinit var importManager: ImportManager
 
-  private var alertDialog: AlertDialog? = null
-  private var actionMode: ActionMode? = null
+    @Inject
+    lateinit var appLocaleManager: AppLocaleManager
 
-  private fun createCallback(selectedPosition: Int, view: View) = object : ActionMode.Callback {
-    override fun onCreateActionMode(
-      mode: ActionMode,
-      menu: Menu
-    ): Boolean {
-      mode.menuInflater.inflate(R.menu.menu_action, menu)
-      if (VERSION.SDK_INT >= 21) activity?.window?.statusBarColor = Color.BLACK
-      return true
-    }
+    private var savedComparisons = ArrayList<SavedComparison>()
+    private var filteredComparisons = ArrayList<SavedComparison>()
+    private var adapter: SavedComparisonsArrayAdapter? = null
+    private var filter: (SavedComparison) -> Boolean = { true }
 
-    override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
+    private var alertDialog: AlertDialog? = null
+    private var actionMode: ActionMode? = null
+    private var viewBinding: SavedFragmentBinding? = null
+    private var storedCollators: StoredCollator? = null
 
-    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-      return when (item.itemId) {
-        R.id.action_rename -> {
-          val context = context ?: return false
-          val adapter = adapter ?: return false
-          val dialog = alertDialog ?: run {
-            val nameEditText = EditText(context)
-            val sideMargin = resources.getDimensionPixelOffset(R.dimen.horizontal_margin)
-            nameEditText.inputType = InputType.TYPE_CLASS_TEXT
-            nameEditText.setHint(R.string.enter_name)
-            val name = adapter.getItem(selectedPosition)!!.name
-            nameEditText.setText(name)
-            nameEditText.setSelectAllOnFocus(true)
-            nameEditText.requestFocus()
+    private fun createCallback(selectedPosition: Int, view: View) = object : ActionMode.Callback {
+        override fun onCreateActionMode(
+            mode: ActionMode,
+            menu: Menu
+        ): Boolean {
+            mode.menuInflater.inflate(R.menu.menu_action, menu)
+            return true
+        }
 
-            AlertDialog.Builder(context)
-              .setMessage(R.string.give_name)
-              .setPositiveButton(
-                android.R.string.ok
-              ) { _, _ ->
-                val savedName = nameEditText.text.toString()
-                if (savedName.isNotBlank()) {
-                  val old = adapter.getItem(selectedPosition)!!
-                  val renamed = old.rename(savedName)
-                  savedComparisonManager.putSavedComparison(renamed)
-                  savedComparisons.remove(old)
-                  savedComparisons.add(selectedPosition, renamed)
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
 
-                  refreshFilteredComparisons()
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            return when (item.itemId) {
+                R.id.action_rename -> {
+                    val context = context ?: return false
+                    val adapter = adapter ?: return false
+                    val dialog = alertDialog ?: run {
+                        val nameEditText = EditText(context)
+                        val sideMargin =
+                            resources.getDimensionPixelOffset(R.dimen.horizontal_margin)
+                        nameEditText.inputType = InputType.TYPE_CLASS_TEXT
+                        nameEditText.setHint(R.string.enter_name)
+                        val name = adapter.getItem(selectedPosition)!!.name
+                        nameEditText.setText(name)
+                        nameEditText.setSelectAllOnFocus(true)
+                        nameEditText.requestFocus()
+
+                        MaterialAlertDialogBuilder(context)
+                            .setMessage(R.string.give_name)
+                            .setPositiveButton(
+                                android.R.string.ok
+                            ) { _, _ ->
+                                val savedName = nameEditText.text.toString()
+                                if (savedName.isNotBlank()) {
+                                    val old = adapter.getItem(selectedPosition)!!
+                                    val renamed = old.rename(savedName)
+                                    savedComparisonManager.putSavedComparison(renamed)
+                                    savedComparisons.remove(old)
+                                    savedComparisons.add(selectedPosition, renamed)
+
+                                    refreshDisplayedComparisons()
+                                }
+                                actionMode?.finish()
+                            }
+                            .setNegativeButton(android.R.string.cancel) {
+                                    _, _ -> actionMode?.finish()
+                            }
+                            .setOnDismissListener { alertDialog = null }
+                            .create()
+                            .also { newDialog ->
+                                alertDialog = newDialog
+
+                                newDialog.setView(nameEditText, sideMargin, 0, sideMargin, 0)
+                                nameEditText.addTextChangedListener(object : AbstractTextWatcher() {
+                                    override fun afterTextChanged(s: Editable) {
+                                        newDialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled =
+                                            s.isNotBlank()
+                                    }
+                                })
+                            }
+                    }
+                    if (dialog.isShowing) {
+                        dialog.dismiss()
+                    } else {
+                        dialog.show()
+                    }
+                    true
                 }
-                actionMode?.finish()
-              }
-              .setNegativeButton(android.R.string.cancel) { _, _ -> actionMode?.finish() }
-              .setOnDismissListener { alertDialog = null }
-              .create()
-              .also { newDialog ->
-                alertDialog = newDialog
+                R.id.action_delete -> {
+                    val adapter = adapter ?: return false
+                    val comparison = adapter.getItem(selectedPosition)!!
+                    savedComparisons.remove(comparison)
+                    filteredComparisons.remove(comparison)
+                    savedComparisonManager.removeSavedComparison(comparison)
+                    bus.post(SavedComparisonDeletedEvent(comparison.key))
+                    adapter.notifyDataSetChanged()
+                    mode.finish()
+                    true
+                }
+                else -> false
+            }
+        }
 
-                newDialog.setView(nameEditText, sideMargin, 0, sideMargin, 0)
-                nameEditText.addTextChangedListener(object : AbstractTextWatcher() {
-                  override fun afterTextChanged(s: Editable) {
-                    newDialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isEnabled = s.isNotBlank()
-                  }
+        override fun onDestroyActionMode(mode: ActionMode) {
+            actionMode = null
+            view.isSelected = false
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        callback = requireActivity() as Callback
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        setHasOptionsMenu(true)
+        return SavedFragmentBinding.inflate(inflater, container, false)
+            .also { viewBinding = it }
+            .root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val binding = SavedFragmentBinding.bind(view)
+
+        val searchView = binding.searchView
+        searchView.queryChangedListener = OnSearchQueryChangedListener { query ->
+            filter = if (query.isBlank()) {
+                { true }
+            } else {
+                val queryWithoutAccentsInLowerCase =
+                    query.stripAccents().lowercase(Locale.getDefault())
+                ({
+                    queryWithoutAccentsInLowerCase in
+                            it.name.stripAccents().lowercase(Locale.getDefault()) ||
+                            it.savedUnitEntryRows.any { row ->
+                                row.note
+                                    ?.stripAccents()
+                                    ?.lowercase(Locale.getDefault())
+                                    ?.contains(queryWithoutAccentsInLowerCase)
+                                    ?: false
+                            }
                 })
-              }
-          }
-          if (dialog.isShowing) {
-            dialog.dismiss()
-          } else {
-            dialog.show()
-            dialog.materialize()
-          }
-          true
+            }
+            refreshDisplayedComparisons()
         }
-        R.id.action_delete -> {
-          val adapter = adapter ?: return false
-          val comparison = adapter.getItem(selectedPosition)!!
-          savedComparisons.remove(comparison)
-          filteredComparisons.remove(comparison)
-          savedComparisonManager.removeSavedComparison(comparison)
-          bus.post(SavedComparisonDeletedEvent(comparison.key))
-          adapter.notifyDataSetChanged()
-          mode.finish()
-          true
+
+        savedComparisons.clear()
+        savedComparisons.addAll(savedComparisonManager.savedComparisons)
+        val listView = binding.listView
+        adapter = SavedComparisonsArrayAdapter(requireContext(), filteredComparisons, units)
+        listView.adapter = adapter
+        listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
+            adapter?.getItem(position)?.let { callback.onLoadSavedComparison(it) }
         }
-        else -> false
-      }
+        listView.onItemLongClickListener =
+            OnItemLongClickListener { _, longPressedView, position, _ ->
+                if (actionMode != null) return@OnItemLongClickListener false
+
+                // Start the CAB using the ActionMode.Callback defined above
+                view.isSelected = true
+                actionMode =
+                    requireActivity().startActionMode(createCallback(position, longPressedView))
+                true
+            }
+        refreshDisplayedComparisons()
+        activity?.invalidateOptionsMenu()
+
+        binding.titleButton.setOnClickListener {
+            prefs.savedSortOrder = prefs.savedSortOrder.toggledByTitle()
+            syncViews()
+        }
+
+        binding.lastModifiedButton.setOnClickListener {
+            prefs.savedSortOrder = prefs.savedSortOrder.toggledByLastModified()
+            syncViews()
+        }
+
+        syncViews()
     }
 
-    override fun onDestroyActionMode(mode: ActionMode) {
-      actionMode = null
-      view.isSelected = false
-      if (VERSION.SDK_INT >= 21) {
-        activity?.let {
-          it.window?.statusBarColor = ContextCompat.getColor(it, R.color.colorPrimaryDark)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewBinding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        savedComparisons.clear()
+        savedComparisons.addAll(savedComparisonManager.savedComparisons)
+        refreshDisplayedComparisons()
+        activity?.invalidateOptionsMenu()
+
+        bus.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        bus.unregister(this)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        val activity = baseActivity ?: return
+        val actionBar = activity.supportActionBar ?: return
+        activity.menuInflater.inflate(R.menu.menu_saved_comparisons, menu)
+
+        actionBar.customView = null
+        actionBar.setDisplayShowCustomEnabled(false)
+        activity.setTitle(R.string.saved_comparisons)
+
+
+        menu.findItem(R.id.action_export).isEnabled = savedComparisons.isNotEmpty()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_export -> {
+                exportManager.startExport(savedComparisons)
+                true
+            }
+            R.id.action_import -> {
+                importManager.startImport()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-      }
     }
-  }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    callback = requireActivity() as Callback
-  }
-
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    setHasOptionsMenu(true)
-    return inflater.inflate(R.layout.fragment_saved, container, false)
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    savedComparisons.clear()
-    savedComparisons.addAll(savedComparisonManager.savedComparisons)
-    val listView = view.findViewById<ListView>(R.id.list_view)
-    adapter = SavedComparisonsArrayAdapter(requireContext(), filteredComparisons, units)
-    listView.adapter = adapter
-    listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-      adapter?.getItem(position)?.let { callback.onLoadSavedComparison(it) }
+    @Subscribe
+    fun onDataImported(event: DataImportedEvent) {
+        savedComparisons.clear()
+        savedComparisons.addAll(savedComparisonManager.savedComparisons)
+        refreshDisplayedComparisons()
+        activity?.invalidateOptionsMenu()
     }
-    listView.onItemLongClickListener =
-      OnItemLongClickListener { _, longPressedView, position, _ ->
-        if (actionMode != null) return@OnItemLongClickListener false
 
-        // Start the CAB using the ActionMode.Callback defined above
-        view.isSelected = true
-        actionMode = requireActivity().startActionMode(createCallback(position, longPressedView))
-        true
-      }
-    refreshFilteredComparisons()
-    activity?.invalidateOptionsMenu()
-  }
-
-  override fun onStart() {
-    super.onStart()
-    savedComparisons.clear()
-    savedComparisons.addAll(savedComparisonManager.savedComparisons)
-    refreshFilteredComparisons()
-    activity?.invalidateOptionsMenu()
-
-    bus.register(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    bus.unregister(this)
-  }
-
-  override fun onPrepareOptionsMenu(menu: Menu) {
-    super.onPrepareOptionsMenu(menu)
-    val activity = baseActivity ?: return
-    val actionBar = activity.supportActionBar ?: return
-    activity.menuInflater.inflate(R.menu.menu_saved_comparisons, menu)
-
-    actionBar.customView = null
-    actionBar.setDisplayShowCustomEnabled(false)
-    activity.setTitle(R.string.saved_comparisons)
-    val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-    searchView.setOnQueryTextListener(object : OnQueryTextListener {
-      override fun onQueryTextSubmit(query: String): Boolean {
-        return true
-      }
-
-      override fun onQueryTextChange(newText: String): Boolean {
-        filter = if (newText.isBlank()) {
-          { true }
-        } else {
-          val queryWithoutAccentsInLowerCase =
-            newText.stripAccents().toLowerCase(Locale.getDefault())
-          ({
-            queryWithoutAccentsInLowerCase in
-              it.name.stripAccents().toLowerCase(Locale.getDefault()) ||
-              it.savedUnitEntryRows.any { row ->
-                row.note
-                  ?.stripAccents()
-                  ?.toLowerCase(Locale.getDefault())
-                  ?.contains(queryWithoutAccentsInLowerCase)
-                  ?: false
-              }
-          })
+    private fun syncViews() = viewBinding?.apply {
+        val dp24 = (resources.displayMetrics.density * 24).roundToInt()
+        val size = Size(dp24, dp24)
+        when (prefs.savedSortOrder) {
+            LastModifiedDescending -> {
+                titleButton.setDrawableEnd(R.drawable.empty_24, size)
+                lastModifiedButton.setDrawableStart(R.drawable.ic_arrow_down_24, size)
+            }
+            LastModifiedAscending -> {
+                titleButton.setDrawableEnd(R.drawable.empty_24, size)
+                lastModifiedButton.setDrawableStart(R.drawable.ic_arrow_up_24, size)
+            }
+            TitleDescending -> {
+                lastModifiedButton.setDrawableStart(R.drawable.empty_24, size)
+                titleButton.setDrawableEnd(R.drawable.ic_arrow_down_24, size)
+            }
+            TitleAscending -> {
+                lastModifiedButton.setDrawableStart(R.drawable.empty_24, size)
+                titleButton.setDrawableEnd(R.drawable.ic_arrow_up_24, size)
+            }
         }
-        refreshFilteredComparisons()
-        return true
-      }
-    })
-
-    menu.findItem(R.id.action_export).isEnabled = savedComparisons.isNotEmpty()
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return when (item.itemId) {
-      R.id.action_export -> {
-        exportManager.startExport(savedComparisons)
-        true
-      }
-      R.id.action_import -> {
-        importManager.startImport()
-        true
-      }
-      else -> super.onOptionsItemSelected(item)
+        refreshDisplayedComparisons()
     }
-  }
 
-  private fun refreshFilteredComparisons() {
-    filteredComparisons.clear()
-    filteredComparisons.addAll(savedComparisons.filter(filter).sortedDescending())
-    adapter?.notifyDataSetChanged()
-  }
+    private fun refreshDisplayedComparisons() {
+        filteredComparisons.clear()
+        filteredComparisons.addAll(
+            savedComparisons.filter(filter).sortedWith(getOrCreateComparator(prefs.savedSortOrder))
+        )
+        adapter?.notifyDataSetChanged()
+    }
 
-  @Subscribe
-  fun onDataImported(event: DataImportedEvent) {
-    savedComparisons.clear()
-    savedComparisons.addAll(savedComparisonManager.savedComparisons)
-    refreshFilteredComparisons()
-    activity?.invalidateOptionsMenu()
-  }
+    private fun getOrCreateComparator(order: SavedSortOrder): Comparator<SavedComparison> {
+        return when (order) {
+            LastModifiedDescending -> compareByTimestamp(ascending = false)
+            LastModifiedAscending -> compareByTimestamp(ascending = true)
+            TitleDescending -> compareByName(ascending = false)
+            TitleAscending -> compareByName(ascending = true)
+        }
+    }
 
-  interface Callback {
-    fun onLoadSavedComparison(comparison: SavedComparison)
-  }
+    private fun compareByTimestamp(ascending: Boolean) = Comparator<SavedComparison> { o1, o2 ->
+        val o1Millis = o1.timestampMillis
+        val o2Millis = o2.timestampMillis
+        when {
+            o1Millis == null && o2Millis == null -> 0
+            o1Millis == null -> 1
+            o2Millis == null -> -1
+            ascending -> o1Millis.compareTo(o2Millis)
+            else -> o2Millis.compareTo(o1Millis)
+        }
+    }
+
+    private fun compareByName(ascending: Boolean): Comparator<SavedComparison> {
+        val locale = appLocaleManager.current.toLocale()
+        var storedCollators = storedCollators?.takeIf { it.locale == locale }
+        if (storedCollators == null) {
+            storedCollators = StoredCollator(locale)
+            this.storedCollators = storedCollators
+        }
+
+        return Comparator { o1, o2 ->
+            storedCollators.collator.compare(o1, o2) * (if (ascending) 1 else -1)
+        }
+    }
+    private class StoredCollator(val locale: Locale, ) {
+        val collator = CachingCollator<SavedComparison>(locale) { it.name }
+    }
+
+    interface Callback {
+        fun onLoadSavedComparison(comparison: SavedComparison)
+    }
 }

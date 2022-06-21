@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <style name="FlatButton" parent="@style/Widget.AppCompat.Button.Borderless">
+  <style name="FlatButton" parent="@style/Widget.Material3.Button.TextButton">
     <item name="android:textColor">@color/button_text_color</item>
     <item name="android:textAllCaps">false</item>
   </style>

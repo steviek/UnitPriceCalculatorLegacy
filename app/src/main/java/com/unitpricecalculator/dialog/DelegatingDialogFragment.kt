@@ -10,7 +10,6 @@ import com.unitpricecalculator.dialog.DialogId.INITIAL_SCREEN_DIALOG
 import com.unitpricecalculator.dialog.DialogId.LOCALE_DIALOG
 import com.unitpricecalculator.initialscreen.InitialScreenDialog
 import com.unitpricecalculator.locale.AppLocaleDialog
-import com.unitpricecalculator.util.materialize
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Provider
@@ -30,7 +29,6 @@ class DelegatingDialogFragment : BaseDialogFragment() {
     }
     val extras = args.getBundle(KEY_EXTRAS)
     return delegate.createDialog(context, extras)
-      .also { if (it is AlertDialog) it.materialize() }
   }
 
   companion object {

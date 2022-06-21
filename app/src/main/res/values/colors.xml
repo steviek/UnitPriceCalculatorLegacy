@@ -9,9 +9,7 @@
     <color name="dividerColor">#B6B6B6</color>
     <color name="text_icons">#FFFFFF</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="background_color">@android:color/background_light</color>
     <color name="row_focused_color">#DDDDDD</color>
-
     <color name="bad_red">#FFE12828</color>
     <color name="good_green">#FF3AA43A</color>
 </resources>

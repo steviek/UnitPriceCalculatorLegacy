@@ -52,7 +52,7 @@
   <string name="teaspoon_symbol">tsp</string>
   <string name="unit">Unidad</string>
   <string name="unit_symbol">unidad</string>
-  <string name="unit_type">Tipo de unidad:</string>
+  <string name="unit_type">Tipo de unidad</string>
   <string name="us_cup_symbol">tazas USA</string>
   <string name="us_fluid_ounce_symbol">oz USA</string>
   <string name="us_gallon_symbol">gal USA</string>
@@ -126,4 +126,6 @@
   <string name="saved_successfully">Guardado exitosamente</string>
   <string name="buy_me_a_coffee">Compráme un café</string>
   <string name="language_title">Idioma</string>
+  <string name="saved">Guardadas</string>
+  <string name="current">Actual</string>
 </resources>

@@ -4,6 +4,5 @@
   <color name="secondaryText">#A2A2A2</color>
   <color name="text_icons">@android:color/background_dark</color>
   <color name="ic_launcher_background">@android:color/background_dark</color>
-  <color name="background_color">@android:color/background_dark</color>
   <color name="row_focused_color">#333333</color>
 </resources>

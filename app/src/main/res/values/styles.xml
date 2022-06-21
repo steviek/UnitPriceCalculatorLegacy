@@ -1,19 +1,11 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="DialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert" />
+    <style name="DialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert" />
 
     <style name="HeaderTextView">
         <item name="android:layout_height">match_parent</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/primaryText</item>
     </style>
 
     <style name="RowItem">
@@ -26,8 +18,7 @@
 
     <style name="RowTextView" parent="RowItem">
         <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
     </style>
 
     <style name="RowCaption" parent="RowItem">
@@ -37,10 +28,14 @@
     </style>
 
     <style name="RowEditText" parent="RowTextView">
-
     </style>
 
-    <style name="FlatButton" parent="@style/Widget.AppCompat.Button.Borderless">
+    <style name="RowTextInputEditText">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="FlatButton" parent="@style/Widget.Material3.Button.TextButton">
         <item name="android:textColor">@color/button_text_color</item>
     </style>
 

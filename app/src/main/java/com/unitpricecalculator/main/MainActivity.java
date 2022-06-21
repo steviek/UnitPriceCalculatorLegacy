@@ -13,13 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
@@ -33,6 +32,7 @@ import com.unitpricecalculator.comparisons.ComparisonFragment;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.currency.Currencies;
+import com.unitpricecalculator.databinding.MainActivityBinding;
 import com.unitpricecalculator.events.AppLocaleChangedEvent;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.export.ExportManager;
@@ -40,7 +40,6 @@ import com.unitpricecalculator.export.ImportManager;
 import com.unitpricecalculator.initialscreen.InitialScreen;
 import com.unitpricecalculator.initialscreen.InitialScreenManager;
 import com.unitpricecalculator.json.ObjectMapper;
-import com.unitpricecalculator.locale.AppLocale;
 import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.saved.SavedComparisonManager;
 import com.unitpricecalculator.saved.SavedFragment;
@@ -49,7 +48,6 @@ import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.RequestCodes;
 
 import java.util.Currency;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -83,8 +81,9 @@ public final class MainActivity extends BaseActivity
   @Inject
   AppLocaleManager localeManager;
 
-  private ActionBarDrawerToggle mDrawerToggle;
-  private DrawerLayout mDrawerLayout;
+  private MainActivityBinding viewBinding;
+  // private ActionBarDrawerToggle mDrawerToggle;
+  //private DrawerLayout mDrawerLayout;
 
   private ComparisonFragment mComparisonFragment;
   private SettingsFragment mSettingsFragment;
@@ -100,21 +99,10 @@ public final class MainActivity extends BaseActivity
   }
 
   @Override
-  protected final void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    setTitle("");
-
-    ActionBar actionBar = checkNotNull(getSupportActionBar());
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setHomeButtonEnabled(true);
-
-    mDrawerLayout = findViewById(R.id.drawer_layout);
-    mDrawerToggle = new ActionBarDrawerToggle(
-        this, mDrawerLayout, R.string.app_name, R.string.app_name);
-
-    mDrawerToggle.setDrawerIndicatorEnabled(true);
-    mDrawerLayout.addDrawerListener(mDrawerToggle);
+    viewBinding = MainActivityBinding.inflate(getLayoutInflater());
+    setContentView(viewBinding.getRoot());
 
     mComparisonFragment = new ComparisonFragment();
     mSettingsFragment = new SettingsFragment();
@@ -124,6 +112,7 @@ public final class MainActivity extends BaseActivity
       if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
           !savedComparisonManager.getSavedComparisons().isEmpty()) {
         currentState = State.SAVED;
+        viewBinding.bottomNavigation.setSelectedItemId(R.id.saved);
       } else {
         currentState = State.MAIN;
       }
@@ -138,9 +127,19 @@ public final class MainActivity extends BaseActivity
 
     getSupportFragmentManager()
         .beginTransaction()
-        .replace(R.id.content_frame, getFragment(currentState))
-        .replace(R.id.menu_frame, new MenuFragment())
+        .replace(viewBinding.contentFrame.getId(), getFragment(currentState))
         .commit();
+
+    viewBinding.bottomNavigation.setOnItemSelectedListener(item -> {
+      if (item.getItemId() == R.id.current) {
+        changeState(State.MAIN);
+      } else if (item.getItemId() == R.id.saved) {
+        changeState(State.SAVED);
+      } else if (item.getItemId() == R.id.settings) {
+        changeState(State.SETTINGS);
+      }
+      return true;
+    });
   }
 
   @Override
@@ -171,13 +170,13 @@ public final class MainActivity extends BaseActivity
   protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
     // Sync the toggle state after onRestoreInstanceState has occurred.
-    mDrawerToggle.syncState();
+    //mDrawerToggle.syncState();
   }
 
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    mDrawerToggle.onConfigurationChanged(newConfig);
+    // mDrawerToggle.onConfigurationChanged(newConfig);
   }
 
   @Override
@@ -197,27 +196,6 @@ public final class MainActivity extends BaseActivity
         return false;
     }
     return super.onPrepareOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Pass the event to ActionBarDrawerToggle, if it returns
-    // true, then it has handled the app icon touch event
-    if (mDrawerToggle.onOptionsItemSelected(item)) {
-      return true;
-    }
-    // Handle your other action bar items...
-    switch (item.getItemId()) {
-      case R.id.action_save:
-        mComparisonFragment.save();
-        break;
-      case R.id.action_clear:
-        mComparisonFragment.clear();
-        break;
-
-    }
-
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -313,7 +291,6 @@ public final class MainActivity extends BaseActivity
   }
 
   private void changeState(State newState) {
-    mDrawerLayout.closeDrawers();
     if (newState == currentState) {
       return;
     }
@@ -322,6 +299,7 @@ public final class MainActivity extends BaseActivity
       comparisonFragmentState = mComparisonFragment.saveState(this);
     }
 
+    int selectedItemId = R.id.current;
     switch (newState) {
       case MAIN:
         if (comparisonFragmentState != null) {
@@ -329,12 +307,15 @@ public final class MainActivity extends BaseActivity
         } else {
           mComparisonFragment.clear();
         }
+        selectedItemId = R.id.current;
         break;
       case SETTINGS:
         hideSoftKeyboard();
+        selectedItemId = R.id.settings;
         break;
       case SAVED:
         hideSoftKeyboard();
+        selectedItemId = R.id.saved;
         break;
     }
     currentState = newState;
@@ -343,6 +324,10 @@ public final class MainActivity extends BaseActivity
         .replace(R.id.content_frame, getFragment(currentState))
         .commit();
     invalidateOptionsMenu();
+
+    if (viewBinding.bottomNavigation.getSelectedItemId() != selectedItemId) {
+      viewBinding.bottomNavigation.setSelectedItemId(selectedItemId);
+    }
   }
 
   @Override

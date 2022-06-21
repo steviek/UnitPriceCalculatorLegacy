@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.unitpricecalculator.R
 import com.unitpricecalculator.dialog.DialogDelegate
 import java.text.Collator
@@ -29,7 +30,7 @@ class AppLocaleDialog @Inject internal constructor(
     val displayNames = localesSortedByDisplayName.map { it.getDisplayName(context) }.toTypedArray()
     val currentIndex = localesSortedByDisplayName.indexOf(manager.current)
 
-    return AlertDialog.Builder(context)
+    return MaterialAlertDialogBuilder(context)
       .setTitle(R.string.language_title)
       .setSingleChoiceItems(
         displayNames,

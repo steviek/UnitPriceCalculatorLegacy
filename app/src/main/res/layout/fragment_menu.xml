@@ -2,13 +2,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_color"
         android:orientation="vertical"
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
@@ -22,7 +20,7 @@
         <TextView
             android:id="@+id/btn_saved"
             style="@style/Menu.Button"
-            app:drawableStartCompat="@drawable/ic_open"
+            app:drawableStartCompat="@drawable/ic_saved"
             android:text="@string/saved_comparisons" />
 
         <View style="@style/Menu.Divider" />
@@ -30,7 +28,7 @@
         <TextView
             android:id="@+id/btn_settings"
             style="@style/Menu.Button"
-            app:drawableStartCompat="@drawable/ic_action_settings"
+            app:drawableStartCompat="@drawable/ic_settings"
             android:text="@string/settings" />
 
         <TextView

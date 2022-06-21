@@ -18,16 +18,21 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.BuildConfig;
 import com.unitpricecalculator.R;
+import com.unitpricecalculator.databinding.EnterNoteEditTextBinding;
+import com.unitpricecalculator.databinding.UnitEntryViewBinding;
 import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.NoteChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
@@ -36,13 +41,15 @@ import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
 import com.unitpricecalculator.unit.Units;
-import com.unitpricecalculator.util.AlertDialogs;
 import com.unitpricecalculator.util.Consumer;
 import com.unitpricecalculator.util.Localization;
 import com.unitpricecalculator.util.SavesState;
 import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener;
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher;
+import com.unitpricecalculator.util.logger.Logger;
+
 import java.util.Locale;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -54,10 +61,14 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private static final int SIZE = 1;
   private static final int QUANTITY = 2;
 
-  @Inject Activity activity;
-  @Inject Units units;
-  @Inject UnitArrayAdapterFactory unitArrayAdapterFactory;
-  @Inject Bus bus;
+  @Inject
+  Activity activity;
+  @Inject
+  Units units;
+  @Inject
+  UnitArrayAdapterFactory unitArrayAdapterFactory;
+  @Inject
+  Bus bus;
 
   private TextView mRowNumberTextView;
   private EditText mCostEditText;
@@ -78,7 +89,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private DefaultUnit mUnit;
   private Evaluation mEvaluation = Evaluation.NEUTRAL;
 
-  private TextWatcher mTextWatcher = new AbstractTextWatcher() {
+  private final TextWatcher mTextWatcher = new AbstractTextWatcher() {
     @Override
     public void afterTextChanged(Editable s) {
       onUnitChanged();
@@ -89,13 +100,16 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   private boolean mInActionMode = false;
   private boolean mExpanded = false;
   private int mRowNumber;
-  @Nullable private String note;
+  @Nullable
+  private String note;
 
   private final OnClickListener noteOnClickListener = v -> {
-    EditText editText =
-        (EditText) LayoutInflater.from(getContext()).inflate(R.layout.enter_note_edit_text, null);
-    int margin = getResources().getDimensionPixelOffset(R.dimen.horizontal_margin);
+    EnterNoteEditTextBinding binding =
+        EnterNoteEditTextBinding.inflate(LayoutInflater.from(getContext()));
+    EditText editText = binding.input;
+    int margin = (int) (getResources().getDisplayMetrics().density * 32);
     editText.setText(note);
+    editText.setSelection(editText.length());
     editText.requestFocus();
     editText.setSelectAllOnFocus(true);
 
@@ -118,15 +132,17 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
           InputMethodManager.HIDE_NOT_ALWAYS);
     };
 
-    AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+    AlertDialog alertDialog = new MaterialAlertDialogBuilder(getContext())
         .setPositiveButton(android.R.string.ok, onClickListener)
         .setNegativeButton(android.R.string.cancel, onClickListener)
         .setNeutralButton(R.string.delete, onClickListener)
         .create();
-    alertDialog.setView(editText, margin, margin, margin, 0);
+    alertDialog.setView(binding.getRoot(), margin, margin, margin, 0);
     alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    alertDialog.setOnShowListener(
+        dialog -> alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            .setEnabled(!Strings.isNullOrEmpty(note)));
     alertDialog.show();
-    AlertDialogs.materialize(alertDialog);
     if (Strings.isNullOrEmpty(note)) {
       alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setVisibility(View.GONE);
     }
@@ -134,14 +150,14 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       @Override
       public void afterTextChanged(Editable s) {
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            .setEnabled(!s.toString().isEmpty());
+            .setEnabled(!s.toString().isEmpty() && !s.toString().equals(note));
       }
     });
   };
 
   public UnitEntryView(Context context) {
     super(context);
-    LayoutInflater.from(context).inflate(R.layout.view_unit_entry, this);
+    LayoutInflater.from(context).inflate(R.layout.unit_entry_view, this);
     onFinishInflate();
   }
 
@@ -157,6 +173,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   @Override
   public void restoreState(SavedUnitEntryRow entryRow) {
+    Logger.d("Start restoring " + entryRow + " in " + this);
     withoutTextWatcher(mCostEditText, editText -> editText.setText(entryRow.getCost()));
     withoutTextWatcher(mSizeEditText, editText -> editText.setText(entryRow.getSize()));
     withoutTextWatcher(mQuantityEditText, editText -> editText.setText(entryRow.getQuantity()));
@@ -164,6 +181,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     note = entryRow.getNote();
     refreshAdapter(unitArrayAdapterFactory.create(mUnit));
     syncViews();
+    Logger.d("Cost after restore: " + mCostEditText.getText());
+    Logger.d("Done restoring " + entryRow + ", entry is " + getEntry() + " in " + this);
   }
 
   public void setRowNumber(int rowNumber) {
@@ -207,23 +226,28 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     syncViews();
   }
 
-  public Optional<Integer> getFocusedViewId() {
+  @Nullable
+  public Integer getFocusedViewId() {
     if (mCostEditText.isFocused()) {
-      return Optional.of(COST);
+      return COST;
     }
 
     if (mQuantityEditText.isFocused()) {
-      return Optional.of(QUANTITY);
+      return QUANTITY;
     }
 
     if (mSizeEditText.isFocused()) {
-      return Optional.of(SIZE);
+      return SIZE;
     }
 
-    return Optional.absent();
+    return null;
   }
 
-  public void setFocusedViewId(int id) {
+  public void setFocusedViewId(@Nullable Integer id) {
+    if (id == null) {
+      return;
+    }
+
     if (id == COST) {
       mCostEditText.requestFocus();
       return;
@@ -246,7 +270,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public Optional<UnitEntry> getEntry() {
     try {
-      UnitEntry.Builder unitEntry = UnitEntry.builder();
+      UnitEntry.Builder unitEntry = new UnitEntry.Builder();
 
       unitEntry.setCostString(mCostEditText.getText().toString());
       unitEntry.setCost(Localization.parseDoubleOrThrow(mCostEditText.getText().toString()));
@@ -296,6 +320,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   protected void onFinishInflate() {
     super.onFinishInflate();
 
+    Logger.d("onFinishInlate: " + this);
+
     boolean oneLine = getResources().getDisplayMetrics().widthPixels >=
         TypedValue
             .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 600, getResources().getDisplayMetrics());
@@ -306,40 +332,42 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
       setOrientation(VERTICAL);
     }
 
-    mRowNumberTextView = findViewById(R.id.text_ordinal);
+    UnitEntryViewBinding viewBinding = UnitEntryViewBinding.bind(this);
 
-    mCostEditText = findViewById(R.id.price_edit_text);
+    mRowNumberTextView = viewBinding.textOrdinal;
+
+    mCostEditText = viewBinding.priceEditText;
     mCostEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mCostEditText);
 
-    mQuantityEditText = findViewById(R.id.number_edit_text);
+    mQuantityEditText = viewBinding.numberEditText;
     mQuantityEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mQuantityEditText);
 
-    mSizeEditText = findViewById(R.id.size_edit_text);
+    mSizeEditText = viewBinding.sizeEditText;
     mSizeEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mSizeEditText);
 
-    mUnitSpinner = findViewById(R.id.unit_spinner);
+    mUnitSpinner = viewBinding.unitSpinner;
 
-    summaryTextView = findViewById(R.id.text_summary_inline);
-    belowNoteTextView = findViewById(R.id.text_note_below);
+    summaryTextView = viewBinding.textSummaryInline;
+    belowNoteTextView = viewBinding.textNoteBelow;
     belowNoteTextView.setOnClickListener(v -> {
       mExpanded = !mExpanded;
       syncViews();
     });
-    inlineNoteTextView = findViewById(R.id.text_note_inline);
+    inlineNoteTextView = viewBinding.textNoteInline;
     inlineNoteTextView.setOnClickListener(v -> {
       mExpanded = !mExpanded;
       syncViews();
     });
 
-    addNoteButton = findViewById(R.id.note_button);
+    addNoteButton = viewBinding.noteButton;
     addNoteButton.setOnClickListener(noteOnClickListener);
-    editNoteButton = findViewById(R.id.edit_note_button);
+    editNoteButton = viewBinding.editNoteButton;
     editNoteButton.setOnClickListener(noteOnClickListener);
 
-    mInputFieldsContainer = findViewById(R.id.input_fields_container);
+    mInputFieldsContainer = viewBinding.inputFieldsContainer;
 
     mInflated = true;
 
@@ -380,7 +408,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     Optional<UnitEntry> unitEntry = getEntry();
     syncViews();
     if (mListener != null) {
-      mListener.onUnitEntryChanged(unitEntry);
+      mListener.onUnitEntryChanged(this, unitEntry);
     }
   }
 
@@ -485,7 +513,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public interface OnUnitEntryChangedListener {
 
-    void onUnitEntryChanged(Optional<UnitEntry> unitEntry);
+    void onUnitEntryChanged(UnitEntryView view, Optional<UnitEntry> unitEntry);
   }
 
   public enum Evaluation {

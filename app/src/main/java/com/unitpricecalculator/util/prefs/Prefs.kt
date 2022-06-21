@@ -11,130 +11,146 @@ import javax.inject.Inject
 
 @Reusable
 class Prefs @Inject internal constructor(
-  @ApplicationContext context: Context,
-  private val objectMapper: ObjectMapper
+    @ApplicationContext context: Context,
+    private val objectMapper: ObjectMapper
 ) {
 
-  private val prefs: SharedPreferences =
-    context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences(context.packageName + "_prefs", Context.MODE_PRIVATE)
 
-  fun getInt(key: String): Int? {
-    if (prefs.contains(key)) {
-      return prefs.getInt(key, -1)
-    } else {
-      return null
-    }
-  }
+    operator fun get(key: IntPrefsKey) = getInt(key.key)
 
-  fun getInt(key: String, fallback: Int): Int {
-    return prefs.getInt(key, fallback)
-  }
+    operator fun set(key: IntPrefsKey, value: Int?) = putInt(key.key, value)
 
-  fun putInt(key: String, value: Int?) {
-    prefs.edit()
-      .also {
-        if (value == null) {
-          it.remove(key)
+    operator fun get(key: BooleanPrefsKey) = getBoolean(key.key)
+
+    operator fun set(key: BooleanPrefsKey, value: Boolean?) = putBoolean(key.key, value)
+
+    fun getInt(key: String): Int? {
+        if (prefs.contains(key)) {
+            return prefs.getInt(key, -1)
         } else {
-          it.putInt(key, value)
+            return null
         }
-      }.apply()
-  }
-
-  fun getDouble(key: String) = if (prefs.contains(key)) getDouble(key, -1.0) else null
-
-  fun getDouble(key: String, fallback: Double): Double {
-    return Double.fromBits(prefs.getLong(key, fallback.toRawBits()))
-  }
-
-  fun putDouble(key: String, value: Double) {
-    prefs.edit().putLong(key, value.toRawBits()).apply()
-  }
-
-  @JvmOverloads
-  fun getString(key: String, fallback: String? = null): String? {
-    return prefs.getString(key, fallback)
-  }
-
-  fun getNonNullString(key: String, fallback: String): String {
-    return prefs.getString(key, fallback)!!
-  }
-
-  fun putString(key: String, string: String) {
-    prefs.edit().putString(key, string).apply()
-  }
-
-
-  fun getStringSet(key: String, fallback: Set<String>?): Set<String>? {
-    return prefs.getStringSet(key, fallback)
-  }
-
-  fun putStringSet(key: String, set: Set<String>) {
-    prefs.edit().putStringSet(key, set).apply()
-  }
-
-  fun <T> getList(clazz: Class<T>, key: String): List<T> {
-    return getList(clazz, key, ArrayList())
-  }
-
-  fun <T> getList(clazz: Class<T>, key: String, fallback: List<T>): List<T> {
-    val set = getStringSet(key, null)
-    return if (set == null) {
-      fallback
-    } else {
-      try {
-        val list = ArrayList<T>()
-        for (s in set) {
-          list.add(objectMapper.fromJson(clazz, s))
-        }
-        list
-      } catch (e: Exception) {
-        throw RuntimeException(e)
-      }
-
-    }
-  }
-
-  fun <T> putList(key: String, list: List<T>) {
-    val stringSet = HashSet<String>()
-    try {
-      for (t in list) {
-        stringSet.add(objectMapper.toJson(t))
-      }
-      putStringSet(key, stringSet)
-    } catch (e: Exception) {
-      throw RuntimeException(e)
     }
 
-  }
+    fun getInt(key: String, fallback: Int): Int {
+        return prefs.getInt(key, fallback)
+    }
 
-  fun <T> addToList(clazz: Class<T>, key: String, value: T) {
-    val list = getList(clazz, key).toMutableList()
-    list.add(value)
-    putList(key, list)
-  }
+    fun putInt(key: String, value: Int?) {
+        prefs.edit()
+            .also {
+                if (value == null) {
+                    it.remove(key)
+                } else {
+                    it.putInt(key, value)
+                }
+            }.apply()
+    }
 
-  fun <T> getObject(clazz: Class<T>, key: String): T {
-    return getObject(clazz, key, null)
-  }
+    fun getDouble(key: String) = if (prefs.contains(key)) getDouble(key, -1.0) else null
 
-  fun <T> getObject(clazz: Class<T>, key: String, fallback: T?): T {
-    return objectMapper.fromJsonOptional(clazz, getString(key)).or(fallback!!)
-  }
+    fun getDouble(key: String, fallback: Double): Double {
+        return Double.fromBits(prefs.getLong(key, fallback.toRawBits()))
+    }
 
-  fun putObject(key: String, `object`: Any) {
-    prefs.edit().putString(key, objectMapper.toJson(`object`)).apply()
-  }
+    fun putDouble(key: String, value: Double) {
+        prefs.edit().putLong(key, value.toRawBits()).apply()
+    }
 
-  fun getBoolean(key: String): Boolean {
-    return prefs.getBoolean(key, false)
-  }
+    @JvmOverloads
+    fun getString(key: String, fallback: String? = null): String? {
+        return prefs.getString(key, fallback)
+    }
 
-  fun putBoolean(key: String, value: Boolean) {
-    prefs.edit().putBoolean(key, value).apply()
-  }
+    fun getNonNullString(key: String, fallback: String): String {
+        return prefs.getString(key, fallback)!!
+    }
 
-  fun remove(key: String) {
-    prefs.edit().remove(key).apply()
-  }
+    fun putString(key: String, string: String) {
+        prefs.edit().putString(key, string).apply()
+    }
+
+
+    fun getStringSet(key: String, fallback: Set<String>?): Set<String>? {
+        return prefs.getStringSet(key, fallback)
+    }
+
+    fun putStringSet(key: String, set: Set<String>) {
+        prefs.edit().putStringSet(key, set).apply()
+    }
+
+    fun <T> getList(clazz: Class<T>, key: String): List<T> {
+        return getList(clazz, key, ArrayList())
+    }
+
+    fun <T> getList(clazz: Class<T>, key: String, fallback: List<T>): List<T> {
+        val set = getStringSet(key, null)
+        return if (set == null) {
+            fallback
+        } else {
+            try {
+                val list = ArrayList<T>()
+                for (s in set) {
+                    list.add(objectMapper.fromJson(clazz, s))
+                }
+                list
+            } catch (e: Exception) {
+                throw RuntimeException(e)
+            }
+
+        }
+    }
+
+    fun <T> putList(key: String, list: List<T>) {
+        val stringSet = HashSet<String>()
+        try {
+            for (t in list) {
+                stringSet.add(objectMapper.toJson(t))
+            }
+            putStringSet(key, stringSet)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+
+    }
+
+    fun <T> addToList(clazz: Class<T>, key: String, value: T) {
+        val list = getList(clazz, key).toMutableList()
+        list.add(value)
+        putList(key, list)
+    }
+
+    fun <T> getObject(clazz: Class<T>, key: String): T {
+        return getObject(clazz, key, null)
+    }
+
+    fun <T> getObject(clazz: Class<T>, key: String, fallback: T?): T {
+        return objectMapper.fromJsonOptional(clazz, getString(key)).or(fallback!!)
+    }
+
+    fun putObject(key: String, `object`: Any) {
+        prefs.edit().putString(key, objectMapper.toJson(`object`)).apply()
+    }
+
+    fun getBoolean(key: String): Boolean? {
+        return if (prefs.contains(key)) prefs.getBoolean(key, false) else null
+    }
+
+    fun putBoolean(key: String, value: Boolean?) = edit {
+        if (value == null) {
+            remove(key)
+        } else {
+            putBoolean(key, value)
+        }
+    }
+
+    fun remove(key: String) {
+        prefs.edit().remove(key).apply()
+    }
+
+    private inline fun edit(function: SharedPreferences.Editor.() -> Unit) {
+        prefs.edit().also(function).apply()
+    }
 }

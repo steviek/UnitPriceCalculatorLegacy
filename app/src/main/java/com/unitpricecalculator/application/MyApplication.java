@@ -2,6 +2,8 @@ package com.unitpricecalculator.application;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
+
+import com.google.android.material.color.DynamicColors;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.unitpricecalculator.locale.AppLocaleManager;
@@ -23,6 +25,7 @@ public final class MyApplication extends MultiDexApplication {
     super.onCreate();
     bus.register(this);
     AppCompatDelegate.setDefaultNightMode(darkModeManager.getCurrentDarkModeState().getNightMode());
+    DynamicColors.applyToActivitiesIfAvailable(this);
   }
 
   @Subscribe

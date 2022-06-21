@@ -1,7 +1,7 @@
 <resources>
   <string name="app_name">Unit Price Calculator</string>
 
-  <string name="unit_type">Unit Type:</string>
+  <string name="unit_type">Unit Type</string>
   <string name="metric">Metric</string>
   <string name="imperial">Imperial</string>
   <string name="imperial_us">Imperial (US)</string>
@@ -155,4 +155,9 @@
   <string name="saved_successfully">Saved successfully</string>
   <string name="buy_me_a_coffee">Buy me a coffee</string>
   <string name="language_title">Language</string>
+  <string name="saved">Saved</string>
+  <string name="current">Current</string>
+  <string name="comparison_unit">Comparison Unit</string>
+  <string name="title">Title</string>
+  <string name="last_modified">Last Modified</string>
 </resources>

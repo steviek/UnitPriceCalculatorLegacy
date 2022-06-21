@@ -3,7 +3,7 @@
   <string name="app_name">Unit Price Calculator</string>
 
   <!-- Prompt for a drop-down menu that lets the user pick the unit type e.g. weight, volume -->
-  <string name="unit_type">Unit Type:</string>
+  <string name="unit_type">Unit Type</string>
   <!-- Metric unit system -->
   <string name="metric">Metric</string>
   <!-- General name for imperial unit system. -->
@@ -203,4 +203,7 @@
   <string name="saved_successfully">Saved successfully</string>
   <string name="buy_me_a_coffee">Buy me a coffee</string>
   <string name="language_title">Language</string>
+  <string name="saved">Saved</string>
+  <string name="current">Current</string>
+  <string name="comparison_unit">Comparison Unit</string>
 </resources>

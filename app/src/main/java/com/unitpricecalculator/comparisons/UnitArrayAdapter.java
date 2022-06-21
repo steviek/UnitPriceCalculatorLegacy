@@ -67,7 +67,7 @@ public final class UnitArrayAdapter extends ArrayAdapter<String> {
 
   private UnitArrayAdapter(
       Context context, Pair<ImmutableList<String>, ImmutableList<DefaultUnit>> symbolsAndUnits) {
-    super(context, R.layout.unit_type_spinner_dropdown_item, symbolsAndUnits.first);
+    super(context, R.layout.unit_spinner_dropdown_item, symbolsAndUnits.first);
     this.units = Preconditions.checkNotNull(symbolsAndUnits.second);
   }
 

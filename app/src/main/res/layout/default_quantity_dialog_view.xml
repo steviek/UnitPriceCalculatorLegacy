@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:orientation="horizontal"
-  android:gravity="center"
-  android:paddingTop="16dp"
-  android:paddingBottom="16dp">
-
-  <EditText
-    android:id="@+id/amount_edit_text"
-    style="@style/RowEditText"
-    android:gravity="center_horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minWidth="@dimen/header_column_4"
-    android:inputType="numberDecimal"
-    android:importantForAutofill="no"
-    tools:text="1"/>
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
 
-  <Spinner
-    android:id="@+id/unit_spinner"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="end|center_vertical"
-    android:minWidth="@dimen/settings_unit_spinner_min_width"/>
+    <EditText
+        android:id="@+id/amount_edit_text"
+        style="@style/RowEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:minWidth="@dimen/header_column_4"
+        tools:text="1" />
+
+    <Spinner
+        android:id="@+id/unit_spinner"
+        android:popupBackground="@drawable/spinner_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:minWidth="@dimen/settings_unit_spinner_min_width" />
 
 </LinearLayout>

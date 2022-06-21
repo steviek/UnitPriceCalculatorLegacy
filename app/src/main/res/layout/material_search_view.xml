@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/search_view_pill"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_search"
+        app:tint="?attr/colorOnPrimaryContainer"
+        android:importantForAccessibility="no"/>
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:background="@null"
+        android:importantForAutofill="no"
+        android:inputType="textCapSentences"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:hint="@string/search"/>
+
+</LinearLayout>

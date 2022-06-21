@@ -22,7 +22,7 @@ class DefaultQuantityRowView(
   }
 
   fun setData(quantity: Quantity) {
-    val unitTypeName = resources.getString(quantity.unit.unitType.getName())
+    val unitTypeName = resources.getString(quantity.unit.unitType.getLabelResId())
     val quantityAmount = quantity.amount.toLocalizedString()
     val quantitySymbol = quantity.unit.getSymbol(resources)
     summaryTextView.text =

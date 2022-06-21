@@ -2,7 +2,7 @@
 <resources>
   <string name="app_name">Einheitspreis Rechner</string>
 
-  <string name="unit_type">Maßeinheit:</string>
+  <string name="unit_type">Maßeinheit</string>
   <string name="metric">Metrisch</string>
   <string name="imperial">Imperial</string>
   <string name="imperial_us">Imperial (USA)</string>
@@ -142,4 +142,6 @@
   <string name="saved_successfully">Erfolgreich gespeichert</string>
   <string name="buy_me_a_coffee">Kauf mir einen Kaffee</string>
   <string name="language_title">Sprache</string>
+  <string name="saved">Gespeichert</string>
+  <string name="current">Aktuel</string>
 </resources>
