@@ -10,17 +10,13 @@ enum class SavedSortOrder(val serialNumber: Int) {
     TitleAscending(4);
 
     fun toggledByTitle() = when (this) {
-        LastModifiedDescending -> TitleDescending
-        LastModifiedAscending -> TitleAscending
-        TitleDescending -> TitleAscending
+        LastModifiedDescending, LastModifiedAscending, TitleDescending -> TitleAscending
         TitleAscending -> TitleDescending
     }
 
     fun toggledByLastModified() = when (this) {
         LastModifiedDescending -> LastModifiedAscending
-        LastModifiedAscending -> LastModifiedDescending
-        TitleDescending -> LastModifiedDescending
-        TitleAscending -> LastModifiedAscending
+        LastModifiedAscending, TitleDescending, TitleAscending -> LastModifiedDescending
     }
 }
 

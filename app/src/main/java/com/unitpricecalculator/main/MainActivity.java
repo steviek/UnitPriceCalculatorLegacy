@@ -299,13 +299,11 @@ public final class MainActivity extends BaseActivity
       comparisonFragmentState = mComparisonFragment.saveState(this);
     }
 
-    int selectedItemId = R.id.current;
+    int selectedItemId;
     switch (newState) {
       case MAIN:
         if (comparisonFragmentState != null) {
           mComparisonFragment.restoreState(comparisonFragmentState);
-        } else {
-          mComparisonFragment.clear();
         }
         selectedItemId = R.id.current;
         break;
@@ -317,6 +315,8 @@ public final class MainActivity extends BaseActivity
         hideSoftKeyboard();
         selectedItemId = R.id.saved;
         break;
+      default:
+        throw new IllegalStateException("Unexpected state: " + newState);
     }
     currentState = newState;
     getSupportFragmentManager()

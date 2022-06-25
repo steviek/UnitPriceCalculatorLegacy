@@ -74,7 +74,7 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Logger.d("ComparisonFragment onCreateView")
+        Logger.d("ComparisonFragment onCreateView, comparison state was $comparisonState")
         var comparisonState = comparisonState
         if (comparisonState == null) {
             if (savedInstanceState != null) {
@@ -105,19 +105,34 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Logger.d("ComparisonFragment onDestroyView")
+        updateComparisonStateFromView()
+        Logger.d("ComparisonFragment onDestroyView, comparison state is $comparisonState")
         viewState.set(null)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Logger.d("ComparisonFragment onSaveInstanceState")
+        updateComparisonStateFromView()
+        outState[ComparisonKey] = comparisonState
+    }
+
+    private fun updateComparisonStateFromView() {
+        val currentState = viewState.orNull()?.comparisonView?.getCurrentState() ?: return
+        val previousComparisonState = comparisonState ?: return
+        comparisonState = previousComparisonState.copy(currentComparison = currentState)
+        Logger.d("Updated comparison state to $comparisonState")
+    }
+
     override fun saveState(context: Context): ComparisonFragmentState {
+        updateComparisonStateFromView()
         return comparisonState ?: ComparisonFragmentState(comparisonFactory.createComparison())
     }
 
     override fun restoreState(state: ComparisonFragmentState) {
-        val viewState = viewState.orNull() ?: run {
-            comparisonState = state
-            return
-        }
+        Logger.d("restore state $state")
+        comparisonState = state
+        val viewState = viewState.orNull() ?: return
         val comparisonView =
             createAndReplaceComparisonView(viewState.comparisonView, state)
         this.viewState.set(viewState.copy(comparisonView = comparisonView))

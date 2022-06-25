@@ -183,7 +183,6 @@ class SavedFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
         return SavedFragmentBinding.inflate(inflater, container, false)
             .also { viewBinding = it }
             .root
@@ -225,12 +224,18 @@ class SavedFragment : BaseFragment() {
         }
         listView.onItemLongClickListener =
             OnItemLongClickListener { _, longPressedView, position, _ ->
-                if (actionMode != null) return@OnItemLongClickListener false
+                actionMode?.let {
+                    it.finish()
+                    return@OnItemLongClickListener true
+                }
 
                 // Start the CAB using the ActionMode.Callback defined above
                 view.isSelected = true
                 actionMode =
-                    requireActivity().startActionMode(createCallback(position, longPressedView))
+                    longPressedView.startActionMode(
+                        createCallback(position, longPressedView),
+                        ActionMode.TYPE_FLOATING
+                    )
                 true
             }
         refreshDisplayedComparisons()
@@ -255,6 +260,7 @@ class SavedFragment : BaseFragment() {
 
             val popupMenu = PopupMenu(button.context, button)
             popupMenu.inflate(R.menu.menu_saved_comparisons)
+            popupMenu.menu.findItem(R.id.action_export).isEnabled = savedComparisons.isNotEmpty()
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_export -> {
@@ -294,34 +300,8 @@ class SavedFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         bus.unregister(this)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        val activity = baseActivity ?: return
-        val actionBar = activity.supportActionBar ?: return
-        activity.menuInflater.inflate(R.menu.menu_saved_comparisons, menu)
-
-        actionBar.customView = null
-        actionBar.setDisplayShowCustomEnabled(false)
-        activity.setTitle(R.string.saved_comparisons)
-
-
-        menu.findItem(R.id.action_export).isEnabled = savedComparisons.isNotEmpty()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_export -> {
-                exportManager.startExport(savedComparisons)
-                true
-            }
-            R.id.action_import -> {
-                importManager.startImport()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        actionMode?.finish()
+        actionMode = null
     }
 
     @Subscribe
@@ -329,7 +309,6 @@ class SavedFragment : BaseFragment() {
         savedComparisons.clear()
         savedComparisons.addAll(savedComparisonManager.savedComparisons)
         refreshDisplayedComparisons()
-        activity?.invalidateOptionsMenu()
     }
 
     private fun syncViews() = viewBinding?.apply {
