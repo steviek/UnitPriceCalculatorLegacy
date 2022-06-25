@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.EditText
+import android.widget.PopupMenu
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.otto.Bus
@@ -81,6 +82,7 @@ class SavedFragment : BaseFragment() {
     private var actionMode: ActionMode? = null
     private var viewBinding: SavedFragmentBinding? = null
     private var storedCollators: StoredCollator? = null
+    private var optionsPopupMenu: PopupMenu? = null
 
     private fun createCallback(selectedPosition: Int, view: View) = object : ActionMode.Callback {
         override fun onCreateActionMode(
@@ -242,6 +244,33 @@ class SavedFragment : BaseFragment() {
         binding.lastModifiedButton.setOnClickListener {
             prefs.savedSortOrder = prefs.savedSortOrder.toggledByLastModified()
             syncViews()
+        }
+
+        binding.optionsButton.setOnClickListener { button ->
+            optionsPopupMenu?.let {
+                it.dismiss()
+                optionsPopupMenu = null
+                return@setOnClickListener
+            }
+
+            val popupMenu = PopupMenu(button.context, button)
+            popupMenu.inflate(R.menu.menu_saved_comparisons)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_export -> {
+                        exportManager.startExport(savedComparisons)
+                        true
+                    }
+                    R.id.action_import -> {
+                        importManager.startImport()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.setOnDismissListener { optionsPopupMenu = null }
+            popupMenu.show()
+            optionsPopupMenu = popupMenu
         }
 
         syncViews()

@@ -9,6 +9,7 @@
     </style>
 
     <style name="RowItem">
+        <item name="android:saveEnabled">false</item>
         <item name="android:layout_gravity">center</item>
     </style>
 
@@ -28,6 +29,7 @@
     </style>
 
     <style name="RowEditText" parent="RowTextView">
+        <item name="android:saveEnabled">false</item>
     </style>
 
     <style name="RowTextInputEditText">

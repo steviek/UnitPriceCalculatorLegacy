@@ -155,7 +155,7 @@ class SettingsFragment : BaseFragment() {
     defaultQuantityViews.set(defaultQuantityRowViews)
 
     view.findViewById<CompoundButton>(R.id.percentages).let {
-      it.isChecked = prefs.getBoolean(Keys.SHOW_PERCENTAGE)
+      it.isChecked = prefs.getBoolean(Keys.SHOW_PERCENTAGE) == true
       it.setOnCheckedChangeListener { _, isChecked ->
         prefs.putBoolean(Keys.SHOW_PERCENTAGE, isChecked)
       }

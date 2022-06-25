@@ -93,7 +93,7 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
 
         return ComparisonFragmentBinding.inflate(inflater, container, false).root.also {
             val comparisonView =
-                createAndReplaceComparisonView(it, comparisonState.currentComparison)
+                createAndReplaceComparisonView(it, comparisonState)
             viewState.set(
                 ViewState(
                     viewContainer = it,
@@ -109,14 +109,6 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
         viewState.set(null)
     }
 
-    override fun onSave() {
-        save()
-    }
-
-    override fun onClear() {
-        clear()
-    }
-
     override fun saveState(context: Context): ComparisonFragmentState {
         return comparisonState ?: ComparisonFragmentState(comparisonFactory.createComparison())
     }
@@ -127,23 +119,25 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
             return
         }
         val comparisonView =
-            createAndReplaceComparisonView(viewState.comparisonView, state.currentComparison)
+            createAndReplaceComparisonView(viewState.comparisonView, state)
         this.viewState.set(viewState.copy(comparisonView = comparisonView))
     }
 
-    fun clear() {
+    override fun clear() {
         val newComparison = comparisonFactory.createComparison()
-        comparisonState = ComparisonFragmentState(newComparison)
+        val newComparisonState = ComparisonFragmentState(newComparison)
+        comparisonState = newComparisonState
 
         val viewState = viewState.orNull() ?: return
 
         Logger.d("Clear comparison page")
-        val comparisonView = createAndReplaceComparisonView(viewState.viewContainer, newComparison)
+        val comparisonView =
+            createAndReplaceComparisonView(viewState.viewContainer, newComparisonState)
 
         this.viewState.set(viewState.copy(comparisonView = comparisonView))
     }
 
-    fun save() {
+    override fun save() {
         Logger.d("Start save")
         val context = context ?: return
         val currentState = viewState.orNull()?.comparisonView?.getCurrentState() ?: return
@@ -197,11 +191,16 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
 
     private fun createAndReplaceComparisonView(
         container: ViewGroup,
-        comparison: SavedComparison
+        comparisonState: ComparisonFragmentState,
     ): ComparisonView {
+        Logger.d("createAndReplaceComparisonView - $comparisonState")
+        val previousComparisonView = viewState.orNull()?.comparisonView
+        previousComparisonView?.listener = null
         container.removeAllViewsInLayout()
-        val comparisonView = ComparisonView(container.context, comparison)
+        val (comparison, lastSavedComparison) = comparisonState
+        val comparisonView = ComparisonView(container.context, comparison, lastSavedComparison)
         container.addView(comparisonView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
+        comparisonView.listener = this
         return comparisonView
     }
 
@@ -221,7 +220,7 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
         val comparisonView = viewState.comparisonView
 
         comparisonView.setTitle(comparison.name)
-        comparisonView.lastSavedComparison = lastSavedComparison
+        comparisonView.setLastSavedComparison(lastSavedComparison)
     }
 
     private data class ViewState(val viewContainer: FrameLayout, val comparisonView: ComparisonView)

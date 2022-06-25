@@ -2,6 +2,8 @@ package com.unitpricecalculator.comparisons
 
 import android.os.Parcelable
 import com.unitpricecalculator.unit.DefaultUnit
+import com.unitpricecalculator.util.logger.Logger
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,8 +13,9 @@ data class SavedUnitEntryRow(
     val size: String,
     val unit: DefaultUnit,
     val note: String?
-): Parcelable {
-    val isEmpty: Boolean
-        get() = cost.isNotEmpty() || quantity.isNotEmpty() || size.isNotEmpty() ||
-                !note.isNullOrEmpty()
+) : Parcelable {
+    @IgnoredOnParcel
+    val isEmpty =
+        cost.isEmpty() && quantity.isEmpty() && size.isEmpty() && note.isNullOrEmpty()
+
 }

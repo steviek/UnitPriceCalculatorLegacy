@@ -5,6 +5,7 @@ import com.unitpricecalculator.currency.Currencies
 import com.unitpricecalculator.unit.DefaultUnit
 import com.unitpricecalculator.unit.UnitType
 import com.unitpricecalculator.unit.Units
+import com.unitpricecalculator.util.logger.Logger
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.util.Currency

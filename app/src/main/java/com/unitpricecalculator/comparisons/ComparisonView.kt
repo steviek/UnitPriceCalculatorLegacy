@@ -45,7 +45,6 @@ import com.unitpricecalculator.unit.UnitEntry
 import com.unitpricecalculator.unit.UnitType
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.NumberUtils
-import com.unitpricecalculator.util.abstracts.AbstractOnItemSelectedListener
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import com.unitpricecalculator.util.addLocalizedKeyListener
 import com.unitpricecalculator.util.afterTextChanged
@@ -71,7 +70,8 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class ComparisonView(
     context: Context,
-    initialComparison: SavedComparison
+    initialComparison: SavedComparison,
+    private var lastSavedComparison: SavedComparison?
 ) : FrameLayout(context), OnUnitEntryChangedListener {
 
     var comparisonKey = initialComparison.key
@@ -103,16 +103,26 @@ class ComparisonView(
     private var actionModePosition = -1
 
     private val nameTextWatcher = object : AbstractTextWatcher() {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            Logger.d("Name: Before text changed in $this: s=$s, start=$start, count=$count, after=$after")
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            Logger.d("Name: onTextChanged in $this: s=$s, start=$start, count=$count, before=$before")
+        }
+
         override fun afterTextChanged(s: Editable?) {
+            Logger.d("Name: afterTextChanged in $this: s=$s")
             syncViews()
         }
     }
 
     init {
+        Logger.d("Create Comparison view for $initialComparison")
         with(binding) {
             scrollView.setOnClickListener { actionMode?.finish() }
-            saveButton.setOnClickListener { listener?.onSave() }
-            clearButton.setOnClickListener { listener?.onClear() }
+            saveButton.setOnClickListener { listener?.save() }
+            clearButton.setOnClickListener { listener?.clear() }
             nameEditText.setText(initialComparison.name)
             nameEditText.setOnKeyListener { v, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -202,6 +212,7 @@ class ComparisonView(
             initialComparison.savedUnitEntryRows.forEach { addRowView(it) }
         }
 
+        syncViews()
     }
 
     override fun onAttachedToWindow() {
@@ -245,12 +256,12 @@ class ComparisonView(
     }
 
     var listener: ComparisonViewListener? = null
-    var lastSavedComparison: SavedComparison? = null
-        set(value) {
-            if (field == value) return
-            field = value
-            syncViews()
-        }
+
+    fun setLastSavedComparison(comparison: SavedComparison?) {
+        if (comparison == lastSavedComparison) return
+        lastSavedComparison = comparison
+        syncViews()
+    }
 
     fun setTitle(title: String?) = with(binding) {
         if (nameEditText.text.toString() == (title ?: "")) return
@@ -669,8 +680,8 @@ class ComparisonView(
     )
 
     interface ComparisonViewListener {
-        fun onSave()
+        fun save()
 
-        fun onClear()
+        fun clear()
     }
 }

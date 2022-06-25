@@ -340,6 +340,7 @@ public final class MainActivity extends BaseActivity
         units.setCurrency(currency.get());
       }
     }
+    units.setCurrentUnitType(comparison.getUnitType());
     comparisonFragmentState = new ComparisonFragmentState(comparison, comparison);
     changeState(State.MAIN);
   }

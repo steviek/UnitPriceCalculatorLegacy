@@ -40,6 +40,7 @@
             android:maxLines="1"
             android:imeOptions="actionDone"
             android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:saveEnabled="false"
             app:layout_constraintTop_toTopOf="@id/clear_button"
             app:layout_constraintBottom_toBottomOf="@id/clear_button"
             app:layout_constraintStart_toEndOf="@id/clear_button"
@@ -79,6 +80,7 @@
                     android:focusable="false"
                     android:importantForAccessibility="no"
                     android:inputType="none"
+                    android:saveEnabled="false"
                     android:text=" "
                     tools:text="Volume" />
 

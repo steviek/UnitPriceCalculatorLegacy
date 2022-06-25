@@ -160,4 +160,5 @@
   <string name="comparison_unit">Comparison Unit</string>
   <string name="title">Title</string>
   <string name="last_modified">Last Modified</string>
+  <string name="options">Options</string>
 </resources>
