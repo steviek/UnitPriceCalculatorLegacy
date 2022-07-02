@@ -7,7 +7,8 @@ public enum System {
     METRIC(R.string.metric),
     IMPERIAL(R.string.imperial),
     IMPERIAL_UK(R.string.imperial_uk),
-    IMPERIAL_US(R.string.imperial_us);
+    IMPERIAL_US(R.string.imperial_us),
+    NEUTRAL(R.string.metric);
 
     private final int name;
 
@@ -20,7 +21,9 @@ public enum System {
     }
 
     public boolean is(System other) {
-        if (this == METRIC) {
+        if (this == NEUTRAL || other == NEUTRAL) {
+            return true;
+        } else if (this == METRIC) {
             return other == METRIC;
         } else if (this == IMPERIAL) {
             return other != METRIC;

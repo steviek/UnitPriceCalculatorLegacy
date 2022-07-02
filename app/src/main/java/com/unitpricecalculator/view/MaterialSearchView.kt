@@ -16,6 +16,12 @@ class MaterialSearchView(context: Context, attrs: AttributeSet?) : FrameLayout(c
 
     var queryChangedListener: OnSearchQueryChangedListener? = null
 
+    var query: CharSequence
+        get() = binding.input.text
+        set(value) {
+            binding.input.setText(value)
+        }
+
     init {
         addView(binding.root)
         binding.input.addTextChangedListener(object : TextWatcher {

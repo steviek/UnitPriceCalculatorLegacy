@@ -40,6 +40,7 @@ import com.unitpricecalculator.events.UnitTypeChangedEvent;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
+import com.unitpricecalculator.unit.UnitFormatter;
 import com.unitpricecalculator.unit.Units;
 import com.unitpricecalculator.util.Consumer;
 import com.unitpricecalculator.util.Localization;
@@ -69,6 +70,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   UnitArrayAdapterFactory unitArrayAdapterFactory;
   @Inject
   Bus bus;
+  @Inject
+  UnitFormatter unitFormatter;
 
   private TextView mRowNumberTextView;
   private EditText mCostEditText;
@@ -499,16 +502,9 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
     String formattedPricePer = units.getFormatter().apply(pricePer);
 
-    if (baseSize == 1) {
-      return getResources().getString(R.string.m_per_u,
-          formattedPricePer,
-          baseUnit.getSymbol(getResources()));
-    } else {
-      return getResources().getString(R.string.m_per_s_u,
-          formattedPricePer,
-          mLastCompareUnit.getSize(),
-          baseUnit.getSymbol(getResources()));
-    }
+    return getResources().getString(R.string.m_per_u,
+        formattedPricePer,
+        unitFormatter.format((DefaultUnit) baseUnit, baseSize, mLastCompareUnit.getSize()));
   }
 
   public interface OnUnitEntryChangedListener {

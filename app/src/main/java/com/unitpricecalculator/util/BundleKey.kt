@@ -13,3 +13,9 @@ operator fun <P : Parcelable> Bundle.get(key: ParcelableBundleKey<P>): P? {
 operator fun <P : Parcelable> Bundle.set(key: ParcelableBundleKey<P>, value: P?) {
     putParcelable(key.key, value)
 }
+
+data class StringBundleKey(val key: String)
+
+operator fun Bundle.get(key: StringBundleKey): String? = getString(key.key)
+
+operator fun Bundle.set(key: StringBundleKey, value: String?) = putString(key.key, value)

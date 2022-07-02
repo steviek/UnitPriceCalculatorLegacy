@@ -208,6 +208,7 @@
                     android:gravity="center"
                     android:background="@null"
                     android:importantForAutofill="no"
+                    android:saveEnabled="false"
                     android:hint="1"
                     android:inputType="numberDecimal" />
 
@@ -219,7 +220,8 @@
                     android:id="@+id/final_spinner"
                     android:layout_width="@dimen/header_column_5"
                     android:layout_height="wrap_content"
-                    android:popupBackground="@drawable/spinner_background"/>
+                    android:popupBackground="@drawable/spinner_background"
+                    android:saveEnabled="false"/>
 
             </LinearLayout>
 

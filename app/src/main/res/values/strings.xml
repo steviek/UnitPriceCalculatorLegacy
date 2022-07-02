@@ -85,12 +85,25 @@
 
   <string name="quantity">Quantity</string>
   <string name="unit_symbol">unit</string>
-  <plurals name="unit_name">
-    <item quantity="one">unit</item>
-    <item quantity="other">units</item>
-  </plurals>
+  <string name="unit_name">{count, plural, =1{unit} other{# units}}</string>
   <string name="dozen_symbol">dozen</string>
-  <string name="dozen_name">dozen</string>
+  <string name="dozen_name">{count, plural, =1{dozen} other{# dozen}}</string>
+
+  <string name="time">Time</string>
+  <string name="day_symbol">day</string>
+  <string name="day_name">{count, plural, =1{day} other{# days}}</string>
+  <string name="week_symbol">wk</string>
+  <string name="week_name">{count, plural, =1{week} other{# weeks}}</string>
+  <string name="month_symbol">mo</string>
+  <string name="month_name">{count, plural, =1{month} other{# months}}</string>
+  <string name="year_symbol">yr</string>
+  <string name="year_name">{count, plural, =1{year} other{# years}}</string>
+  <string name="second_symbol">sec</string>
+  <string name="second_name">{count, plural, =1{second} other{# seconds}}</string>
+  <string name="minute_symbol">min</string>
+  <string name="minute_name">{count, plural, =1{minute} other{# minutes}}</string>
+  <string name="hour_symbol">hr</string>
+  <string name="hour_name">{count, plural, =1{hour} other{# hours}}</string>
 
 
   <!-- AREA -->
@@ -98,16 +111,10 @@
   <string name="square_metre_symbol">m\u00B2</string>
   <string name="square_centimetre_symbol">cm\u00B2</string>
   <string name="square_millimetre_symbol">mm\u00B2</string>
-  <plurals name="square_millimetre_name">
-    <item quantity="one">mm\u00B2</item>
-    <item quantity="other">mm\u00B2</item>
-  </plurals>
+  <string name="square_millimetre_name">{count, plural, other{# mm\u00B2}}</string>
   <string name="square_kilometre_symbol">km\u00B2</string>
   <string name="are_symbol">a</string>
-  <plurals name="are_name">
-    <item quantity="one">are</item>
-    <item quantity="other">ares</item>
-  </plurals>
+  <string name="are_name">{count, plural, =1{are} other{# ares}}</string>
   <string name="hectare_symbol">ha</string>
   <string name="acre_symbol">ac</string>
   <string name="square_foot_symbol">ft\u00B2</string>

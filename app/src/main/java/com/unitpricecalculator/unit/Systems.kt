@@ -41,15 +41,15 @@ class Systems @Inject internal constructor(private val prefs: Prefs, private val
     }
 
   private var _includedSystems: Set<System> =
-    prefs.getStringSet(Keys.INCLUDED_SYSTEMS, fallback = null)
+    (prefs.getStringSet(Keys.INCLUDED_SYSTEMS, fallback = null)
       ?.map(System::valueOf)
       ?.toSet()
-      ?: setOf(METRIC, IMPERIAL_US, IMPERIAL_UK)
+      ?: setOf(METRIC, IMPERIAL_US, IMPERIAL_UK)) + NEUTRAL
   var includedSystems: Set<System>
     get() = _includedSystems
     set(value) {
       require(value.isNotEmpty())
-      _includedSystems = value
+      _includedSystems = value + NEUTRAL
       prefs.putStringSet(Keys.INCLUDED_SYSTEMS, value.map { it.name }.toSet())
       bus.post(SystemChangedEvent(preferredOrder, includedSystems))
     }

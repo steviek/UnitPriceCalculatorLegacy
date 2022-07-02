@@ -36,8 +36,11 @@ import com.unitpricecalculator.export.ImportManager
 import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.CachingCollator
+import com.unitpricecalculator.util.StringBundleKey
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
+import com.unitpricecalculator.util.get
 import com.unitpricecalculator.util.prefs.Prefs
+import com.unitpricecalculator.util.set
 import com.unitpricecalculator.util.setDrawableEnd
 import com.unitpricecalculator.util.setDrawableStart
 import com.unitpricecalculator.util.stripAccents
@@ -83,6 +86,7 @@ class SavedFragment : BaseFragment() {
     private var viewBinding: SavedFragmentBinding? = null
     private var storedCollators: StoredCollator? = null
     private var optionsPopupMenu: PopupMenu? = null
+    private var queryText: String? = null
 
     private fun createCallback(selectedPosition: Int, view: View) = object : ActionMode.Callback {
         override fun onCreateActionMode(
@@ -192,7 +196,10 @@ class SavedFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = SavedFragmentBinding.bind(view)
 
+        val savedQuery = queryText ?: savedInstanceState?.get(SearchTextKey)
+
         val searchView = binding.searchView
+        searchView.query = savedQuery ?: ""
         searchView.queryChangedListener = OnSearchQueryChangedListener { query ->
             filter = if (query.isBlank()) {
                 { true }
@@ -282,8 +289,17 @@ class SavedFragment : BaseFragment() {
         syncViews()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewBinding?.apply {
+            queryText = searchView.query.toString()
+        }
+        outState[SearchTextKey] = queryText
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        queryText = viewBinding?.searchView?.query?.toString()
         viewBinding = null
     }
 
@@ -376,11 +392,15 @@ class SavedFragment : BaseFragment() {
             storedCollators.collator.compare(o1, o2) * (if (ascending) 1 else -1)
         }
     }
-    private class StoredCollator(val locale: Locale, ) {
+    private class StoredCollator(val locale: Locale) {
         val collator = CachingCollator<SavedComparison>(locale) { it.name }
     }
 
     interface Callback {
         fun onLoadSavedComparison(comparison: SavedComparison)
+    }
+
+    private companion object {
+        val SearchTextKey = StringBundleKey("key-search-text")
     }
 }

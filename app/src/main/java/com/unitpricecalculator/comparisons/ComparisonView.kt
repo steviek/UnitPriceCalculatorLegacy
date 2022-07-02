@@ -40,8 +40,10 @@ import com.unitpricecalculator.events.CurrencyChangedEvent
 import com.unitpricecalculator.events.NoteChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.events.UnitTypeChangedEvent
+import com.unitpricecalculator.unit.DefaultUnit
 import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
+import com.unitpricecalculator.unit.UnitFormatter
 import com.unitpricecalculator.unit.UnitType
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.NumberUtils
@@ -93,6 +95,9 @@ class ComparisonView(
 
     @Inject
     internal lateinit var bus: Bus
+
+    @Inject
+    internal lateinit var unitFormatter: UnitFormatter
 
     private val binding: ComparisonViewBinding = run {
         val layoutInflater = LayoutInflater.from(context)
@@ -614,59 +619,40 @@ class ComparisonView(
         val compareSize = compareUnitChangedEvent.size
         val formatter = units.formatter
         val formattedEntryCostString = formatter.apply(unitEntry.cost)
-        val unitEntrySymbol = unitEntry.unit.getSymbol(resources)
-        if (unitEntry.quantity == 1 && unitEntry.sizeString == "1") {
-            message.append(getString(string.m_per_u, formattedEntryCostString, unitEntrySymbol))
-        } else if (unitEntry.quantity == 1) {
-            message.append(
-                getString(
-                    string.m_per_s_u,
-                    formattedEntryCostString,
-                    unitEntry.sizeString,
-                    unitEntrySymbol
-                )
+        val formattedUnit =
+            unitFormatter.format(
+                unitEntry.unit as DefaultUnit,
+                unitEntry.size,
+                unitEntry.sizeString,
             )
+        if (unitEntry.quantityString?.toDoubleOrNull() == 1.0) {
+            message.append(getString(string.m_per_u, formattedEntryCostString, formattedUnit))
         } else {
             message.append(
                 getString(
-                    string.m_per_qxs_u, formattedEntryCostString, unitEntry.quantityString,
-                    unitEntry.sizeString, unitEntrySymbol
+                    string.m_per_qxu,
+                    formattedEntryCostString,
+                    unitEntry.quantityString,
+                    formattedUnit
                 )
             )
         }
         message.append(" = ")
         val formattedCompareUnitCost = formatter
             .apply(unitEntry.pricePer(compareSize.parseDoubleOrThrow(), compareUnit))
-        val compareUnitSymbol = compareUnit.getSymbol(resources)
-        if (compareSize == "1") {
-            message
-                .append(getString(string.m_per_u, formattedCompareUnitCost, compareUnitSymbol))
-        } else {
-            message.append(
-                getString(
-                    string.m_per_s_u,
-                    formattedCompareUnitCost,
-                    compareSize,
-                    compareUnitSymbol
-                )
+        val formattedCompareUnit =
+            unitFormatter.format(
+                compareUnit as DefaultUnit,
+                compareSize.toDoubleOrNull() ?: 1.0,
+                compareSize
             )
-        }
+        message
+            .append(getString(string.m_per_u, formattedCompareUnitCost, formattedCompareUnit))
         message.append("\n")
 
         if (prefs[ShowPercentage] == true && best !== unitEntry) {
-            val formattedPercentage = if (Build.VERSION.SDK_INT >= 24) {
-                val percent = (unitEntry.pricePerBaseUnit / best.pricePerBaseUnit) - 1
-                NumberFormat.getPercentInstance().format(percent)
-            } else {
-                val percent = 100 * ((unitEntry.pricePerBaseUnit / best.pricePerBaseUnit) - 1)
-                val roundedPercent = when {
-                    percent.isIntegral() -> percent
-                    percent < 1 -> percent
-                    percent >= 100 -> percent.roundToInt().toDouble()
-                    else -> (percent * 100).toInt() / 100.00
-                }
-                roundedPercent.toLocalizedString() + "%"
-            }
+            val percent = (unitEntry.pricePerBaseUnit / best.pricePerBaseUnit) - 1
+            val formattedPercentage = NumberFormat.getPercentInstance().format(percent)
             message.append("(+").append(formattedPercentage).append(")").append("\n")
         }
 
