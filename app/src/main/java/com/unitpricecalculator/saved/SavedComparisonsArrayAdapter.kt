@@ -14,6 +14,7 @@ import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.parseDoubleOrNull
+import java.util.Currency
 
 class SavedComparisonsArrayAdapter(
   context: Context,
@@ -56,7 +57,10 @@ class SavedComparisonsArrayAdapter(
     } else {
       viewHolder.subtitle.visibility = View.VISIBLE
       viewHolder.subtitle.text =
-        context.getString(R.string.saved_comparison_subtitle, bestRow.getSummaryText())
+        context.getString(
+          R.string.saved_comparison_subtitle,
+          bestRow.getSummaryText(comparison.currency)
+        )
     }
 
     return view
@@ -80,11 +84,11 @@ class SavedComparisonsArrayAdapter(
     }.minByOrNull { it.second }?.first
   }
 
-  private fun SavedUnitEntryRow.getSummaryText(): String {
+  private fun SavedUnitEntryRow.getSummaryText(currency: Currency?): String {
     val cost = this.cost.parseDoubleOrNull() ?: 1.0
     val quantity = this.quantity.parseDoubleOrNull() ?: 1.0
     val size = this.quantity.parseDoubleOrNull() ?: 1.0
-    val formattedPrice = units.formatter.apply(cost)
+    val formattedPrice = units.getCostFormatter(currency).format(cost)
     val rawSummary = when{
       quantity == 1.0 && size == 1.0 -> {
         context.getString(

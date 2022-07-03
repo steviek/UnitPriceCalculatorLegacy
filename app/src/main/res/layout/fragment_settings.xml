@@ -1,103 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:layoutDirection="locale"
-  android:textDirection="locale">
-
-  <LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <com.unitpricecalculator.settings.SettingsItemView
-      android:id="@+id/change_currency"
-      style="@style/SettingsItem"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:title="@string/currency_header"/>
-
-    <com.unitpricecalculator.settings.SettingsItemView
-      android:id="@+id/dark_mode"
-      style="@style/SettingsItem"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:title="@string/dark_mode"/>
-
-    <com.unitpricecalculator.settings.SettingsItemView
-      android:id="@+id/initial_screen"
-      style="@style/SettingsItem"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:title="@string/initial_screen"/>
+    android:layout_height="match_parent"
+    android:layoutDirection="locale"
+    android:textDirection="locale">
 
     <LinearLayout
-      android:id="@+id/default_unit_quantity_parent"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:orientation="vertical">
-
-      <TextView
-        android:id="@+id/default_unit_quantity_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:text="@string/default_unit_quantity"
-        android:textColor="@color/primaryText"
-        android:textSize="18sp"/>
+        android:orientation="vertical">
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/currency_row"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/currency_header" />
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/default_unit_quantities_row"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/default_unit_quantity"
+            tools:subtitle="Volume : 200 mL"/>
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/unit_systems"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/preferred_system" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/percentages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:padding="16dp"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textSize="20sp"
+            android:text="@string/show_percentages" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/dark_mode"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/dark_mode" />
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/initial_screen"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/initial_screen" />
+
+        <com.unitpricecalculator.settings.SettingsItemView
+            android:id="@+id/language"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@string/language_title" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:flexWrap="wrap"
+            app:alignItems="stretch"
+            app:alignContent="stretch"
+            app:justifyContent="space_evenly">
+
+            <Button
+                android:id="@+id/rate_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/rate_app" />
+
+            <Button
+                android:id="@+id/feedback_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/send_feedback" />
+
+            <Button
+                android:id="@+id/buy_coffee_button"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/buy_me_a_coffee" />
+
+        </com.google.android.flexbox.FlexboxLayout>
 
     </LinearLayout>
-
-    <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingBottom="4dp"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
-      android:paddingTop="16dp"
-      android:text="@string/preferred_system"
-      android:textColor="@color/primaryText"
-      android:textSize="18sp"/>
-
-    <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingBottom="8dp"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
-      android:paddingTop="4dp"
-      android:text="@string/drag_and_drop_prompt"
-      android:textColor="@color/secondaryText"
-      android:textSize="14sp"/>
-
-    <com.unitpricecalculator.view.DragLinearLayout
-      android:id="@+id/drag_linear_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"/>
-
-    <androidx.appcompat.widget.SwitchCompat
-      android:id="@+id/percentages"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:minHeight="56dp"
-      android:padding="16dp"
-      android:text="@string/show_percentages"
-      android:textColor="@color/primaryText"
-      android:textSize="18sp"
-      android:gravity="center_vertical"/>
-
-    <com.unitpricecalculator.settings.SettingsItemView
-        android:id="@+id/language"
-        style="@style/SettingsItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:title="@string/language_title"/>
-
-  </LinearLayout>
 
 </ScrollView>

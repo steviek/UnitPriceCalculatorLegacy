@@ -618,7 +618,7 @@ class ComparisonView(
         val compareUnit = compareUnitChangedEvent.unit
         val compareSize = compareUnitChangedEvent.size
         val formatter = units.formatter
-        val formattedEntryCostString = formatter.apply(unitEntry.cost)
+        val formattedEntryCostString = formatter.format(unitEntry.cost)
         val formattedUnit =
             unitFormatter.format(
                 unitEntry.unit as DefaultUnit,
@@ -639,7 +639,7 @@ class ComparisonView(
         }
         message.append(" = ")
         val formattedCompareUnitCost = formatter
-            .apply(unitEntry.pricePer(compareSize.parseDoubleOrThrow(), compareUnit))
+            .format(unitEntry.pricePer(compareSize.parseDoubleOrThrow(), compareUnit))
         val formattedCompareUnit =
             unitFormatter.format(
                 compareUnit as DefaultUnit,

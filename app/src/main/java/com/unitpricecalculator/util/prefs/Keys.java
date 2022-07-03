@@ -9,5 +9,4 @@ public final class Keys {
   public static final String LEGACY_SAVED_STATES = "saved-states";
   public static final String HAS_CLICKED_SAVE = "has-clicked-save";
   public static final String INITIAL_SCREEN = "initial-screen";
-  public static final String SHOW_PERCENTAGE = "show-percentage";
 }

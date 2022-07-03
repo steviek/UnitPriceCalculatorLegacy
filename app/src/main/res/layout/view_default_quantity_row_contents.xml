@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <TextView
-    android:id="@+id/summary"
-    style="@style/RowTextView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="start|center_vertical"
-    android:textColor="@color/secondaryText"/>
+    <TextView
+        android:id="@+id/summary"
+        style="@style/RowTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:textAppearance="?attr/textAppearanceBodyMedium"/>
 
 </merge>

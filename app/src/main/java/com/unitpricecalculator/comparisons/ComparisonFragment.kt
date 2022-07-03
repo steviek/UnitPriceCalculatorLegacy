@@ -64,7 +64,7 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
     internal lateinit var savedComparisonManager: SavedComparisonManager
 
     @Inject
-    lateinit var comparisonFactory: ComparisonFactory
+    internal lateinit var comparisonFactory: ComparisonFactory
 
     private var comparisonState: ComparisonFragmentState? = null
     private var viewState = MutableSometimes.create<ViewState>()
@@ -124,9 +124,9 @@ class ComparisonFragment : BaseFragment(), SavesState<ComparisonFragmentState?>,
         Logger.d("Updated comparison state to $comparisonState")
     }
 
-    override fun saveState(context: Context): ComparisonFragmentState {
+    override fun saveState(context: Context): ComparisonFragmentState? {
         updateComparisonStateFromView()
-        return comparisonState ?: ComparisonFragmentState(comparisonFactory.createComparison())
+        return comparisonState
     }
 
     override fun restoreState(state: ComparisonFragmentState) {

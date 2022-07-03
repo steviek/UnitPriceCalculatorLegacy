@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -164,8 +165,9 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     onFinishInflate();
   }
 
+  @NonNull
   @Override
-  public SavedUnitEntryRow saveState(Context context) {
+  public SavedUnitEntryRow saveState(@NonNull Context context) {
     return new SavedUnitEntryRow(
         mCostEditText.getText().toString(),
         mQuantityEditText.getText().toString(),
@@ -500,7 +502,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     double baseSize = Localization.parseDoubleOrThrow(mLastCompareUnit.getSize());
     double pricePer = unitEntry.pricePer(baseSize, baseUnit);
 
-    String formattedPricePer = units.getFormatter().apply(pricePer);
+    String formattedPricePer = units.getFormatter().format(pricePer);
 
     return getResources().getString(R.string.m_per_u,
         formattedPricePer,

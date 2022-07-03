@@ -114,7 +114,7 @@
   <string name="dark_mode_always_dark">Întotdeauna întunecată</string>
   <string name="dark_mode_always_light">Întotdeauna aprins</string>
   <string name="default_unit_quantity">Cantitate unitar standard</string>
-  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s</string>
   <string name="default_quantity_dialog_header">Cantitate standard: %1$s</string>
   <string name="search">Căutați</string>
   <string name="initial_screen">Pagina principala</string>

@@ -13,6 +13,7 @@ import com.unitpricecalculator.unit.Units;
 import dagger.Reusable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +36,7 @@ public final class Currencies {
   public void showChangeCurrencyDialog() {
     Currency currentCurrency = units.getCurrency();
     final List<Currency> currencies = new ArrayList<>(Currency.getAvailableCurrencies());
-    Collections.sort(currencies, (c1, c2) -> c1.getCurrencyCode().compareTo(c2.getCurrencyCode()));
+    currencies.sort(Comparator.comparing(Currency::getCurrencyCode));
 
     int currentCurrencyIndex = -1;
     String[] labels = new String[currencies.size()];

@@ -1,17 +1,22 @@
 package com.unitpricecalculator.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.TextView
+import android.widget.Toast
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.squareup.otto.Bus
 import com.squareup.otto.Subscribe
 import com.unitpricecalculator.BaseFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.currency.Currencies
+import com.unitpricecalculator.databinding.FragmentSettingsBinding
+import com.unitpricecalculator.dialog.DelegatingDialogFragment
+import com.unitpricecalculator.dialog.DialogId
 import com.unitpricecalculator.events.CurrencyChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.initialscreen.InitialScreenChangedEvent
@@ -20,185 +25,198 @@ import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.mode.DarkModeDialogFragment
 import com.unitpricecalculator.mode.DarkModeManager
 import com.unitpricecalculator.mode.DarkModeStateChangedEvent
-import com.unitpricecalculator.unit.DefaultQuantityDialogFragment
 import com.unitpricecalculator.unit.Systems
+import com.unitpricecalculator.unit.UnitFormatter
 import com.unitpricecalculator.unit.UnitType
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.unit.Units.DefaultQuantityChangedEvent
-import com.unitpricecalculator.util.prefs.Keys
 import com.unitpricecalculator.util.prefs.Prefs
+import com.unitpricecalculator.util.prefs.PrefsKeys.ShowPercentage
 import com.unitpricecalculator.util.sometimes.MutableSometimes
-import com.unitpricecalculator.view.DragLinearLayout
+import com.unitpricecalculator.util.toLocalizedString
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.HashSet
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : BaseFragment() {
 
-  @Inject internal lateinit var units: Units
-  @Inject internal lateinit var systems: Systems
-  @Inject internal lateinit var currencies: Currencies
-  @Inject internal lateinit var bus: Bus
-  @Inject internal lateinit var darkModeManager: DarkModeManager
-  @Inject internal lateinit var initialScreenManager: InitialScreenManager
-  @Inject internal lateinit var prefs: Prefs
-  @Inject internal lateinit var localeManager: AppLocaleManager
+    @Inject
+    internal lateinit var units: Units
+    @Inject
+    internal lateinit var systems: Systems
+    @Inject
+    internal lateinit var currencies: Currencies
+    @Inject
+    internal lateinit var bus: Bus
+    @Inject
+    internal lateinit var darkModeManager: DarkModeManager
+    @Inject
+    internal lateinit var initialScreenManager: InitialScreenManager
+    @Inject
+    internal lateinit var prefs: Prefs
+    @Inject
+    internal lateinit var localeManager: AppLocaleManager
+    @Inject
+    internal lateinit var unitFormatter: UnitFormatter
 
-  private val changeCurrency = MutableSometimes.create<SettingsItemView>()
-  private val darkMode = MutableSometimes.create<SettingsItemView>()
-  private val initialScreen = MutableSometimes.create<SettingsItemView>()
-  private val defaultQuantityViews =
-    MutableSometimes.create<Map<UnitType, DefaultQuantityRowView>>()
-  private val percentageToggle = MutableSometimes.create<CompoundButton>()
-  private val language = MutableSometimes.create<SettingsItemView>()
+    private val binding = MutableSometimes.create<FragmentSettingsBinding>()
 
-  override fun onStart() {
-    super.onStart()
-    bus.register(this)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    bus.unregister(this)
-  }
-
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    val view = inflater.inflate(R.layout.fragment_settings, container, false)
-
-    view.findViewById<SettingsItemView>(R.id.change_currency)?.let {
-      it.setOnClickListener { currencies.showChangeCurrencyDialog() }
-      it.subtitle = units.currency.symbol
-      changeCurrency.set(it)
+    override fun onStart() {
+        super.onStart()
+        bus.register(this)
     }
 
-    view.findViewById<SettingsItemView>(R.id.initial_screen)?.let {
-      it.setOnClickListener { initialScreenManager.showDialog(childFragmentManager) }
-      it.setSubtitle(initialScreenManager.initialScreen.labelResId)
-      initialScreen.set(it)
+    override fun onStop() {
+        super.onStop()
+        bus.unregister(this)
     }
 
-    view.findViewById<SettingsItemView>(R.id.language)?.let {
-      it.setOnClickListener { localeManager.showSelectionDialog(childFragmentManager) }
-      it.subtitle = localeManager.current.getDisplayName(requireContext())
-      language.set(it)
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
+        this.binding.set(binding)
 
-    val dragLinearLayout = view.findViewById<DragLinearLayout>(R.id.drag_linear_layout)
+        with(binding) {
+            currencyRow.setOnClickListener { currencies.showChangeCurrencyDialog() }
+            initialScreen.setOnClickListener {
+                initialScreenManager.showDialog(childFragmentManager)
+            }
+            language.setOnClickListener {
+                localeManager.showSelectionDialog(childFragmentManager)
+            }
+            darkMode.setOnClickListener { DarkModeDialogFragment.show(childFragmentManager) }
+            percentages.isChecked = prefs[ShowPercentage] == true
+            percentages.setOnCheckedChangeListener { _, isChecked ->
+                prefs[ShowPercentage] = isChecked
+            }
 
-    val includedSystems = HashSet(systems.includedSystems)
-    for (system in systems.preferredOrder) {
-      val rowView = inflater.inflate(R.layout.list_draggable, dragLinearLayout, false)
-      val text = rowView.findViewById<TextView>(R.id.text)
-      text.text = resources.getString(system.getName())
-      rowView.tag = system
-      dragLinearLayout.addDragView(rowView, rowView.findViewById(R.id.handler))
-      val checkBox = rowView.findViewById<CheckBox>(R.id.checkbox)
-      checkBox.isChecked = includedSystems.contains(system)
-      text.setOnClickListener { checkBox.toggle() }
-      checkBox.setOnCheckedChangeListener { compoundButton, isChecked ->
-        val modificationRequired = isChecked != includedSystems.contains(system)
-        if (!modificationRequired) {
-          return@setOnCheckedChangeListener
+            unitSystems.setOnClickListener {
+                DelegatingDialogFragment.show(childFragmentManager, DialogId.UNIT_SYSTEMS)
+            }
+
+            defaultUnitQuantitiesRow.setOnClickListener {
+                DelegatingDialogFragment.show(childFragmentManager, DialogId.ALL_DEFAULT_QUANTITIES)
+            }
+
+            rateButton.setOnClickListener { view ->
+                val manager = ReviewManagerFactory.create(view.context)
+                val request = manager.requestReviewFlow()
+                request.addOnCompleteListener { task ->
+                    val activity = activity ?: return@addOnCompleteListener
+
+                    if (!task.isSuccessful) {
+                        launchPlayStore()
+                        return@addOnCompleteListener
+                    }
+
+                    val result = task.result
+                    if (result == null) {
+                        launchPlayStore()
+                        return@addOnCompleteListener
+                    }
+
+                    manager.launchReviewFlow(activity, result)
+                }
+            }
+
+            feedbackButton.setOnClickListener {
+                val activity = activity ?: return@setOnClickListener
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "message/rfc822"
+                intent.putExtra(Intent.EXTRA_EMAIL, "sixbynineapps@gmail.com")
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
+                try {
+                    activity.startActivity(
+                        Intent.createChooser(intent, getString(R.string.send_email))
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(activity, R.string.no_email_client, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            buyCoffeeButton.setOnClickListener {
+                val activity = activity ?: return@setOnClickListener
+                val coffeeIntent = Intent(Intent.ACTION_VIEW)
+                    .setData(Uri.parse("https://www.buymeacoffee.com/kideckel"))
+                activity.startActivity(coffeeIntent)
+            }
         }
 
-        if (includedSystems.size == 1 && !isChecked) {
-          // If this is the last unit, don't allow it to be unchecked.
-          compoundButton.toggle()
-          return@setOnCheckedChangeListener
-        }
-
-        if (isChecked) {
-          includedSystems.add(system)
-        } else {
-          includedSystems.remove(system)
-        }
-        systems.includedSystems = includedSystems
-      }
+        syncViews()
+        return binding.root
     }
 
-    dragLinearLayout.setOnViewSwapListener { _, firstPosition, _, secondPosition ->
-      val order = systems.preferredOrder
-      val temp = order[firstPosition]
-      order[firstPosition] = order[secondPosition]
-      order[secondPosition] = temp
-      systems.preferredOrder = order
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.set(null)
     }
 
-    view.findViewById<SettingsItemView>(R.id.dark_mode).let {
-      it.setOnClickListener { DarkModeDialogFragment.show(childFragmentManager) }
-      it.setSubtitle(darkModeManager.currentDarkModeState.labelResId)
-      darkMode.set(it)
+    @Subscribe
+    fun onCurrencyChangedEvent(event: CurrencyChangedEvent) {
+        syncViews()
     }
 
-    val defaultUnitQuantityContainer =
-      view.findViewById<ViewGroup>(R.id.default_unit_quantity_parent)
-    val defaultQuantityRowViews = mutableMapOf<UnitType, DefaultQuantityRowView>()
-    UnitType.values().forEach { unitType ->
-      val rowView =
-        layoutInflater.inflate(
-          R.layout.view_default_quantity_row,
-          defaultUnitQuantityContainer,
-          false
-        ) as DefaultQuantityRowView
-      rowView.setData(units.getDefaultQuantity(unitType))
-      rowView.setOnClickListener {
-        DefaultQuantityDialogFragment.show(childFragmentManager, units.getDefaultQuantity(unitType))
-      }
-      defaultUnitQuantityContainer.addView(rowView)
-      defaultQuantityRowViews[unitType] = rowView
-    }
-    defaultQuantityViews.set(defaultQuantityRowViews)
-
-    view.findViewById<CompoundButton>(R.id.percentages).let {
-      it.isChecked = prefs.getBoolean(Keys.SHOW_PERCENTAGE) == true
-      it.setOnCheckedChangeListener { _, isChecked ->
-        prefs.putBoolean(Keys.SHOW_PERCENTAGE, isChecked)
-      }
-      percentageToggle.set(it)
+    @Subscribe
+    fun onDarkModeStateChanged(event: DarkModeStateChangedEvent) {
+        syncViews()
     }
 
-    return view
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    changeCurrency.set(null)
-    darkMode.set(null)
-    initialScreen.set(null)
-    defaultQuantityViews.set(null)
-  }
-
-  @Subscribe
-  fun onCurrencyChangedEvent(event: CurrencyChangedEvent) {
-    changeCurrency.whenPresent { it.subtitle = event.currency.symbol }
-  }
-
-  @Subscribe
-  fun onDarkModeStateChanged(event: DarkModeStateChangedEvent) {
-    darkMode.whenPresent { it.setSubtitle(event.newState.labelResId) }
-  }
-
-  @Subscribe
-  fun onInitialScreenChanged(event: InitialScreenChangedEvent) {
-    initialScreen.whenPresent { it.setSubtitle(event.newInitialScreen.labelResId) }
-  }
-
-  @Subscribe
-  fun onSystemsChanged(event: SystemChangedEvent) {
-    defaultQuantityViews.whenPresent {
-      it.entries.forEach { (unit, row) -> row.setData(units.getDefaultQuantity(unit)) }
+    @Subscribe
+    fun onInitialScreenChanged(event: InitialScreenChangedEvent) {
+        syncViews()
     }
-  }
 
-  @Subscribe
-  fun onDefaultQuantityChanged(event: DefaultQuantityChangedEvent) {
-    defaultQuantityViews.whenPresent {
-      it.entries.forEach { (unit, row) -> row.setData(units.getDefaultQuantity(unit)) }
+    @Subscribe
+    fun onSystemsChanged(event: SystemChangedEvent) {
+        syncViews()
     }
-  }
+
+    @Subscribe
+    fun onDefaultQuantityChanged(event: DefaultQuantityChangedEvent) {
+        /*defaultQuantityViews.whenPresent {
+          it.entries.forEach { (unit, row) -> row.setData(units.getDefaultQuantity(unit)) }
+        }*/
+        syncViews()
+    }
+
+    private fun syncViews() = binding.orNull()?.apply {
+        darkMode.setSubtitle(darkModeManager.currentDarkModeState.labelResId)
+        currencyRow.subtitle = units.currency.symbol
+        initialScreen.setSubtitle(initialScreenManager.initialScreen.labelResId)
+        language.subtitle = localeManager.current.getDisplayName(root.context)
+
+        val includedSystems = systems.includedSystems
+        unitSystems.subtitle =
+            systems
+                .preferredOrder
+                .filter { it in includedSystems }
+                .joinToString { getString(it.getName()) }
+
+        defaultUnitQuantitiesRow.subtitle =
+            UnitType.values().joinToString(separator = ",\t") { unitType ->
+                val quantity = units.getDefaultQuantity(unitType)
+                val unitTypeName = getString(quantity.unit.unitType.labelResId)
+                val quantityAmount = quantity.amount.toLocalizedString()
+                getString(
+                    R.string.default_unit_quantity_summary_line,
+                    unitTypeName,
+                    unitFormatter.format(quantity.unit, quantity.amount, quantityAmount)
+                )
+            }
+    }
+
+    private fun launchPlayStore() {
+        val activity = activity ?: return
+        val i = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(
+                "https://play.google.com/store/apps/details?id=" +
+                        "com.unitpricecalculator"
+            )
+        )
+        activity.startActivity(i)
+    }
 }

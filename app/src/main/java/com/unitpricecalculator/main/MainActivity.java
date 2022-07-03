@@ -112,7 +112,6 @@ public final class MainActivity extends BaseActivity
       if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
           !savedComparisonManager.getSavedComparisons().isEmpty()) {
         currentState = State.SAVED;
-        viewBinding.bottomNavigation.setSelectedItemId(R.id.saved);
       } else {
         currentState = State.MAIN;
       }
@@ -123,6 +122,17 @@ public final class MainActivity extends BaseActivity
       mComparisonFragment.restoreState(
           objectMapper.fromJson(ComparisonFragmentState.class,
               savedInstanceState.getString("mainFragment")));
+    }
+
+    switch (currentState) {
+      case MAIN:
+        break;
+      case SAVED:
+        viewBinding.bottomNavigation.setSelectedItemId(R.id.saved);
+        break;
+      case SETTINGS:
+        viewBinding.bottomNavigation.setSelectedItemId(R.id.settings);
+        break;
     }
 
     getSupportFragmentManager()
@@ -155,15 +165,16 @@ public final class MainActivity extends BaseActivity
   }
 
   @Override
-  protected void onSaveInstanceState(Bundle outState) {
+  protected void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString("state", currentState.name());
-    if (mComparisonFragment != null) {
-      outState.putString(
-          "mainFragment",
-          objectMapper.toJson(mComparisonFragment.saveState(this)));
 
-    }
+    if (mComparisonFragment == null) return;
+
+    ComparisonFragmentState comparisonFragmentState = mComparisonFragment.saveState(this);
+    if (comparisonFragmentState == null) return;
+
+    outState.putString("mainFragment", objectMapper.toJson(comparisonFragmentState));
   }
 
   @Override

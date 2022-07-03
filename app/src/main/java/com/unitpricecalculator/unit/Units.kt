@@ -20,144 +20,155 @@ import kotlin.math.pow
 /** Collection of utility functions for [Unit]. */
 @Reusable
 class Units @Inject internal constructor(
-  private val prefs: Prefs,
-  private val bus: Bus,
-  private val systems: Systems
+    private val prefs: Prefs,
+    private val bus: Bus,
+    private val systems: Systems
 ) {
 
-  private var _currency: Currency? = null
-  private var costFormatter: Function<Double, String>? = null
+    private val currencyToFormatter = mutableMapOf<String, CostFormatter>()
+    private var _currency: Currency? = null
 
-  var currentUnitType: UnitType
-    get() = UnitType.valueOf(prefs.getNonNullString(Keys.UNIT_TYPE, UnitType.WEIGHT.name))
-    set(unitType) {
-      prefs.putString(Keys.UNIT_TYPE, unitType.name)
-      bus.post(UnitTypeChangedEvent(unitType))
-    }
-
-  val formatter: Function<Double, String>
-    get() = (this.costFormatter ?: createFormatter()).also { this.costFormatter = it }
-
-  fun getUnitsForType(unitType: UnitType): List<DefaultUnit> {
-    return unitMap.getOrPut(unitType) { DefaultUnit.values().filter { it.unitType == unitType } }
-  }
-
-  @JvmOverloads
-  fun getIncludedUnitsForTypeSorted(
-    unitType: UnitType,
-    unitToAlwaysInclude: Unit? = null
-  ): List<DefaultUnit> {
-    val includedSystems = systems.includedSystems
-    val preferredOrder = systems.preferredOrder
-    return getUnitsForType(unitType)
-      .filter {
-        it == unitToAlwaysInclude || it.unitType == QUANTITY || includedSystems.includes(it.system)
-      }
-      .sortedBy {
-        if (it.system == System.IMPERIAL) {
-          if (preferredOrder[0] == System.METRIC) {
-            1
-          } else {
-            0
-          }
-        } else {
-          preferredOrder.indexOf(it.system)
+    var currentUnitType: UnitType
+        get() = UnitType.valueOf(prefs.getNonNullString(Keys.UNIT_TYPE, UnitType.WEIGHT.name))
+        set(unitType) {
+            prefs.putString(Keys.UNIT_TYPE, unitType.name)
+            bus.post(UnitTypeChangedEvent(unitType))
         }
-      }
-  }
 
-  var currency: Currency
-    get() {
-      _currency?.let { return it }
+    val formatter: CostFormatter
+        get() = getCostFormatter()
 
-      costFormatter = null
-
-      return (prefs.getString(KEY_CURRENCY)?.let { Currencies.parseCurrencySafely(it).orNull() }
-        ?: Currencies.getSafeDefaultCurrency())
-        .also {
-          _currency = it
+    fun getCostFormatter(currency: Currency? = null): CostFormatter {
+        val effectiveCurrency = currency ?: this.currency
+        return currencyToFormatter.getOrPut(effectiveCurrency.symbol) {
+            createFormatter(effectiveCurrency)
         }
     }
-    set(value) {
-      this._currency = value
-      this.costFormatter = null
-      prefs.putString(KEY_CURRENCY, value.currencyCode)
+
+    fun getUnitsForType(unitType: UnitType): List<DefaultUnit> {
+        return unitMap.getOrPut(unitType) {
+            DefaultUnit.values().filter { it.unitType == unitType }
+        }
     }
 
-  private fun createFormatter(): Function<Double, String> {
-    val noFractionFormat = NumberFormat.getCurrencyInstance()
-    noFractionFormat.currency = currency
-    noFractionFormat.minimumFractionDigits = 0
-    noFractionFormat.maximumFractionDigits = 0
-
-    val defaultForCurrency = NumberFormat.getCurrencyInstance()
-    defaultForCurrency.currency = currency
-
-    return Function { input ->
-      if (input!!.isIntegral()) {
-        return@Function noFractionFormat.format(input)
-      }
-
-      val lotsOfDigits = NumberFormat.getCurrencyInstance()
-      lotsOfDigits.currency = currency
-      lotsOfDigits.minimumFractionDigits = maxOf(lotsOfDigits.minimumFractionDigits, 2)
-
-      val firstSignificantFractionIndex = input.firstSignificantFractionIndex
-      if (firstSignificantFractionIndex >= 0) {
-        lotsOfDigits.maximumFractionDigits =
-          minOf(
-            8, maxOf(
-            lotsOfDigits.maximumFractionDigits,
-            input.firstSignificantFractionIndex + 4
-          )
-          )
-      } else {
-        lotsOfDigits.maximumFractionDigits = lotsOfDigits.minimumFractionDigits
-      }
-
-      lotsOfDigits.format(input)
-    }
-  }
-
-  private val Double.firstSignificantFractionIndex: Int
-    get() = ((0 until 9).firstOrNull { this >= 10.0.pow(-it.toDouble()) } ?: 9) - 1
-
-  fun getDefaultQuantity(): Quantity {
-    return getDefaultQuantity(currentUnitType)
-  }
-
-  fun getDefaultQuantity(unitType: UnitType): Quantity {
-    val amount = prefs.getDouble(getDefaultQuantityAmountKey(unitType))
-    val unit = prefs.getString(getDefaultQuantityUnitKey(unitType))
-    if (amount == null || unit == null) {
-      val targetUnit = getIncludedUnitsForTypeSorted(unitType).first()
-      return Quantity(targetUnit.defaultQuantity.toDouble(), targetUnit)
+    @JvmOverloads
+    fun getIncludedUnitsForTypeSorted(
+        unitType: UnitType,
+        unitToAlwaysInclude: Unit? = null
+    ): List<DefaultUnit> {
+        val includedSystems = systems.includedSystems
+        val preferredOrder = systems.preferredOrder
+        return getUnitsForType(unitType)
+            .filter {
+                it == unitToAlwaysInclude || it.unitType == QUANTITY || includedSystems.includes(it.system)
+            }
+            .sortedBy {
+                if (it.system == System.IMPERIAL) {
+                    if (preferredOrder[0] == System.METRIC) {
+                        1
+                    } else {
+                        0
+                    }
+                } else {
+                    preferredOrder.indexOf(it.system)
+                }
+            }
     }
 
-    return Quantity(amount, DefaultUnit.valueOf(unit))
-  }
+    var currency: Currency
+        get() {
+            _currency?.let { return it }
 
-  object DefaultQuantityChangedEvent
+            return (prefs.getString(KEY_CURRENCY)
+                ?.let { Currencies.parseCurrencySafely(it).orNull() }
+                ?: Currencies.getSafeDefaultCurrency())
+                .also {
+                    _currency = it
+                }
+        }
+        set(value) {
+            this._currency = value
+            prefs.putString(KEY_CURRENCY, value.currencyCode)
+        }
 
-  fun setDefaultQuantity(unitType: UnitType, quantity: Quantity) {
-    prefs.putDouble(getDefaultQuantityAmountKey(unitType), quantity.amount)
-    prefs.putString(getDefaultQuantityUnitKey(unitType), quantity.unit.name)
-    bus.post(DefaultQuantityChangedEvent)
-    Logger.d("New default quantity: %s, %s", unitType.name, quantity.toString())
-  }
+    private fun createFormatter(currency: Currency): CostFormatter {
+        val noFractionFormat = NumberFormat.getCurrencyInstance()
+        noFractionFormat.currency = currency
+        noFractionFormat.minimumFractionDigits = 0
+        noFractionFormat.maximumFractionDigits = 0
 
-  companion object {
+        val defaultForCurrency = NumberFormat.getCurrencyInstance()
+        defaultForCurrency.currency = currency
 
-    private const val KEY_CURRENCY = "currency"
+        return CostFormatter { input ->
+            if (input.isIntegral()) {
+                return@CostFormatter noFractionFormat.format(input)
+            }
 
-    private val unitMap = ArrayMap<UnitType, List<DefaultUnit>>()
+            val lotsOfDigits = NumberFormat.getCurrencyInstance()
+            lotsOfDigits.currency = currency
+            lotsOfDigits.minimumFractionDigits = maxOf(lotsOfDigits.minimumFractionDigits, 2)
 
-    private fun getDefaultQuantityAmountKey(unitType: UnitType): String {
-      return "default_quantity_amount:${unitType.name}"
+            val firstSignificantFractionIndex = input.firstSignificantFractionIndex
+            if (firstSignificantFractionIndex >= 0) {
+                lotsOfDigits.maximumFractionDigits =
+                    minOf(
+                        8, maxOf(
+                            lotsOfDigits.maximumFractionDigits,
+                            input.firstSignificantFractionIndex + 4
+                        )
+                    )
+            } else {
+                lotsOfDigits.maximumFractionDigits = lotsOfDigits.minimumFractionDigits
+            }
+
+            lotsOfDigits.format(input)
+        }
     }
 
-    private fun getDefaultQuantityUnitKey(unitType: UnitType): String {
-      return "default_quantity_unit:${unitType.name}"
+    private val Double.firstSignificantFractionIndex: Int
+        get() = ((0 until 9).firstOrNull { this >= 10.0.pow(-it.toDouble()) } ?: 9) - 1
+
+    fun getDefaultQuantity(): Quantity {
+        return getDefaultQuantity(currentUnitType)
     }
-  }
+
+    fun getDefaultQuantity(unitType: UnitType): Quantity {
+        val amount = prefs.getDouble(getDefaultQuantityAmountKey(unitType))
+        val unit = prefs.getString(getDefaultQuantityUnitKey(unitType))
+        if (amount == null || unit == null) {
+            val targetUnit = getIncludedUnitsForTypeSorted(unitType).first()
+            return Quantity(targetUnit.defaultQuantity.toDouble(), targetUnit)
+        }
+
+        return Quantity(amount, DefaultUnit.valueOf(unit))
+    }
+
+    object DefaultQuantityChangedEvent
+
+    fun setDefaultQuantity(unitType: UnitType, quantity: Quantity) {
+        prefs.putDouble(getDefaultQuantityAmountKey(unitType), quantity.amount)
+        prefs.putString(getDefaultQuantityUnitKey(unitType), quantity.unit.name)
+        bus.post(DefaultQuantityChangedEvent)
+        Logger.d("New default quantity: %s, %s", unitType.name, quantity.toString())
+    }
+
+    fun interface CostFormatter {
+        fun format(cost: Double): String
+    }
+
+    companion object {
+
+        private const val KEY_CURRENCY = "currency"
+
+        private val unitMap = ArrayMap<UnitType, List<DefaultUnit>>()
+
+        private fun getDefaultQuantityAmountKey(unitType: UnitType): String {
+            return "default_quantity_amount:${unitType.name}"
+        }
+
+        private fun getDefaultQuantityUnitKey(unitType: UnitType): String {
+            return "default_quantity_unit:${unitType.name}"
+        }
+    }
 }

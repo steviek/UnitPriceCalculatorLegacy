@@ -169,9 +169,9 @@
   <!-- Header for a section that lets the user change the default comparison quantity for a unit
        type. For example, the default for weight is preset to 100 g, but the user can change this.
        -->
-  <string name="default_unit_quantity">Default unit quantity</string>
+  <string name="default_unit_quantity">Default unit quantities</string>
   <!-- e.g. Weight: 100 g -->
-  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s</string>
   <!-- Title for a dialog that lets the user change the default comparison quantity for a unit type
        -->
   <string name="default_quantity_dialog_header">Default quantity: %1$s</string>

@@ -113,8 +113,8 @@
   <string name="match_device">Geräteeinstellung</string>
   <string name="dark_mode_always_dark">Immer dunkel</string>
   <string name="dark_mode_always_light">Immer hell</string>
-  <string name="default_unit_quantity">Standardeinheitsmenge</string>
-  <string name="default_unit_quantity_summary_line">%1$s: %2$s %3$s</string>
+  <string name="default_unit_quantity">Standardeinheitsmengen</string>
+  <string name="default_unit_quantity_summary_line">%1$s: %2$s</string>
   <string name="default_quantity_dialog_header">Standardmenge: %1$s</string>
   <string name="search">Suchen</string>
   <string name="initial_screen">Start</string>

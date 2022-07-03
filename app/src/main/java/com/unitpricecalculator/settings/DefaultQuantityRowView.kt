@@ -7,12 +7,19 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.unitpricecalculator.R
 import com.unitpricecalculator.unit.Quantity
+import com.unitpricecalculator.unit.UnitFormatter
 import com.unitpricecalculator.util.toLocalizedString
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DefaultQuantityRowView(
   context: Context,
   attrs: AttributeSet
 ) : FrameLayout(context, attrs) {
+
+  @Inject
+  lateinit var unitFormatter: UnitFormatter
 
   private val summaryTextView: TextView
 
@@ -24,14 +31,12 @@ class DefaultQuantityRowView(
   fun setData(quantity: Quantity) {
     val unitTypeName = resources.getString(quantity.unit.unitType.getLabelResId())
     val quantityAmount = quantity.amount.toLocalizedString()
-    val quantitySymbol = quantity.unit.getSymbol(resources)
+
     summaryTextView.text =
       resources.getString(
         R.string.default_unit_quantity_summary_line,
         unitTypeName,
-        quantityAmount,
-        quantitySymbol
+        unitFormatter.format(quantity.unit, quantity.amount, quantityAmount)
       )
   }
-
 }
