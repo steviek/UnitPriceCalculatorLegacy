@@ -60,6 +60,22 @@
   <string name="length">Longueur</string>
   <string name="inch_symbol">p</string>
 
+  <string name="time">Temps</string>
+  <string name="day_symbol">jr</string>
+  <string name="day_name">{count, plural, =1{jour} other{# jours}}</string>
+  <string name="week_symbol">sem</string>
+  <string name="week_name">{count, plural, =1{semaine} other{# semaines}}</string>
+  <string name="month_symbol">mo</string>
+  <string name="month_name">{count, plural, =1{mois} other{# mois}}</string>
+  <string name="year_symbol">an</string>
+  <string name="year_name">{count, plural, =1{an} other{# ans}}</string>
+  <string name="second_symbol">sec</string>
+  <string name="second_name">{count, plural, =1{seconde} other{# secondes}}</string>
+  <string name="minute_symbol">min</string>
+  <string name="minute_name">{count, plural, =1{minute} other{# minutes}}</string>
+  <string name="hour_symbol">hr</string>
+  <string name="hour_name">{count, plural, =1{heure} other{# heures}}</string>
+
   <string name="quantity">Quantité</string>
   <string name="unit_symbol">unité</string>
 
@@ -117,7 +133,8 @@
   <string name="search">Rechercher</string>
   <string name="initial_screen">Accueil</string>
   <string name="saved_comparison_subtitle">Le meilleur: $1%s</string>
-  <string name="dozen_name">douzaine</string>
+  <string name="unit_name">{count, plural, one{unité} other{# unités}}</string>
+  <string name="dozen_name">{count, plural, =1{douzaine} other{# douzaines}}</string>
   <string name="initial_screen_new_comparison">Nouvelle comparaison</string>
   <string name="change_order_title">Changer l\'ordre?</string>
   <string name="change_order_message">Faire un appui long à un titre pour réordonner</string>
@@ -125,10 +142,7 @@
   <string name="row_x">Rangée %1$d</string>
   <string name="note_row_x">Rangée %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s par %2$s x %3$s</string>
-  <plurals name="are_name">
-    <item quantity="one">are</item>
-    <item quantity="other">are</item>
-  </plurals>
+  <string name="are_name">{count, plural, one{are} other{# ares}}</string>
   <plurals name="saved_comparison_items">
     <item quantity="one">%1$s (%2$d article)</item>
     <item quantity="other">%1$s (%2$d articles)</item>

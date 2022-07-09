@@ -85,6 +85,7 @@
 
   <string name="quantity">Stücke</string>
   <string name="unit_symbol">stk</string>
+  <string name="unit_name">{count, plural, one{Stück} other{# Stücke}}</string>
 
   <string name="send_email">E-Mail senden</string>
   <string name="feedback_subject">Feedback für Einheitspreis Rechner</string>
@@ -119,7 +120,7 @@
   <string name="search">Suchen</string>
   <string name="initial_screen">Start</string>
   <string name="saved_comparison_subtitle">Bester Artikel: %1$s</string>
-  <string name="dozen_name">Dutzend</string>
+  <string name="dozen_name">{count, plural, =1{Dutzend} other{# Dutzend}}</string>
   <string name="initial_screen_new_comparison">Neuer Vergleich</string>
   <string name="change_order_title">Sortieren?</string>
   <string name="change_order_message">Die Zeilen werden nach dieser Spalte sortiert</string>
@@ -127,14 +128,27 @@
   <string name="row_x">Zeile %1$d</string>
   <string name="note_row_x">Zeile %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s pro %2$s x %3$s</string>
-  <plurals name="are_name">
-    <item quantity="one">Ar</item>
-    <item quantity="other">Ar</item>
-  </plurals>
+  <string name="are_name">{count, plural, =1{Ar} other{# Are}}</string>
   <plurals name="saved_comparison_items">
     <item quantity="one">%1$s (%2$d Artikel)</item>
     <item quantity="other">%1$s (%2$d Artikel)</item>
   </plurals>
+
+  <string name="time">Zeit</string>
+  <string name="day_symbol">Tg</string>
+  <string name="day_name">{count, plural, =1{Tag} other{# Tage}}</string>
+  <string name="week_symbol">Wo</string>
+  <string name="week_name">{count, plural, =1{Woche} other{# Wochen}}</string>
+  <string name="month_symbol">Mo</string>
+  <string name="month_name">{count, plural, =1{Monat} other{# Monate}}</string>
+  <string name="year_symbol">Jr</string>
+  <string name="year_name">{count, plural, =1{Jahr} other{# Jahre}}</string>
+  <string name="second_symbol">Sek</string>
+  <string name="second_name">{count, plural, =1{Sekunde} other{# Sekunden}}</string>
+  <string name="minute_symbol">Min</string>
+  <string name="minute_name">{count, plural, =1{Minute} other{# Minuten}}</string>
+  <string name="hour_symbol">Std</string>
+  <string name="hour_name">{count, plural, =1{Stunde} other{# Stunden}}</string>
 
   <string name="export_data">Daten exportieren</string>
   <string name="import_data">Daten importieren</string>

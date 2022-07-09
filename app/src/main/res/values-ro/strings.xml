@@ -85,6 +85,7 @@
 
   <string name="quantity">Cantitate</string>
   <string name="unit_symbol">fiecare</string>
+  <string name="unit_name">{count, plural, =1{unitate} few{# unitati} other{# de unitati}}</string>
 
   <string name="send_email">Trimiteți email</string>
   <string name="feedback_subject">Feedback pentru calculator de preț unitar</string>
@@ -119,7 +120,7 @@
   <string name="search">Căutați</string>
   <string name="initial_screen">Pagina principala</string>
   <string name="saved_comparison_subtitle">Cel mai bun articol: %1$s</string>
-  <string name="dozen_name">duzină</string>
+  <string name="dozen_name">{count, plural, =1{duzină} few{# duzini} other{# de duzini}}</string>
   <string name="initial_screen_new_comparison">Nouă comparație</string>
   <string name="change_order_title">Sorteți?</string>
   <string name="change_order_message" translatable="false">Rândurile vor fi sortate după coloană</string>
@@ -127,11 +128,7 @@
   <string name="row_x">Rând %1$d</string>
   <string name="note_row_x" translatable="false">Rând %2$d: %1$s</string>
   <string name="m_per_qxu">%1$s pe %2$s x %3$s</string>
-  <plurals name="are_name">
-    <item quantity="one">ar</item>
-    <item quantity="few">ari</item>
-    <item quantity="other">de ari</item>
-  </plurals>
+  <string name="are_name">{count, plural, =1{ar} few{# ari} other{# de ari}}</string>
   <plurals name="saved_comparison_items">
     <item quantity="one">%1$s (%2$d articol)</item>
     <item quantity="few">%1$s (%2$d articole)</item>
@@ -145,4 +142,20 @@
   <string name="language_title">Limbă</string>
   <string name="saved">Salvate</string>
   <string name="current">Curentă</string>
+
+  <string name="time">Timp</string>
+  <string name="day_symbol">zi</string>
+  <string name="day_name">{count, plural, =1{zi} few{# zile} other{# de zile}}</string>
+  <string name="week_symbol">spt</string>
+  <string name="week_name">{count, plural, =1{săptămână} few{# saptamani} other{# de saptamani}}</string>
+  <string name="month_symbol">ln</string>
+  <string name="month_name">{count, plural, =1{lună} few{# luni} other{# de luni}}</string>
+  <string name="year_symbol">an</string>
+  <string name="year_name">{count, plural, =1{an} few{# ani} other{# de ani}}</string>
+  <string name="second_symbol">sec</string>
+  <string name="second_name">{count, plural, =1{secunda} few{# secunde} other{# de secunde}}</string>
+  <string name="minute_symbol">min</string>
+  <string name="minute_name">{count, plural, =1{minut} few{# minute} other{# de minute}}</string>
+  <string name="hour_symbol">or</string>
+  <string name="hour_name">{count, plural, =1{oră} few{# ore} other{# de ore}}</string>
 </resources>

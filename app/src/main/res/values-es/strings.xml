@@ -104,7 +104,8 @@
   <string name="search">Buscar</string>
   <string name="initial_screen">Inicio</string>
   <string name="saved_comparison_subtitle">Mejor artículo: %1$s</string>
-  <string name="dozen_name">docena</string>
+  <string name="unit_name">{count, plural, =1{unidad} other{# unidades}}</string>
+  <string name="dozen_name">{count, plural, =1{docena} other{# docenas}}</string>
   <string name="initial_screen_new_comparison">Nueva comparación</string>
   <string name="change_order_title">Ordenar?</string>
   <string name="row_x">Fila %1$d</string>
@@ -112,10 +113,7 @@
   <string name="m_per_qxu">%1$s por %2$s x %3$s</string>
   <string name="show_percentages">Mostrar porcentajes</string>
   <string name="change_order_message" translatable="false">Las filas seran ordenadas por esa columna</string>
-  <plurals name="are_name">
-    <item quantity="one">área</item>
-    <item quantity="other">áreas</item>
-  </plurals>
+  <string name="are_name">{count, plural, =1{área} other{# áreas}}</string>
   <plurals name="saved_comparison_items">
     <item quantity="one">%1$s (%2$d artículo)</item>
     <item quantity="other">%1$s (%2$d artículos)</item>
@@ -128,4 +126,20 @@
   <string name="language_title">Idioma</string>
   <string name="saved">Guardadas</string>
   <string name="current">Actual</string>
+
+  <string name="time">Tiempo</string>
+  <string name="day_symbol">día</string>
+  <string name="day_name">{count, plural, =1{día} other{# días}}</string>
+  <string name="week_symbol">sem</string>
+  <string name="week_name">{count, plural, =1{semana} other{# semanas}}</string>
+  <string name="month_symbol">mes</string>
+  <string name="month_name">{count, plural, =1{mes} other{# meses}}</string>
+  <string name="year_symbol">año</string>
+  <string name="year_name">{count, plural, =1{año} other{# años}}</string>
+  <string name="second_symbol">seg</string>
+  <string name="second_name">{count, plural, =1{segundo} other{# segundos}}</string>
+  <string name="minute_symbol">min</string>
+  <string name="minute_name">{count, plural, =1{minuto} other{# minutos}}</string>
+  <string name="hour_symbol">hr</string>
+  <string name="hour_name">{count, plural, =1{hora} other{# horas}}</string>
 </resources>
