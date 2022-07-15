@@ -12,6 +12,8 @@ import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.Normalizer.Form.NFD
+import java.text.NumberFormat
+import java.util.Locale
 
 fun EditText.addLocalizedKeyListener(): TextWatcher?  {
   val localeSeparator = DecimalFormatSymbols.getInstance().monetaryDecimalSeparator
@@ -47,17 +49,29 @@ fun String.parseDoubleOrThrow(): Double {
 }
 
 fun String.parseDoubleSafely(): Optional<Double> {
-  val separator = firstOrNull { !it.isDigit() } ?: return this.maybeParseDouble()
+  val separator = firstOrNull { it.isSeparator() } ?: return this.maybeParseDouble()
   return this.replace(separator, '.').maybeParseDouble()
 }
 
+fun String.convertDigits(): String {
+  return map {
+    if (it.isDigit()) {
+      Character.getNumericValue(it)
+    } else if (it == ',') {
+      '.'
+    } else {
+      it
+    }
+  }.joinToString(separator = "")
+}
+
 fun String.parseDoubleOrNull(): Double? {
-  val separator = firstOrNull { !it.isDigit() } ?: return this.maybeParseDouble().orNull()
+  val separator = firstOrNull { it.isSeparator() } ?: return this.maybeParseDouble().orNull()
   return this.replace(separator, '.').maybeParseDouble().orNull()
 }
 
 private fun String.maybeParseDouble(): Optional<Double> {
-  return Optional.fromNullable(toDoubleOrNull())
+  return Optional.fromNullable(convertDigits().toDoubleOrNull())
 }
 
 fun String.stripAccents(): String {
@@ -67,4 +81,8 @@ fun String.stripAccents(): String {
     Normalizer.normalize(this, NFD)
   }
   return normalizedForm.replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
+}
+
+fun Char.isSeparator(): Boolean {
+  return this == '.' || this == ','
 }

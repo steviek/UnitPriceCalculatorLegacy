@@ -6,6 +6,7 @@ import com.unitpricecalculator.dialog.DelegatingDialogFragment
 import com.unitpricecalculator.dialog.DialogId.LOCALE_DIALOG
 import com.unitpricecalculator.events.AppLocaleChangedEvent
 import com.unitpricecalculator.util.prefs.Prefs
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +35,9 @@ class AppLocaleManager @Inject constructor(
       prefs.putInt(PREFS_KEY, value.number)
       bus.post(AppLocaleChangedEvent)
     }
+
+  val currentLocale: Locale
+    get() = current.toLocale()
 
   fun showSelectionDialog(fragmentManager: FragmentManager) {
     DelegatingDialogFragment.show(fragmentManager, LOCALE_DIALOG)

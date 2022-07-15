@@ -198,6 +198,8 @@ class SavedFragment : BaseFragment() {
 
         val savedQuery = queryText ?: savedInstanceState?.get(SearchTextKey)
 
+        val locale = AppLocaleManager.getInstance().currentLocale
+
         val searchView = binding.searchView
         searchView.query = savedQuery ?: ""
         searchView.queryChangedListener = OnSearchQueryChangedListener { query ->
@@ -205,14 +207,14 @@ class SavedFragment : BaseFragment() {
                 { true }
             } else {
                 val queryWithoutAccentsInLowerCase =
-                    query.stripAccents().lowercase(Locale.getDefault())
+                    query.stripAccents().lowercase(locale)
                 ({
                     queryWithoutAccentsInLowerCase in
-                            it.name.stripAccents().lowercase(Locale.getDefault()) ||
+                            it.name.stripAccents().lowercase(locale) ||
                             it.savedUnitEntryRows.any { row ->
                                 row.note
                                     ?.stripAccents()
-                                    ?.lowercase(Locale.getDefault())
+                                    ?.lowercase(locale)
                                     ?.contains(queryWithoutAccentsInLowerCase)
                                     ?: false
                             }

@@ -9,6 +9,7 @@ import com.google.common.base.Optional;
 import com.squareup.otto.Bus;
 import com.unitpricecalculator.R;
 import com.unitpricecalculator.events.CurrencyChangedEvent;
+import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.unit.Units;
 import dagger.Reusable;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public final class Currencies {
   public static Currency getSafeDefaultCurrency() {
     Currency currency = null;
     try {
-      currency = Currency.getInstance(Locale.getDefault());
+      currency = Currency.getInstance(AppLocaleManager.getInstance().getCurrentLocale());
     } catch (Exception e) {
       // Locale did not have a currency.
     }

@@ -207,5 +207,4 @@
   <string name="current">Current</string>
   <string name="comparison_unit">Comparison Unit</string>
   <string name="unit_name">{count, plural, =1{unit} other{# units}}</string>
-  <string name="unit_name">{count, plural, =1{unit} other{# units}}</string>
 </resources>

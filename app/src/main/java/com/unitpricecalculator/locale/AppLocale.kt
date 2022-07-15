@@ -13,7 +13,8 @@ enum class AppLocale(val number: Int, private val localeSupplier: () -> Locale) 
   ES(4, "es"),
   FR(5, "fr"),
   PT(6, "pt"),
-  RO(7, "ro");
+  RO(7, "ro"),
+  AR(8, "ar");
 
   constructor(number: Int, languageCode: String) : this(
     number,

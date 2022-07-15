@@ -15,13 +15,13 @@ public final class Logger {
 
     public static void d(String format, Object... args) {
         if (shouldLog()) {
-            Log.d(TAG, String.format(Locale.getDefault(), format, args));
+            Log.d(TAG, String.format(Locale.US, format, args));
         }
     }
 
     public static void e(String format, Object... args) {
         if (shouldLog()) {
-            Log.e(TAG, String.format(Locale.getDefault(), format, args));
+            Log.e(TAG, String.format(Locale.US, format, args));
         }
     }
 
@@ -33,19 +33,19 @@ public final class Logger {
 
     public static void i(String format, Object... args) {
         if (shouldLog()) {
-            Log.i(TAG, String.format(Locale.getDefault(), format, args));
+            Log.i(TAG, String.format(Locale.US, format, args));
         }
     }
 
     public static void v(String format, Object... args) {
         if (shouldLog()) {
-            Log.v(TAG, String.format(Locale.getDefault(), format, args));
+            Log.v(TAG, String.format(Locale.US, format, args));
         }
     }
 
     public static void w(String format, Object... args) {
         if (shouldLog()) {
-            Log.w(TAG, String.format(Locale.getDefault(), format, args));
+            Log.w(TAG, String.format(Locale.US, format, args));
         }
     }
 

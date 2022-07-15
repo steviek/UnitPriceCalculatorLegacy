@@ -38,6 +38,7 @@ import com.unitpricecalculator.events.CompareUnitChangedEvent;
 import com.unitpricecalculator.events.NoteChangedEvent;
 import com.unitpricecalculator.events.SystemChangedEvent;
 import com.unitpricecalculator.events.UnitTypeChangedEvent;
+import com.unitpricecalculator.locale.AppLocaleManager;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.Unit;
 import com.unitpricecalculator.unit.UnitEntry;
@@ -161,6 +162,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public UnitEntryView(Context context) {
     super(context);
+    setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
+    setTextDirection(View.TEXT_DIRECTION_LOCALE);
     LayoutInflater.from(context).inflate(R.layout.unit_entry_view, this);
     onFinishInflate();
   }
@@ -192,7 +195,9 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
 
   public void setRowNumber(int rowNumber) {
     mRowNumber = rowNumber;
-    mRowNumberTextView.setText(String.format(Locale.getDefault(), "%d", rowNumber + 1));
+    mRowNumberTextView.setText(
+        String.format(AppLocaleManager.getInstance().getCurrentLocale(), "%d", rowNumber + 1)
+    );
   }
 
   public int getRowNumber() {
@@ -345,11 +350,15 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     mCostEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mCostEditText);
 
+    Locale locale = AppLocaleManager.getInstance().getCurrentLocale();
+
     mQuantityEditText = viewBinding.numberEditText;
+    mQuantityEditText.setHint(String.format(locale, "%d", 1));
     mQuantityEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mQuantityEditText);
 
     mSizeEditText = viewBinding.sizeEditText;
+    mSizeEditText.setHint(String.format(locale, "%d", 1));
     mSizeEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mSizeEditText);
 

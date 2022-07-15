@@ -7,6 +7,8 @@
 
     <LinearLayout
         android:id="@+id/input_fields_container"
+        android:layoutDirection="locale"
+        android:textDirection="locale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -48,6 +50,7 @@
         <Spinner
             android:id="@+id/unit_spinner"
             style="@style/RowItem"
+            android:textAlignment="textEnd"
             android:layout_width="@dimen/header_column_5"
             android:popupBackground="@drawable/spinner_background"
             android:layout_height="wrap_content" />

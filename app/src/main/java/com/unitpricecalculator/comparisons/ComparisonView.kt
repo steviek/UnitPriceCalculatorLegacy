@@ -40,6 +40,7 @@ import com.unitpricecalculator.events.CurrencyChangedEvent
 import com.unitpricecalculator.events.NoteChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.events.UnitTypeChangedEvent
+import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.unit.DefaultUnit
 import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
@@ -63,6 +64,7 @@ import com.unitpricecalculator.util.prefs.PrefsKeys.ShowPercentage
 import com.unitpricecalculator.util.toLocalizedString
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
@@ -199,6 +201,7 @@ class ComparisonView(
 
             removeRowBtn.setOnClickListener { removeRow(entryViews.size - 1) }
 
+            finalSize.hint = String.format(AppLocaleManager.getInstance().currentLocale, "%d", 1)
             finalSize.setText(initialComparison.finalQuantity)
             finalSize.afterTextChanged {
                 bus.post(compareUnitChangedEvent())

@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
+import com.unitpricecalculator.locale.AppLocaleManager
 import com.unitpricecalculator.util.*
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +56,8 @@ class DefaultQuantityDialogFragment : BaseDialogFragment() {
       .setTitle(
         resources.getString(
           R.string.default_quantity_dialog_header,
-          resources.getString(unit.unitType.getLabelResId()).toLowerCase(Locale.getDefault())
+          resources.getString(unit.unitType.labelResId)
+            .lowercase(AppLocaleManager.getInstance().currentLocale)
         )
       )
       .setView(view)
