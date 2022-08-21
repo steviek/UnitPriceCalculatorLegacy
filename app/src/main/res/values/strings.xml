@@ -111,7 +111,7 @@
   <string name="square_metre_symbol">m\u00B2</string>
   <string name="square_centimetre_symbol">cm\u00B2</string>
   <string name="square_millimetre_symbol">mm\u00B2</string>
-  <string name="square_millimetre_name">{count, plural, other{# mm\u00B2}}</string>
+  <string name="square_millimetre_name" translatable="false">{count, plural, other{# mm\u00B2}}</string>
   <string name="square_kilometre_symbol">km\u00B2</string>
   <string name="are_symbol">a</string>
   <string name="are_name">{count, plural, =1{are} other{# ares}}</string>
