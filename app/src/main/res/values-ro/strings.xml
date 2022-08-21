@@ -158,4 +158,9 @@
   <string name="minute_name">{count, plural, =1{minut} few{# minute} other{# de minute}}</string>
   <string name="hour_symbol">or</string>
   <string name="hour_name">{count, plural, =1{oră} few{# ore} other{# de ore}}</string>
+
+  <string name="comparison_unit">Unitate de comparație</string>
+  <string name="title">Titlu</string>
+  <string name="last_modified">Salvată</string>
+  <string name="options">Opțiuni</string>
 </resources>

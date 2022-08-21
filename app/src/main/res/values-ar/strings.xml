@@ -118,7 +118,7 @@
     <string name="language_title">اللغة</string>
     <string name="unit_name">وحدات</string>
     <string name="dozen_name">درازن</string>
-    <string name="are_name">آريس</string>
+    <string name="are_name">{count, plural, one{# هي} two{# آريس} few{# آريس} many{# آريس} other{# آريس}}</string>
     <string name="saved">تم الحفظ</string>
     <string name="current">الحالية</string>
     <string name="time">الوقت</string>
@@ -141,7 +141,7 @@
         <item quantity="many">%1$s (%2$d قطعة)</item>
     </plurals>
 
-    <string name="day_name">{count, plural, one{يوم} two{# أيام} few{# ايام} many{# يوم} other{14# يومًا}}</string>
+    <string name="day_name">{count, plural, one{يوم} two{# أيام} few{# ايام} many{# يوم} other{# يومًا}}</string>
     <string name="week_name">{count, plural, one{أسبوع} two{# أسابيع} few{# أسابيع} many{# أسبوعا} other{# أسبوعًا}}</string>
     <string name="month_name">{count, plural, one{شهر} two{# أشهر} few{# شهور} many{# شهرا} other{# شهرًا}}</string>
     <string name="year_name">{count, plural, one{عام} two{سنتان} few{# سنوات} many{# سنة} other{# سنة}}</string>

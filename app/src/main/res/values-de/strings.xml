@@ -158,4 +158,9 @@
   <string name="language_title">Sprache</string>
   <string name="saved">Gespeichert</string>
   <string name="current">Aktuel</string>
+
+  <string name="comparison_unit">Vergleichseinheit</string>
+  <string name="title">Titel</string>
+  <string name="last_modified">Gespeichert</string>
+  <string name="options">Optionen</string>
 </resources>

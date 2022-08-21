@@ -142,4 +142,9 @@
   <string name="minute_name">{count, plural, =1{minuto} other{# minutos}}</string>
   <string name="hour_symbol">hr</string>
   <string name="hour_name">{count, plural, =1{hora} other{# horas}}</string>
+
+  <string name="comparison_unit">Unidade de comparação</string>
+  <string name="title">Título</string>
+  <string name="last_modified">Salva</string>
+  <string name="options">Opções</string>
 </resources>
