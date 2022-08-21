@@ -34,6 +34,7 @@ import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.currency.Currencies;
 import com.unitpricecalculator.databinding.MainActivityBinding;
 import com.unitpricecalculator.events.AppLocaleChangedEvent;
+import com.unitpricecalculator.events.ComparisonSavedEvent;
 import com.unitpricecalculator.events.SavedComparisonDeletedEvent;
 import com.unitpricecalculator.export.ExportManager;
 import com.unitpricecalculator.export.ImportManager;
@@ -108,9 +109,11 @@ public final class MainActivity extends BaseActivity
     mSettingsFragment = new SettingsFragment();
     mSavedFragment = new SavedFragment();
 
-    if (savedInstanceState == null && getIntent().getStringExtra("state") == null) {
+    boolean hasSavedComparisons = !savedComparisonManager.getSavedComparisons().isEmpty();
+    if ((savedInstanceState == null || !savedInstanceState.containsKey("state")) &&
+        getIntent().getStringExtra("state") == null) {
       if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
-          !savedComparisonManager.getSavedComparisons().isEmpty()) {
+          hasSavedComparisons) {
         currentState = State.SAVED;
       } else {
         currentState = State.MAIN;

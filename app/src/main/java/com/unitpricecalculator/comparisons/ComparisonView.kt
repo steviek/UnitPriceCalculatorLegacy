@@ -242,7 +242,8 @@ class ComparisonView(
     fun onUnitTypeChanged(event: UnitTypeChangedEvent) {
         binding.finalSpinner.adapter =
                 unitArrayAdapterFactory.create(units.getDefaultQuantity(event.unitType).unit)
-
+        binding.finalSize.hint =
+            String.format(AppLocaleManager.getInstance().currentLocale, "%d", 1)
         actionMode?.finish()
     }
 

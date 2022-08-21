@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.common.collect.ImmutableList;
+import com.squareup.otto.Bus;
 import com.unitpricecalculator.comparisons.Order;
 import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
+import com.unitpricecalculator.events.ComparisonSavedEvent;
 import com.unitpricecalculator.json.ObjectMapper;
 import com.unitpricecalculator.unit.DefaultUnit;
 import com.unitpricecalculator.unit.UnitType;
@@ -28,12 +30,14 @@ public final class SavedComparisonManager {
 
   private final SharedPreferences prefs;
   private final ObjectMapper objectMapper;
+  private final Bus bus;
 
   @Inject
-  SavedComparisonManager(Activity activity, ObjectMapper objectMapper, Prefs prefs) {
+  SavedComparisonManager(Activity activity, ObjectMapper objectMapper, Prefs prefs, Bus bus) {
     this.prefs =
         activity.getSharedPreferences("saved-prefs", Context.MODE_PRIVATE);
     this.objectMapper = objectMapper;
+    this.bus = bus;
     cleanUpLegacyValues(prefs);
   }
 
@@ -84,6 +88,7 @@ public final class SavedComparisonManager {
       prefs.edit()
           .putString(savedComparison.getKey(), objectMapper.toJson(savedComparison))
           .apply();
+      bus.post(ComparisonSavedEvent.INSTANCE);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

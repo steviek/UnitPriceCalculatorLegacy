@@ -203,6 +203,8 @@ class SavedFragment : BaseFragment() {
         val searchView = binding.searchView
         searchView.query = savedQuery ?: ""
         searchView.queryChangedListener = OnSearchQueryChangedListener { query ->
+            actionMode?.finish()
+
             filter = if (query.isBlank()) {
                 { true }
             } else {
@@ -229,6 +231,10 @@ class SavedFragment : BaseFragment() {
         adapter = SavedComparisonsArrayAdapter(requireContext(), filteredComparisons, units)
         listView.adapter = adapter
         listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
+            actionMode?.let {
+                it.finish()
+                return@OnItemClickListener
+            }
             adapter?.getItem(position)?.let { callback.onLoadSavedComparison(it) }
         }
         listView.onItemLongClickListener =
@@ -239,7 +245,7 @@ class SavedFragment : BaseFragment() {
                 }
 
                 // Start the CAB using the ActionMode.Callback defined above
-                view.isSelected = true
+                longPressedView.isSelected = true
                 actionMode =
                     longPressedView.startActionMode(
                         createCallback(position, longPressedView),
@@ -251,16 +257,20 @@ class SavedFragment : BaseFragment() {
         activity?.invalidateOptionsMenu()
 
         binding.titleButton.setOnClickListener {
+            actionMode?.finish()
             prefs.savedSortOrder = prefs.savedSortOrder.toggledByTitle()
             syncViews()
         }
 
         binding.lastModifiedButton.setOnClickListener {
+            actionMode?.finish()
             prefs.savedSortOrder = prefs.savedSortOrder.toggledByLastModified()
             syncViews()
         }
 
         binding.optionsButton.setOnClickListener { button ->
+            actionMode?.finish()
+
             optionsPopupMenu?.let {
                 it.dismiss()
                 optionsPopupMenu = null
