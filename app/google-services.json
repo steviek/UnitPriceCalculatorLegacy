@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "622509517327",
+    "project_id": "unit-price-calculator",
+    "storage_bucket": "unit-price-calculator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622509517327:android:de69bb9b8cc19aab99517a",
+        "android_client_info": {
+          "package_name": "com.unitpricecalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622509517327-15m9ooapjdsoah2ekgrgvue9g371gn46.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unitpricecalculator",
+            "certificate_hash": "5ee4e9eb7a189a340191677949210d77cefb9d48"
+          }
+        },
+        {
+          "client_id": "622509517327-qjc24cojd0k3joprvdvn23d40lb1teao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDztykhSkE16obMzLkBy-UXb0U0r1G0e8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622509517327-qjc24cojd0k3joprvdvn23d40lb1teao.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

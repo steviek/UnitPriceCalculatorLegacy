@@ -110,21 +110,35 @@ public final class MainActivity extends BaseActivity
     mSavedFragment = new SavedFragment();
 
     boolean hasSavedComparisons = !savedComparisonManager.getSavedComparisons().isEmpty();
-    if ((savedInstanceState == null || !savedInstanceState.containsKey("state")) &&
-        getIntent().getStringExtra("state") == null) {
+    String rawSavedState = null;
+    String rawMainFragmentState = null;
+
+    Intent intent = getIntent();
+    if (intent != null) {
+      rawSavedState = Strings.emptyToNull(intent.getStringExtra("state"));
+    }
+
+    if (savedInstanceState != null) {
+      if (rawSavedState == null) {
+        rawSavedState = Strings.emptyToNull(savedInstanceState.getString("state", null));
+      }
+      rawMainFragmentState = Strings.emptyToNull(savedInstanceState.getString("mainFragment"));
+    }
+
+    if (rawSavedState == null) {
       if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
           hasSavedComparisons) {
         currentState = State.SAVED;
       } else {
         currentState = State.MAIN;
       }
-    } else if (savedInstanceState == null) {
-      currentState = State.valueOf(getIntent().getStringExtra("state"));
     } else {
-      currentState = State.valueOf(savedInstanceState.getString("state"));
+      currentState = State.valueOf(rawSavedState);
+    }
+
+    if (rawMainFragmentState != null) {
       mComparisonFragment.restoreState(
-          objectMapper.fromJson(ComparisonFragmentState.class,
-              savedInstanceState.getString("mainFragment")));
+          objectMapper.fromJson(ComparisonFragmentState.class, rawMainFragmentState));
     }
 
     switch (currentState) {

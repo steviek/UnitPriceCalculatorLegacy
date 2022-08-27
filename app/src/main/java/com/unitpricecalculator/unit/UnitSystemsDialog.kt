@@ -18,7 +18,7 @@ class UnitSystemsDialog @Inject constructor(
         val layoutInflater = LayoutInflater.from(context)
         val dragLinearLayout = UnitSystemsDialogViewBinding.inflate(layoutInflater).root
 
-        val includedSystems = HashSet(systems.includedSystems)
+        val includedSystems = HashSet(systems.includedSystems - System.NEUTRAL)
         for (system in systems.preferredOrder) {
             val rowViewBinding =
                 ListDraggableBinding.inflate(layoutInflater, dragLinearLayout, false)
