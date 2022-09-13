@@ -17,6 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.unitpricecalculator.BaseDialogFragment
 import com.unitpricecalculator.R
 import com.unitpricecalculator.locale.AppLocaleManager
+import com.unitpricecalculator.locale.currentLocale
 import com.unitpricecalculator.util.*
 import com.unitpricecalculator.util.abstracts.AbstractTextWatcher
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class DefaultQuantityDialogFragment : BaseDialogFragment() {
 
   @Inject lateinit var units: Units
+  @Inject lateinit var appLocaleManager: AppLocaleManager
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val context = requireContext()
@@ -57,7 +59,7 @@ class DefaultQuantityDialogFragment : BaseDialogFragment() {
         resources.getString(
           R.string.default_quantity_dialog_header,
           resources.getString(unit.unitType.labelResId)
-            .lowercase(AppLocaleManager.getInstance().currentLocale)
+            .lowercase(appLocaleManager.currentLocale)
         )
       )
       .setView(view)

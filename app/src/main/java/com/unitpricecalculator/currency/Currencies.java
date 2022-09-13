@@ -1,5 +1,7 @@
 package com.unitpricecalculator.currency;
 
+import static com.unitpricecalculator.locale.AppLocaleManagerKt.getCurrentLocale;
+
 import android.app.Activity;
 import androidx.appcompat.app.AlertDialog;
 
@@ -80,7 +82,7 @@ public final class Currencies {
   public static Currency getSafeDefaultCurrency() {
     Currency currency = null;
     try {
-      currency = Currency.getInstance(AppLocaleManager.getInstance().getCurrentLocale());
+      currency = Currency.getInstance(getCurrentLocale(AppLocaleManager.getInstance()));
     } catch (Exception e) {
       // Locale did not have a currency.
     }

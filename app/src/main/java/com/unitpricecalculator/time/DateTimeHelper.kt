@@ -2,6 +2,7 @@ package com.unitpricecalculator.time
 
 import android.text.format.DateFormat
 import com.unitpricecalculator.locale.AppLocaleManager
+import com.unitpricecalculator.locale.currentLocale
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

@@ -85,7 +85,7 @@ class SettingsFragment : BaseFragment() {
                 initialScreenManager.showDialog(childFragmentManager)
             }
             language.setOnClickListener {
-                localeManager.showSelectionDialog(childFragmentManager)
+                AppLocaleManager.showSelectionDialog(childFragmentManager)
             }
             darkMode.setOnClickListener { DarkModeDialogFragment.show(childFragmentManager) }
             percentages.isChecked = prefs[ShowPercentage] == true

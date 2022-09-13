@@ -7,6 +7,7 @@ import android.icu.text.DecimalFormat
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import com.unitpricecalculator.locale.AppLocaleManager
+import com.unitpricecalculator.locale.currentLocale
 import java.util.Locale
 
 

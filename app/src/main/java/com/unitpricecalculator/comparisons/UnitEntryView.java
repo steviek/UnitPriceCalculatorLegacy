@@ -1,5 +1,7 @@
 package com.unitpricecalculator.comparisons;
 
+import static com.unitpricecalculator.locale.AppLocaleManagerKt.getCurrentLocale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,6 +76,8 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   Bus bus;
   @Inject
   UnitFormatter unitFormatter;
+  @Inject
+  AppLocaleManager appLocaleManager;
 
   private TextView mRowNumberTextView;
   private EditText mCostEditText;
@@ -196,7 +200,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
   public void setRowNumber(int rowNumber) {
     mRowNumber = rowNumber;
     mRowNumberTextView.setText(
-        String.format(AppLocaleManager.getInstance().getCurrentLocale(), "%d", rowNumber + 1)
+        String.format(getCurrentLocale(appLocaleManager), "%d", rowNumber + 1)
     );
   }
 
@@ -350,7 +354,7 @@ public final class UnitEntryView extends LinearLayout implements SavesState<Save
     mCostEditText.addTextChangedListener(mTextWatcher);
     Localization.addLocalizedKeyListener(mCostEditText);
 
-    Locale locale = AppLocaleManager.getInstance().getCurrentLocale();
+    Locale locale = getCurrentLocale(appLocaleManager);
 
     mQuantityEditText = viewBinding.numberEditText;
     mQuantityEditText.setHint(String.format(locale, "%d", 1));

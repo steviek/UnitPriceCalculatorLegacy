@@ -34,6 +34,7 @@ import com.unitpricecalculator.events.SavedComparisonDeletedEvent
 import com.unitpricecalculator.export.ExportManager
 import com.unitpricecalculator.export.ImportManager
 import com.unitpricecalculator.locale.AppLocaleManager
+import com.unitpricecalculator.locale.currentLocale
 import com.unitpricecalculator.unit.Units
 import com.unitpricecalculator.util.CachingCollator
 import com.unitpricecalculator.util.StringBundleKey
@@ -198,7 +199,7 @@ class SavedFragment : BaseFragment() {
 
         val savedQuery = queryText ?: savedInstanceState?.get(SearchTextKey)
 
-        val locale = AppLocaleManager.getInstance().currentLocale
+        val locale = appLocaleManager.currentLocale
 
         val searchView = binding.searchView
         searchView.query = savedQuery ?: ""

@@ -41,6 +41,7 @@ import com.unitpricecalculator.events.NoteChangedEvent
 import com.unitpricecalculator.events.SystemChangedEvent
 import com.unitpricecalculator.events.UnitTypeChangedEvent
 import com.unitpricecalculator.locale.AppLocaleManager
+import com.unitpricecalculator.locale.currentLocale
 import com.unitpricecalculator.unit.DefaultUnit
 import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
@@ -100,6 +101,9 @@ class ComparisonView(
 
     @Inject
     internal lateinit var unitFormatter: UnitFormatter
+
+    @Inject
+    lateinit var appLocaleManager: AppLocaleManager
 
     private val binding: ComparisonViewBinding = run {
         val layoutInflater = LayoutInflater.from(context)
@@ -201,7 +205,7 @@ class ComparisonView(
 
             removeRowBtn.setOnClickListener { removeRow(entryViews.size - 1) }
 
-            finalSize.hint = String.format(AppLocaleManager.getInstance().currentLocale, "%d", 1)
+            finalSize.hint = String.format(appLocaleManager.currentLocale, "%d", 1)
             finalSize.setText(initialComparison.finalQuantity)
             finalSize.afterTextChanged {
                 bus.post(compareUnitChangedEvent())
@@ -243,7 +247,7 @@ class ComparisonView(
         binding.finalSpinner.adapter =
                 unitArrayAdapterFactory.create(units.getDefaultQuantity(event.unitType).unit)
         binding.finalSize.hint =
-            String.format(AppLocaleManager.getInstance().currentLocale, "%d", 1)
+            String.format(appLocaleManager.currentLocale, "%d", 1)
         actionMode?.finish()
     }
 
