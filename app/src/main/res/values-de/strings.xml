@@ -104,6 +104,7 @@
   <string name="square_inch_symbol">in\u00B2</string>
   <string name="square_yard_symbol">yd\u00B2</string>
   <string name="square_mile_symbol">mi\u00B2</string>
+    <string name="cubic_metre_symbol">m\u00B3</string>
   <string name="untitled_italics"><i>Ohne Titel</i></string>
   <string name="unsaved_changes">Du hast nicht gespeicherte Änderungen. Klicken Sie zum Speichern auf die Schaltfläche Speichern.</string>
   <string name="all_changes_saved">Alle Änderungen werden gespeichert. Von nun an zeigt die Schaltfläche Speichern an, wann Sie Änderungen zum Speichern vornehmen müssen.\n\nDiese Meldung verschwindet und taucht nicht mehr auf in %1$d…</string>

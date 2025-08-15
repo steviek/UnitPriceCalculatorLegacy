@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="unsaved_changes">Hay modificaciones no guardadas. Pincha el botón para guardar.</string>
+    <string name="cubic_metre_symbol">m\u00B3</string>
 </resources>

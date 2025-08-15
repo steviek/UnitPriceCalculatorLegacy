@@ -12,6 +12,7 @@ import com.unitpricecalculator.unit.DefaultUnit.ACRE
 import com.unitpricecalculator.unit.DefaultUnit.ARE
 import com.unitpricecalculator.unit.DefaultUnit.CENTIMETRE
 import com.unitpricecalculator.unit.DefaultUnit.CUBIC_CENTIMETRE
+import com.unitpricecalculator.unit.DefaultUnit.CUBIC_METRE
 import com.unitpricecalculator.unit.DefaultUnit.CUP
 import com.unitpricecalculator.unit.DefaultUnit.DAY
 import com.unitpricecalculator.unit.DefaultUnit.DOZEN
@@ -72,6 +73,7 @@ fun DefaultUnit.toMeasureUnitOrPlural(): MeasureUnitOrPlural = when (this) {
     MILLILITRE -> Unit(MeasureUnit.MILLILITER)
     LITRE -> Unit(MeasureUnit.LITER)
     CUBIC_CENTIMETRE -> Unit(MeasureUnit.CUBIC_CENTIMETER)
+    CUBIC_METRE -> Unit(MeasureUnit.CUBIC_METER)
     METRE -> Unit(MeasureUnit.METER)
     KILOMETRE -> Unit(MeasureUnit.KILOMETER)
     CENTIMETRE -> Unit(MeasureUnit.CENTIMETER)

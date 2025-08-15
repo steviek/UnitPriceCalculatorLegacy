@@ -11,6 +11,7 @@ import com.unitpricecalculator.unit.DefaultUnit.ACRE
 import com.unitpricecalculator.unit.DefaultUnit.ARE
 import com.unitpricecalculator.unit.DefaultUnit.CENTIMETRE
 import com.unitpricecalculator.unit.DefaultUnit.CUBIC_CENTIMETRE
+import com.unitpricecalculator.unit.DefaultUnit.CUBIC_METRE
 import com.unitpricecalculator.unit.DefaultUnit.CUP
 import com.unitpricecalculator.unit.DefaultUnit.DAY
 import com.unitpricecalculator.unit.DefaultUnit.DOZEN
@@ -83,7 +84,7 @@ class UnitFormatter @Inject constructor(
             US_PINT, US_CUP, US_FLUID_OUNCE, US_TABLESPOON, US_TEASPOON, METRE, KILOMETRE,
             CENTIMETRE, MILLIMETRE, INCH, FOOT, YARD, MILE, SQUARE_METRE, SQUARE_CENTIMETRE,
             SQUARE_MILLIMETRE, SQUARE_KILOMETRE, ARE, HECTARE, ACRE, SQUARE_FOOT, SQUARE_INCH,
-            SQUARE_YARD, SQUARE_MILE -> {
+            SQUARE_YARD, SQUARE_MILE, CUBIC_METRE -> {
                 val symbol = unit.getSymbol(context.resources)
                 return if (size == 1.0) {
                     symbol

@@ -76,6 +76,7 @@
     <string name="dozen_symbol">درزن</string>
     <string name="area">المساحة</string>
     <string name="square_metre_symbol">م\u00B2</string>
+    <string name="cubic_metre_symbol">م\u00B3</string>
     <string name="square_centimetre_symbol">سم\u00B2</string>
     <string name="square_millimetre_symbol">ملم\u00B2</string>
     <string name="square_kilometre_symbol">كلم\u00B2</string>

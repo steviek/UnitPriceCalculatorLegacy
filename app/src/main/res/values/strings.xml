@@ -121,6 +121,7 @@
   <string name="square_inch_symbol">in\u00B2</string>
   <string name="square_yard_symbol">yd\u00B2</string>
   <string name="square_mile_symbol">mi\u00B2</string>
+  <string name="cubic_metre_symbol">m\u00B3</string>
 
   <string name="send_email">Send Email</string>
   <string name="feedback_subject">Feedback for Unit Price Calculator</string>

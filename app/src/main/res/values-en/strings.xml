@@ -151,6 +151,7 @@
   <!-- AREA -->
   <string name="area">Area</string>
   <string name="square_metre_symbol">m\u00B2</string>
+  <string name="cubic_metre_symbol">m\u00B3</string>
   <string name="square_centimetre_symbol">cm\u00B2</string>
   <string name="square_millimetre_symbol">mm\u00B2</string>
   <string name="square_kilometre_symbol">km\u00B2</string>

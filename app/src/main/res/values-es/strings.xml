@@ -66,8 +66,9 @@
   <string name="change_currency_symbol">Cambiar el símbolo monetario</string>
   <string name="currency_header">Símbolo monetario</string>
   <string name="dozen_symbol">docena</string>
+    <string name="cubic_metre_symbol">m\u00B3</string>
 
-  <string name="main_final_summary">La opción más économica es fila %1$d</string>
+    <string name="main_final_summary">La opción más económica es fila %1$d</string>
   <string name="m_per_u">%1$s por %2$s</string>
   <string name="m_per_s_u">%1$s por %2$s %3$s</string>
   <string name="m_per_qxs_u">%1$s por %2$s x %3$s %4$s</string>

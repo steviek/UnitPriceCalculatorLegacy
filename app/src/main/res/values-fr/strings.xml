@@ -117,6 +117,7 @@
   <string name="square_inch_symbol">p\u00B2</string>
   <string name="square_yard_symbol">yd\u00B2</string>
   <string name="square_mile_symbol">mi\u00B2</string>
+  <string name="cubic_metre_symbol">m\u00B3</string>
   <string name="untitled_italics"><i>Sans titre</i></string>
   <string name="unsaved_changes">Il y a des modifications pas sauvgardées. Cliquez le bouton pour les sauvegarder.</string>
   <string name="all_changes_saved">Tous les modifications ont été sauvegardées. À partir de maintenant, le bouton indiquera si vous avez des changements pas sauvegardées.\n\nCe message va disparaître et ne va pas revenir en %1$d…</string>

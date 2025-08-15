@@ -21,6 +21,7 @@ public enum DefaultUnit implements Unit {
   MILLILITRE(R.string.millilitre_symbol, 0.001, System.METRIC, UnitType.VOLUME, MeasureUnit.MILLILITER, 100),
   LITRE(R.string.litre_symbol, 1, System.METRIC, UnitType.VOLUME, MeasureUnit.LITER),
   CUBIC_CENTIMETRE(R.string.cubic_centimetre_symbol, 0.001, System.METRIC, UnitType.VOLUME, MeasureUnit.CUBIC_CENTIMETER, 100),
+  CUBIC_METRE(R.string.cubic_metre_symbol, 1000, System.METRIC, UnitType.VOLUME, MeasureUnit.CUBIC_METER),
   GALLON(R.string.gallon_symbol, 4.54609, System.IMPERIAL_UK, UnitType.VOLUME, MeasureUnit.GALLON),
   QUART(R.string.quart_symbol, 1.13652, System.IMPERIAL_UK, UnitType.VOLUME, MeasureUnit.QUART),
   PINT(R.string.pint_symbol, 0.568261, System.IMPERIAL_UK, UnitType.VOLUME, MeasureUnit.PINT),
