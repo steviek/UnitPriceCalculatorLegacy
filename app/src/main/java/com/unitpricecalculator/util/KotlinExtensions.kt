@@ -33,3 +33,16 @@ fun <T: Comparable<T>> Iterable<T>.isSorted(descending: Boolean = false): Boolea
   }
   return true
 }
+
+inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNullNotNull(selector: (T) -> R?): T? {
+  var min: T? = null
+  var minValue: R? = null
+  for (item in this) {
+    val value = selector(item) ?: continue
+    if (minValue == null || value < minValue) {
+      min = item
+      minValue = value
+    }
+  }
+  return min
+}

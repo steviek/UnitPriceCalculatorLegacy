@@ -9,10 +9,12 @@ import android.widget.TextView
 import com.unitpricecalculator.R
 import com.unitpricecalculator.comparisons.SavedComparison
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow
+import com.unitpricecalculator.comparisons.pricePerBaseUnit
 import com.unitpricecalculator.time.DateTimeHelper
 import com.unitpricecalculator.unit.Unit
 import com.unitpricecalculator.unit.UnitEntry
 import com.unitpricecalculator.unit.Units
+import com.unitpricecalculator.util.minByOrNullNotNull
 import com.unitpricecalculator.util.parseDoubleOrNull
 import java.util.Currency
 
@@ -73,15 +75,7 @@ class SavedComparisonsArrayAdapter(
   }
 
   private fun SavedComparison.getBestRow(): SavedUnitEntryRow? {
-    val comparisonUnit = finalUnit ?: return null
-    return savedUnitEntryRows.mapNotNull {
-      val cost = it.cost.parseDoubleOrNull() ?: return@mapNotNull null
-      val size = it.size.parseDoubleOrNull()?: return@mapNotNull null
-      val quantity = it.quantity.parseDoubleOrNull() ?: 1.0
-      val unit = it.unit
-      val pricePerUnit = cost / (quantity * size)
-      it to  pricePerUnit / (unit.factor / comparisonUnit.factor)
-    }.minByOrNull { it.second }?.first
+    return savedUnitEntryRows.minByOrNullNotNull { it.pricePerBaseUnit }
   }
 
   private fun SavedUnitEntryRow.getSummaryText(currency: Currency?): String {

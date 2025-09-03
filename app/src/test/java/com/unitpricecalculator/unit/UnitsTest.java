@@ -16,25 +16,34 @@ import com.google.common.collect.ImmutableSet;
 import com.unitpricecalculator.application.SingletonModule;
 import com.unitpricecalculator.json.SerializersModule;
 import dagger.Component;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = P)
+@Config(sdk = P, application = HiltTestApplication.class)
 public class UnitsTest {
 
-  @Inject Systems systems;
-  @Inject Units units;
+  @Rule
+  public final HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
   @Before
   public void setUp() {
-    DaggerUnitsTest_TestComponent.create().inject(this);
+    hiltRule.inject();
   }
+
+  @Inject Systems systems;
+  @Inject Units units;
 
   @Test
   public void defaultQuantity_notSet_shouldUseFallback() {
@@ -81,37 +90,26 @@ public class UnitsTest {
 
   @Test
   public void formatter_integer_shouldFormatWithoutDecimals() {
-    assertThat(units.getFormatter().apply(12.00)).isEqualTo("$12");
+    assertThat(units.getFormatter().format(12.00)).isEqualTo("$12");
   }
 
   @Test
   public void formatter_hasLeadingZeros_shouldTakeToFourDigits() {
-    assertThat(units.getFormatter().apply(0.00001234)).isEqualTo("$0.00001234");
+    assertThat(units.getFormatter().format(0.00001234)).isEqualTo("$0.00001234");
   }
 
   @Test
   public void formatter_hasLeadingZeros_shouldNotGoBeyondFourExtraDigits() {
-    assertThat(units.getFormatter().apply(0.00123456)).isEqualTo("$0.001235");
+    assertThat(units.getFormatter().format(0.00123456)).isEqualTo("$0.001235");
   }
 
   @Test
   public void formatter_hasOneDecimal_shouldUseTwoDecimalPlaces() {
-    assertThat(units.getFormatter().apply(10.1)).isEqualTo("$10.10");
+    assertThat(units.getFormatter().format(10.1)).isEqualTo("$10.10");
   }
 
   @Test
   public void formatter_hasLotsOfDecimals_isWhole_shouldOnlyUseTwoDecimalPlaces() {
-    assertThat(units.getFormatter().apply(123.45678)).isEqualTo("$123.46");
-  }
-
-  @Singleton
-  @Component(modules = {
-      SerializersModule.class,
-      SingletonModule.class,
-      TestApplicationModule.class
-  })
-  interface TestComponent {
-
-    void inject(UnitsTest test);
+    assertThat(units.getFormatter().format(123.45678)).isEqualTo("$123.46");
   }
 }

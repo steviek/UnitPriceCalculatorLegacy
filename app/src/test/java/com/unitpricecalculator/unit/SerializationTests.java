@@ -6,23 +6,38 @@ import static org.junit.Assert.assertFalse;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.unitpricecalculator.comparisons.ComparisonFragmentState;
+import com.unitpricecalculator.comparisons.SavedComparison;
 import com.unitpricecalculator.comparisons.SavedUnitEntryRow;
 import com.unitpricecalculator.json.JsonMapperModule;
 import com.unitpricecalculator.json.ObjectMapper;
 import dagger.Component;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
+import javax.inject.Inject;
+
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 33, application = HiltTestApplication.class)
 public class SerializationTests {
 
-  private ObjectMapper objectMapper;
+  @Rule
+  public final HiltAndroidRule hiltRule = new HiltAndroidRule(this);
+
+  @Inject
+  ObjectMapper objectMapper;
 
   @Before
   public void setUp() {
-    objectMapper = DaggerSerializationTests_TestComponent.create().getObjectMapper();
+    hiltRule.inject();
   }
 
   @Test
@@ -40,7 +55,7 @@ public class SerializationTests {
     String note = "hello world";
     SavedUnitEntryRow savedUnitEntryRow = new SavedUnitEntryRow("1", "1", "1", unit, note);
     SavedComparison savedComparison = new SavedComparison("key", "comparison", unit.getUnitType(),
-        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode);
+        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode, null);
     String serialized = objectMapper.toJson(savedComparison);
     SavedComparison deSerialized = objectMapper.fromJson(SavedComparison.class, serialized);
     assertEquals(savedComparison, deSerialized);
@@ -53,7 +68,7 @@ public class SerializationTests {
     String note = "hello world";
     SavedUnitEntryRow savedUnitEntryRow = new SavedUnitEntryRow("1", "1", "1", unit, note);
     SavedComparison savedComparison = new SavedComparison("key", "comparison", unit.getUnitType(),
-        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode);
+        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode, null);
 
     ComparisonFragmentState state = new ComparisonFragmentState(savedComparison, null);
 
@@ -70,7 +85,7 @@ public class SerializationTests {
     String note = "hello wo rld";
     SavedUnitEntryRow savedUnitEntryRow = new SavedUnitEntryRow("1", "1", "1", unit, note);
     SavedComparison savedComparison = new SavedComparison("key", "comparison", unit.getUnitType(),
-        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode);
+        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode, null);
     String serialized = objectMapper.toJson(savedComparison);
     SavedComparison deSerialized = objectMapper.fromJson(SavedComparison.class, serialized);
     assertEquals(savedComparison, deSerialized);
@@ -83,16 +98,9 @@ public class SerializationTests {
     String note = "hello world";
     SavedUnitEntryRow savedUnitEntryRow = new SavedUnitEntryRow("1", "1", "1", unit, note);
     SavedComparison savedComparison = new SavedComparison(null, "comparison", unit.getUnitType(),
-        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode);
+        ImmutableList.of(savedUnitEntryRow), "1.4", unit, currencyCode, null);
     String serialized = objectMapper.toJson(savedComparison);
     SavedComparison deSerialized = objectMapper.fromJson(SavedComparison.class, serialized);
     assertFalse(Strings.isNullOrEmpty(deSerialized.getKey()));
   }
-
-  @Component(modules = JsonMapperModule.class)
-  interface TestComponent {
-
-    ObjectMapper getObjectMapper();
-  }
-
 }
