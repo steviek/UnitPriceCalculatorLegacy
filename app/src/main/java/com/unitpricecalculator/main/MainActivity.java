@@ -7,14 +7,21 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.Task;
@@ -42,6 +49,7 @@ import com.unitpricecalculator.initialscreen.InitialScreen;
 import com.unitpricecalculator.initialscreen.InitialScreenManager;
 import com.unitpricecalculator.json.ObjectMapper;
 import com.unitpricecalculator.locale.AppLocaleManager;
+import com.unitpricecalculator.mode.DarkModeStateChangedEvent;
 import com.unitpricecalculator.saved.SavedComparisonManager;
 import com.unitpricecalculator.saved.SavedFragment;
 import com.unitpricecalculator.settings.SettingsFragment;
@@ -56,351 +64,362 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public final class MainActivity extends BaseActivity
-    implements MenuFragment.Callback, SavedFragment.Callback {
+        implements MenuFragment.Callback, SavedFragment.Callback {
 
-  @Inject
-  Bus bus;
+    @Inject
+    Bus bus;
 
-  @Inject
-  Units units;
+    @Inject
+    Units units;
 
-  @Inject
-  ObjectMapper objectMapper;
+    @Inject
+    ObjectMapper objectMapper;
 
-  @Inject
-  InitialScreenManager initialScreenManager;
+    @Inject
+    InitialScreenManager initialScreenManager;
 
-  @Inject
-  SavedComparisonManager savedComparisonManager;
+    @Inject
+    SavedComparisonManager savedComparisonManager;
 
-  @Inject
-  ExportManager exportManager;
+    @Inject
+    ExportManager exportManager;
 
-  @Inject
-  ImportManager importManager;
+    @Inject
+    ImportManager importManager;
 
-  @Inject
-  AppLocaleManager localeManager;
+    @Inject
+    AppLocaleManager localeManager;
 
-  private MainActivityBinding viewBinding;
-  // private ActionBarDrawerToggle mDrawerToggle;
-  //private DrawerLayout mDrawerLayout;
+    private MainActivityBinding viewBinding;
+    // private ActionBarDrawerToggle mDrawerToggle;
+    //private DrawerLayout mDrawerLayout;
 
-  private ComparisonFragment mComparisonFragment;
-  private SettingsFragment mSettingsFragment;
-  private SavedFragment mSavedFragment;
+    private ComparisonFragment mComparisonFragment;
+    private SettingsFragment mSettingsFragment;
+    private SavedFragment mSavedFragment;
 
-  @Nullable
-  private ComparisonFragmentState comparisonFragmentState;
+    @Nullable
+    private ComparisonFragmentState comparisonFragmentState;
 
-  private State currentState;
+    private State currentState;
 
-  private enum State {
-    MAIN, SETTINGS, SAVED
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    viewBinding = MainActivityBinding.inflate(getLayoutInflater());
-    setContentView(viewBinding.getRoot());
-
-    mComparisonFragment = new ComparisonFragment();
-    mSettingsFragment = new SettingsFragment();
-    mSavedFragment = new SavedFragment();
-
-    boolean hasSavedComparisons = !savedComparisonManager.getSavedComparisons().isEmpty();
-    String rawSavedState = null;
-    String rawMainFragmentState = null;
-
-    Intent intent = getIntent();
-    if (intent != null) {
-      rawSavedState = Strings.emptyToNull(intent.getStringExtra("state"));
+    private enum State {
+        MAIN, SETTINGS, SAVED
     }
 
-    if (savedInstanceState != null) {
-      if (rawSavedState == null) {
-        rawSavedState = Strings.emptyToNull(savedInstanceState.getString("state", null));
-      }
-      rawMainFragmentState = Strings.emptyToNull(savedInstanceState.getString("mainFragment"));
-    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewBinding = MainActivityBinding.inflate(getLayoutInflater());
+        setContentView(viewBinding.getRoot());
 
-    if (rawSavedState == null) {
-      if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
-          hasSavedComparisons) {
-        currentState = State.SAVED;
-      } else {
-        currentState = State.MAIN;
-      }
-    } else {
-      currentState = State.valueOf(rawSavedState);
-    }
+        mComparisonFragment = new ComparisonFragment();
+        mSettingsFragment = new SettingsFragment();
+        mSavedFragment = new SavedFragment();
 
-    if (rawMainFragmentState != null) {
-      mComparisonFragment.restoreState(
-          objectMapper.fromJson(ComparisonFragmentState.class, rawMainFragmentState));
-    }
+        boolean hasSavedComparisons = !savedComparisonManager.getSavedComparisons().isEmpty();
+        String rawSavedState = null;
+        String rawMainFragmentState = null;
 
-    switch (currentState) {
-      case MAIN:
-        break;
-      case SAVED:
-        viewBinding.bottomNavigation.setSelectedItemId(R.id.saved);
-        break;
-      case SETTINGS:
-        viewBinding.bottomNavigation.setSelectedItemId(R.id.settings);
-        break;
-    }
-
-    getSupportFragmentManager()
-        .beginTransaction()
-        .replace(viewBinding.contentFrame.getId(), getFragment(currentState))
-        .commit();
-
-    viewBinding.bottomNavigation.setOnItemSelectedListener(item -> {
-      if (item.getItemId() == R.id.current) {
-        changeState(State.MAIN);
-      } else if (item.getItemId() == R.id.saved) {
-        changeState(State.SAVED);
-      } else if (item.getItemId() == R.id.settings) {
-        changeState(State.SETTINGS);
-      }
-      return true;
-    });
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-    bus.register(this);
-  }
-
-  @Override
-  protected void onStop() {
-    super.onStop();
-    bus.unregister(this);
-  }
-
-  @Override
-  protected void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putString("state", currentState.name());
-
-    if (mComparisonFragment == null) return;
-
-    ComparisonFragmentState comparisonFragmentState = mComparisonFragment.saveState(this);
-    if (comparisonFragmentState == null) return;
-
-    outState.putString("mainFragment", objectMapper.toJson(comparisonFragmentState));
-  }
-
-  @Override
-  protected void onPostCreate(Bundle savedInstanceState) {
-    super.onPostCreate(savedInstanceState);
-    // Sync the toggle state after onRestoreInstanceState has occurred.
-    //mDrawerToggle.syncState();
-  }
-
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    // mDrawerToggle.onConfigurationChanged(newConfig);
-  }
-
-  @Override
-  public boolean onPrepareOptionsMenu(Menu menu) {
-    menu.clear();
-    switch (currentState) {
-      case MAIN:
-        return false;
-      case SETTINGS:
-        getSupportActionBar().setDisplayShowCustomEnabled(false);
-        setTitle(R.string.settings);
-        return true;
-      case SAVED:
-        getSupportActionBar().setCustomView(null);
-        getSupportActionBar().setDisplayShowCustomEnabled(false);
-        setTitle(R.string.saved_comparisons);
-        return false;
-    }
-    return super.onPrepareOptionsMenu(menu);
-  }
-
-  @Override
-  public void onMenuEvent(MenuFragment.MenuEvent event) {
-    switch (event) {
-      case FEEDBACK:
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, "sixbynineapps@gmail.com");
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
-        try {
-          startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
-        } catch (ActivityNotFoundException e) {
-          Toast.makeText(this, R.string.no_email_client, Toast.LENGTH_SHORT).show();
+        Intent intent = getIntent();
+        if (intent != null) {
+            rawSavedState = Strings.emptyToNull(intent.getStringExtra("state"));
         }
-        break;
-      case NEW:
-        changeState(State.MAIN);
-        break;
-      case RATE:
-        ReviewManager manager = ReviewManagerFactory.create(this);
-        Task<ReviewInfo> request = manager.requestReviewFlow();
-        request.addOnCompleteListener(task -> {
-          if (task.isSuccessful()) {
-            ReviewInfo reviewInfo = task.getResult();
-            manager.launchReviewFlow(this, reviewInfo);
-          } else {
-            // Failed, just launch play store
-            launchPlayStore();
-          }
+
+        if (savedInstanceState != null) {
+            if (rawSavedState == null) {
+                rawSavedState = Strings.emptyToNull(savedInstanceState.getString("state", null));
+            }
+            rawMainFragmentState = Strings.emptyToNull(savedInstanceState.getString("mainFragment"));
+        }
+
+        if (rawSavedState == null) {
+            if (initialScreenManager.getInitialScreen() == InitialScreen.SAVED_COMPARISONS &&
+                    hasSavedComparisons) {
+                currentState = State.SAVED;
+            } else {
+                currentState = State.MAIN;
+            }
+        } else {
+            currentState = State.valueOf(rawSavedState);
+        }
+
+        if (rawMainFragmentState != null) {
+            mComparisonFragment.restoreState(
+                    objectMapper.fromJson(ComparisonFragmentState.class, rawMainFragmentState));
+        }
+
+        switch (currentState) {
+            case MAIN:
+                break;
+            case SAVED:
+                viewBinding.bottomNavigation.setSelectedItemId(R.id.saved);
+                break;
+            case SETTINGS:
+                viewBinding.bottomNavigation.setSelectedItemId(R.id.settings);
+                break;
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(viewBinding.contentFrame.getId(), getFragment(currentState))
+                .commit();
+
+        viewBinding.bottomNavigation.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.current) {
+                changeState(State.MAIN);
+            } else if (item.getItemId() == R.id.saved) {
+                changeState(State.SAVED);
+            } else if (item.getItemId() == R.id.settings) {
+                changeState(State.SETTINGS);
+            }
+            return true;
         });
 
-        break;
-      case SETTINGS:
-        changeState(State.SETTINGS);
-        break;
-      case SAVED:
-        changeState(State.SAVED);
-        break;
-      case SHARE:
-        break;
-      case BUY_COFFEE:
-        Intent coffeeIntent = new Intent(Intent.ACTION_VIEW)
-            .setData(Uri.parse("https://www.buymeacoffee.com/kideckel"));
-        startActivity(coffeeIntent);
-        break;
-    }
-  }
-
-  @Override
-  public void onBackPressed() {
-    InitialScreen initialScreen = initialScreenManager.getInitialScreen();
-    // If the user presses back on a different screen, navigate them back to their initial one.
-    if (currentState != State.MAIN && initialScreen == InitialScreen.NEW_COMPARISON) {
-      changeState(State.MAIN);
-      return;
-    } else if (currentState != State.SAVED && initialScreen == InitialScreen.SAVED_COMPARISONS) {
-      // If the user presses back on a different screen, navigate them back to the main one.
-      changeState(State.SAVED);
-      return;
-    }
-    super.onBackPressed();
-  }
-
-  @Subscribe
-  public void onSavedComparisonDeleted(SavedComparisonDeletedEvent event) {
-    if (comparisonFragmentState == null) {
-      return;
+        updateSystemNav();
     }
 
-    SavedComparison draftComparison = comparisonFragmentState.getCurrentComparison();
-    if (draftComparison != null && draftComparison.getKey().equals(event.getKey())) {
-      comparisonFragmentState = null;
-    }
-  }
-
-  @Subscribe
-  public void onAppLocaleChanged(AppLocaleChangedEvent event) {
-    startActivity(new Intent(this, MainActivity.class).putExtra("state", currentState.name()));
-    finish();
-  }
-
-  private Fragment getFragment(State state) {
-    switch (state) {
-      case SETTINGS:
-        return mSettingsFragment;
-      case MAIN:
-        return mComparisonFragment;
-      case SAVED:
-        return mSavedFragment;
-    }
-    throw new IllegalArgumentException("Unexpected state: " + state);
-  }
-
-  private void changeState(State newState) {
-    if (newState == currentState) {
-      return;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bus.register(this);
     }
 
-    if (currentState == State.MAIN) {
-      comparisonFragmentState = mComparisonFragment.saveState(this);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        bus.unregister(this);
     }
 
-    int selectedItemId;
-    switch (newState) {
-      case MAIN:
-        if (comparisonFragmentState != null) {
-          mComparisonFragment.restoreState(comparisonFragmentState);
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("state", currentState.name());
+
+        if (mComparisonFragment == null) return;
+
+        ComparisonFragmentState comparisonFragmentState = mComparisonFragment.saveState(this);
+        if (comparisonFragmentState == null) return;
+
+        outState.putString("mainFragment", objectMapper.toJson(comparisonFragmentState));
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        //mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        switch (currentState) {
+            case MAIN:
+                return false;
+            case SETTINGS:
+                getSupportActionBar().setDisplayShowCustomEnabled(false);
+                setTitle(R.string.settings);
+                return true;
+            case SAVED:
+                getSupportActionBar().setCustomView(null);
+                getSupportActionBar().setDisplayShowCustomEnabled(false);
+                setTitle(R.string.saved_comparisons);
+                return false;
         }
-        selectedItemId = R.id.current;
-        break;
-      case SETTINGS:
-        hideSoftKeyboard();
-        selectedItemId = R.id.settings;
-        break;
-      case SAVED:
-        hideSoftKeyboard();
-        selectedItemId = R.id.saved;
-        break;
-      default:
-        throw new IllegalStateException("Unexpected state: " + newState);
-    }
-    currentState = newState;
-    getSupportFragmentManager()
-        .beginTransaction()
-        .replace(R.id.content_frame, getFragment(currentState))
-        .commit();
-    invalidateOptionsMenu();
-
-    if (viewBinding.bottomNavigation.getSelectedItemId() != selectedItemId) {
-      viewBinding.bottomNavigation.setSelectedItemId(selectedItemId);
-    }
-  }
-
-  @Override
-  public void onLoadSavedComparison(SavedComparison comparison) {
-    if (Strings.isNullOrEmpty(comparison.getCurrencyCode())) {
-      comparison = comparison.addCurrency(units.getCurrency().getCurrencyCode());
-    } else {
-      Optional<Currency> currency = Currencies.parseCurrencySafely(comparison.getCurrencyCode());
-      if (currency.isPresent()) {
-        units.setCurrency(currency.get());
-      }
-    }
-    units.setCurrentUnitType(comparison.getUnitType());
-    comparisonFragmentState = new ComparisonFragmentState(comparison, comparison);
-    changeState(State.MAIN);
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode != Activity.RESULT_OK) {
-      return;
+        return super.onPrepareOptionsMenu(menu);
     }
 
-    switch (requestCode) {
-      case RequestCodes.RC_CREATE_FILE:
-        exportManager.handleActivityResult(data);
-      case RequestCodes.RC_OPEN_FILE:
-        importManager.handleActivityResult(data);
-        break;
-    }
-  }
+    @Override
+    public void onMenuEvent(MenuFragment.MenuEvent event) {
+        switch (event) {
+            case FEEDBACK:
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
+                intent.putExtra(Intent.EXTRA_EMAIL, "sixbynineapps@gmail.com");
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
+                try {
+                    startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, R.string.no_email_client, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case NEW:
+                changeState(State.MAIN);
+                break;
+            case RATE:
+                ReviewManager manager = ReviewManagerFactory.create(this);
+                Task<ReviewInfo> request = manager.requestReviewFlow();
+                request.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ReviewInfo reviewInfo = task.getResult();
+                        manager.launchReviewFlow(this, reviewInfo);
+                    } else {
+                        // Failed, just launch play store
+                        launchPlayStore();
+                    }
+                });
 
-  private Context getDisplayContext() {
-    return localeManager.getCurrent().apply(this);
-  }
-
-  private void launchPlayStore() {
-    if (isDestroyed()) {
-      return;
+                break;
+            case SETTINGS:
+                changeState(State.SETTINGS);
+                break;
+            case SAVED:
+                changeState(State.SAVED);
+                break;
+            case SHARE:
+                break;
+            case BUY_COFFEE:
+                Intent coffeeIntent = new Intent(Intent.ACTION_VIEW)
+                        .setData(Uri.parse("https://www.buymeacoffee.com/kideckel"));
+                startActivity(coffeeIntent);
+                break;
+        }
     }
-    Intent i = new Intent(Intent.ACTION_VIEW,
-        Uri.parse(
-            "https://play.google.com/store/apps/details?id=" +
-                "com.unitpricecalculator"));
-    startActivity(i);
-  }
+
+    @Override
+    public void onBackPressed() {
+        InitialScreen initialScreen = initialScreenManager.getInitialScreen();
+        // If the user presses back on a different screen, navigate them back to their initial one.
+        if (currentState != State.MAIN && initialScreen == InitialScreen.NEW_COMPARISON) {
+            changeState(State.MAIN);
+            return;
+        } else if (currentState != State.SAVED && initialScreen == InitialScreen.SAVED_COMPARISONS) {
+            // If the user presses back on a different screen, navigate them back to the main one.
+            changeState(State.SAVED);
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Subscribe
+    public void onSavedComparisonDeleted(SavedComparisonDeletedEvent event) {
+        if (comparisonFragmentState == null) {
+            return;
+        }
+
+        SavedComparison draftComparison = comparisonFragmentState.getCurrentComparison();
+        if (draftComparison != null && draftComparison.getKey().equals(event.getKey())) {
+            comparisonFragmentState = null;
+        }
+    }
+
+    @Subscribe
+    public void onAppLocaleChanged(AppLocaleChangedEvent event) {
+        startActivity(new Intent(this, MainActivity.class).putExtra("state", currentState.name()));
+        finish();
+    }
+
+    private Fragment getFragment(State state) {
+        switch (state) {
+            case SETTINGS:
+                return mSettingsFragment;
+            case MAIN:
+                return mComparisonFragment;
+            case SAVED:
+                return mSavedFragment;
+        }
+        throw new IllegalArgumentException("Unexpected state: " + state);
+    }
+
+    private void changeState(State newState) {
+        if (newState == currentState) {
+            return;
+        }
+
+        if (currentState == State.MAIN) {
+            comparisonFragmentState = mComparisonFragment.saveState(this);
+        }
+
+        int selectedItemId;
+        switch (newState) {
+            case MAIN:
+                if (comparisonFragmentState != null) {
+                    mComparisonFragment.restoreState(comparisonFragmentState);
+                }
+                selectedItemId = R.id.current;
+                break;
+            case SETTINGS:
+                hideSoftKeyboard();
+                selectedItemId = R.id.settings;
+                break;
+            case SAVED:
+                hideSoftKeyboard();
+                selectedItemId = R.id.saved;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected state: " + newState);
+        }
+        currentState = newState;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, getFragment(currentState))
+                .commit();
+        invalidateOptionsMenu();
+
+        if (viewBinding.bottomNavigation.getSelectedItemId() != selectedItemId) {
+            viewBinding.bottomNavigation.setSelectedItemId(selectedItemId);
+        }
+    }
+
+    @Override
+    public void onLoadSavedComparison(SavedComparison comparison) {
+        if (Strings.isNullOrEmpty(comparison.getCurrencyCode())) {
+            comparison = comparison.addCurrency(units.getCurrency().getCurrencyCode());
+        } else {
+            Optional<Currency> currency = Currencies.parseCurrencySafely(comparison.getCurrencyCode());
+            if (currency.isPresent()) {
+                units.setCurrency(currency.get());
+            }
+        }
+        units.setCurrentUnitType(comparison.getUnitType());
+        comparisonFragmentState = new ComparisonFragmentState(comparison, comparison);
+        changeState(State.MAIN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case RequestCodes.RC_CREATE_FILE:
+                exportManager.handleActivityResult(data);
+            case RequestCodes.RC_OPEN_FILE:
+                importManager.handleActivityResult(data);
+                break;
+        }
+    }
+
+    private void updateSystemNav() {
+        boolean isNightMode = getResources().getBoolean(R.bool.is_night_mode);
+        WindowInsetsControllerCompat controller =
+                new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(/* isLight = */ !isNightMode);
+
+        getWindow().setNavigationBarColor(getColor(R.color.nav_bar_color));
+    }
+
+    private Context getDisplayContext() {
+        return localeManager.getCurrent().apply(this);
+    }
+
+    private void launchPlayStore() {
+        if (isDestroyed()) {
+            return;
+        }
+        Intent i = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(
+                        "https://play.google.com/store/apps/details?id=" +
+                                "com.unitpricecalculator"));
+        startActivity(i);
+    }
 }
