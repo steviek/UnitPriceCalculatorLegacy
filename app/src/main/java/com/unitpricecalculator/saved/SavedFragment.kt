@@ -77,6 +77,9 @@ class SavedFragment : BaseFragment() {
     @Inject
     lateinit var appLocaleManager: AppLocaleManager
 
+    @Inject
+    lateinit var adapterFactory: SavedComparisonsArrayAdapterFactory
+
     private var savedComparisons = ArrayList<SavedComparison>()
     private var filteredComparisons = ArrayList<SavedComparison>()
     private var adapter: SavedComparisonsArrayAdapter? = null
@@ -229,7 +232,7 @@ class SavedFragment : BaseFragment() {
         savedComparisons.clear()
         savedComparisons.addAll(savedComparisonManager.savedComparisons)
         val listView = binding.listView
-        adapter = SavedComparisonsArrayAdapter(requireContext(), filteredComparisons, units)
+        adapter = adapterFactory.create(requireContext(), filteredComparisons)
         listView.adapter = adapter
         listView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             actionMode?.let {
